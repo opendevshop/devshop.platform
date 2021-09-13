@@ -1,0 +1,77 @@
+#
+#
+#
+
+all:
+  children:
+    apps:
+      vars:
+        # Override all
+        ansible_connection: local
+
+      children:
+
+        # App: thinkdrop
+        thinkdrop:
+          vars:
+            devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
+
+            # Default servers to use for app hosts in this app group.
+            devshop_app_server_http: server.dev.thinkdrop.net
+            devshop_app_server_db: server.dev.thinkdrop.net
+
+          # App Hosts: thinkdrop
+          hosts:
+
+            live.thinkdrop.net:
+              devshop_app_git_reference: "3.4.0"
+              devshop_app_domains:
+                - thinkdrop.net
+                - live.thinkdrop.net
+                - www.thinkdrop.net
+
+              # Tell the live site to use the live servers.
+              devshop_app_server_http: server.live.thinkdrop.net
+              devshop_app_server_db: server.db.thinkdrop.net
+
+            test.thinkdrop.net:
+              devshop_app_git_reference: "3.4.0"
+
+            dev.thinkdrop.net:
+              devshop_app_git_reference: "8.x"
+
+    # Server Hosts
+    servers:
+
+      # Service Groups
+      children:
+
+        # Drupal Web Servers
+        service_http:
+          hosts:
+            server.live.thinkdrop.net:
+            server.dev.thinkdrop.net:
+
+        service_db:
+          hosts:
+            server.db.thinkdrop.net:
+
+    # Service Groups
+    # @TODO: Move to devshop.platform vars plugin.
+    # Drupal Web Server
+    # Since this list is in *your* inventory, you can override as you see fit.
+    service_http:
+      vars:
+        devshop_service_roles_http:
+          - geerlingguy.apache
+          - geerlingguy.php
+          - geerlingguy.php-mysql
+          - geerlingguy.php-versions
+          - geerlingguy.composer
+          - geerlingguy.drush
+
+    # Drupal Database Server
+    service_db:
+      vars:
+        devshop_service_roles_db:
+          - geerlingguy.mysql
