@@ -3,7 +3,7 @@
 devshop_app_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
 
 # The path to clone the "devshop_app_git_repository" to.
-devshop_app_git_root: "{{ playbook_dir }}/app"
+devshop_app_git_root: "{{ playbook_dir }}/apps/{{ inventory_hostname }}"
 
 # The git remote to clone.
 devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-template.git"
