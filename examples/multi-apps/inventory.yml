@@ -1,0 +1,87 @@
+#
+#
+#
+
+all:
+  children:
+    apps:
+      vars:
+        # Needed until set elsewhere.
+        ansible_connection: local
+
+      children:
+
+        # App: thinkdrop
+        thinkdrop:
+          vars:
+            devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
+            ansible_connection: local
+
+          # App Hosts: thinkdrop
+          hosts:
+
+            live.thinkdrop.net:
+              devshop_app_git_reference: "3.4.0"
+              devshop_app_domains:
+                - thinkdrop.net
+                - live.thinkdrop.net
+                - www.thinkdrop.net
+
+            test.thinkdrop.net:
+              devshop_app_git_reference: "3.4.0"
+
+            dev.thinkdrop.net:
+              devshop_app_git_reference: "8.x"
+
+
+        # App: support
+        support:
+          vars:
+            devshop_app_git_repository: git@github.com:thinkdrop/devshop.support.git
+            ansible_connection: local
+
+          # App Hosts: support
+          hosts:
+
+            live.devshop.support:
+              devshop_app_git_reference: "master"
+              devshop_app_domains:
+                - devshop.support
+
+            develop.devshop.support:
+              devshop_app_git_reference: "members"
+
+    # Server Hosts
+    servers:
+
+      # Service Groups
+      children:
+
+        # Drupal Web Server
+        service_http:
+          hosts:
+            thinkdrop.local.computer:
+
+        service_db:
+          hosts:
+            thinkdrop.local.computer:
+
+    # Service Groups
+    # @TODO: Move to devshop.platform vars plugin.
+    # Drupal Web Server
+    # Since this list is in *your* inventory, you can override as you see fit.
+    service_http:
+      vars:
+        devshop_service_roles_http:
+          - geerlingguy.apache
+          - geerlingguy.php
+          - geerlingguy.php-mysql
+          - geerlingguy.php-versions
+          - geerlingguy.composer
+          - geerlingguy.drush
+
+    # Drupal Database Server
+    service_db:
+      vars:
+        devshop_service_roles_db:
+          - geerlingguy.mysql
