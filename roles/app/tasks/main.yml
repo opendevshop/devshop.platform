@@ -17,7 +17,9 @@
       devshop_app_git_root: {{ devshop_app_git_root }}
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
-      ansible_user_id: {{ ansible_user_id }}
+
+      devshop_app_server_http: {{ devshop_app_server_http }}
+      devshop_app_server_db: {{ devshop_app_server_db }}
 
 #      devshop_app_git_root: {{ devshop_app_git_root }}
 #      devshop_app_host: {{ devshop_app_host }}
