@@ -1,0 +1,27 @@
+---
+#
+# Ansible Galaxy Roles and Collections
+#
+roles:
+  - name: geerlingguy.apache
+  - name: geerlingguy.composer
+  - name: geerlingguy.drupal
+  - name: geerlingguy.drush
+  - name: geerlingguy.git
+  - name: geerlingguy.github-users
+  - name: geerlingguy.security
+  - name: geerlingguy.supervisor
+  - name: geerlingguy.mysql
+  - name: geerlingguy.php-mysql
+  - name: geerlingguy.php-versions
+  - name: geerlingguy.repo-remi
+  - name: geerlingguy.repo-epel
+
+  - name: tenequm.icinga-director-client
+
+collections:
+  - name: community.general
+  - name: community.aws
+  - name: community.digitalocean
+  - name: community.docker
+  - name: community.mysql

@@ -1,0 +1,30 @@
+---
+
+- name: Servers
+  collections:
+    - devshop.platform
+
+  hosts: servers
+  become: yes
+  gather_facts: yes
+  tags:
+    - servers
+
+  roles:
+    - role: host
+      tags:
+        - servers
+
+    - role: services
+      tags:
+        - services
+
+- name: Apps
+  hosts: apps
+  become: yes
+  gather_facts: yes
+  tags:
+    - apps
+
+  roles:
+    - name: app
