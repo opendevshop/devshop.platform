@@ -1,0 +1,18 @@
+---
+- name: DevShop.Services Role Complete.
+  debug:
+    msg: |
+      ------------------------------------------
+      devshop.services role complete.
+      All role dependencies installed.
+
+      inventory_hostname: {{ inventory_hostname }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+
+      groups:
+      {{ group_names | to_nice_yaml }}
+
+      devshop_host_roles:
+      {{ devshop_host_roles | default('None') | to_nice_yaml }}
+

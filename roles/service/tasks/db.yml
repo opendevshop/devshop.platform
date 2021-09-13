@@ -1,0 +1,48 @@
+---
+- name: "Preparing DevShop Service: db"
+  debug:
+    msg: |
+      Current Host: {{ inventory_hostname }}
+      mysql_user_home: {{ mysql_user_home }}
+
+
+- name: "Prepare Databases."
+  with_items: "{{ devshop_host_service_apps[devshop_host_service] }}"
+  set_fact:
+    devshop_app_mysql_host: "{{ item }}"
+    devshop_app_mysql_database:
+      # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
+      name: "{{ hostvars[item]['devshop_app_environment_id'] }}"
+      encoding: utf8mb4
+      collation: utf8mb4_general_ci
+    devshop_app_mysql_user:
+      name: "{{ hostvars[item]['devshop_app_environment_id'] }}"
+      host: "%"
+      password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
+      priv: "{{ hostvars[item]['devshop_app_environment_id'] }}.*:ALL"
+
+  register: devshop_service_app_register
+
+- name: "Set Facts for host."
+  set_fact:
+    mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
+    mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
+
+- name: "Set facts on app hosts."
+  with_items: "{{ devshop_service_app_register.results }}"
+  delegate_to: "{{ item.ansible_facts.devshop_app_mysql_host }}"
+  delegate_facts: yes
+  set_fact:
+    devshop_service_db_user: "{{ item.ansible_facts.devshop_app_mysql_user.name }}"
+    devshop_service_db_password: "{{ item.ansible_facts.devshop_app_mysql_user.password }}"
+    devshop_service_db_name: "{{ item.ansible_facts.devshop_app_mysql_database.name }}"
+    devshop_service_db_backend: "{{ devshop_service_db_backend }}"
+    devshop_service_db_host: "{{ item.ansible_facts.devshop_app_mysql_user.password }}"
+
+- name: "Variables prepared."
+  debug:
+    msg: |
+      Current Host: {{ inventory_hostname }}
+
+      mysql_databases: {{ mysql_databases }}
+      mysql_users: {{ mysql_users }}

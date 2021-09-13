@@ -1,0 +1,13 @@
+---
+apache_vhosts: []
+
+devshop_service_http_apache_mods_enabled:
+    - expires.load
+    - ssl.load
+    - rewrite.load
+    - proxy.load
+    - proxy_fcgi.load
+
+# Override with app.document_root or env.document_root
+
+devshop_service_http_document_root: "web"

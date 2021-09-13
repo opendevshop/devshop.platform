@@ -1,0 +1,69 @@
+dependencies:
+
+  - name: geerlingguy.security
+    when: '"geerlingguy.security" in devshop_host_service_roles'
+    tags:
+      - services
+    vars:
+      security_sudoers_passwordless: "{{ devshop_host_admins }}"
+
+  - name: geerlingguy.github-users
+    when: '"geerlingguy.github-users" in devshop_host_service_roles'
+    tags:
+      - services
+    vars:
+      github_users: "{{ devshop_host_github_users }}"
+
+  - name: tenequm.icinga-director-client
+    when: '"tenequm.icinga-director-client" in devshop_host_service_roles'
+    tags:
+      - services
+    vars:
+
+      # FQDN of this server.
+      icinga_client_fqdn: "{{ inventory_hostname }}"
+
+      # @TODO: Match icinga setup role.
+      icinga_client_import_template: 'Linux Server'
+
+      # URL of the server with icinga.
+      icinga_master_fqdn: ""
+      icinga_master_ip: ""
+      icinga_director_url: ""
+      icinga_director_pass: admin
+
+  - name: geerlingguy.apache
+    when: '"geerlingguy.apache" in devshop_host_service_roles'
+    tags:
+      - services
+
+  # Make sure this runs before gg.php
+  - name: geerlingguy.php-versions
+    when: '"geerlingguy.php-versions" in devshop_host_service_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.php
+    when: '"geerlingguy.php" in devshop_host_service_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.php-mysql
+    when: '"geerlingguy.php-mysql" in devshop_host_service_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.composer
+    when: '"geerlingguy.composer" in devshop_host_service_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.drush
+    when: '"geerlingguy.drush" in devshop_host_service_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.mysql
+    when: '"geerlingguy.mysql" in devshop_host_service_roles'
+    tags:
+      - services

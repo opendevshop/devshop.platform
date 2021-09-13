@@ -1,0 +1,96 @@
+---
+
+- name: DevShop.App Role
+  debug:
+    msg: |
+      ---------------------------------
+      Welcome to the DevShop.App role.
+      ---------------------------------
+      Name: {{ devshop_app_data.name }}
+      Description: {{ devshop_app_data.description | default('None') }}
+      ---------------------------------
+      http://{{ ansible_host }}
+      devshop_app_environment_name: {{ devshop_app_environment_name }}
+      devshop_app_environment_id: {{ devshop_app_environment_id }}
+      ---------------------------------
+      devshop_app_git_repository: {{ devshop_app_git_repository }}
+      devshop_app_git_reference: {{ devshop_app_git_reference }}
+      devshop_app_source_path: {{ devshop_app_source_path }}
+      devshop_app_host: {{ devshop_app_host }}
+      ---------------------------------
+      devshop_app_servers:
+      {{ devshop_app_servers | to_nice_yaml }}
+      ---------------------------------
+      inventory_hostname: {{ inventory_hostname }}
+      ansible_host: {{ ansible_host }}
+      ansible_connection: {{ ansible_connection }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+
+      groups:
+      {{ group_names | to_nice_yaml }}
+
+      devshop_service_db_user: {{ devshop_service_db_user }}
+      devshop_service_db_name: {{ devshop_service_db_name }}
+      devshop_service_db_host: {{ devshop_service_db_host }}
+
+- name: Prepare Parent Directory
+  file:
+    path: "{{ devshop_app_source_path | dirname }}"
+    state: directory
+    owner: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user }}"
+    mode: '0755'
+
+- name: Clone app source code
+  become: yes
+  become_user: "{{ devshop_app_user }}"
+  git:
+    repo: "{{ devshop_app_git_repository }}"
+    version: "{{ devshop_app_git_reference }}"
+    dest: "{{ devshop_app_source_path }}"
+    accept_hostkey: yes
+
+  register: git_results
+  notify:
+    - run build
+    - run deploy
+
+- name: Git Clone and Checkout Complete!
+  debug:
+    msg: "{{ git_results }}"
+
+- name: Force git handlers.
+  when:
+  - devshop_app_force_git_handlers
+  - git_results.changed == false
+  command: "echo Triggering git handlers because 'devshop_app_force_git_handlers' is true..."
+  notify:
+    - run build
+    - run deploy
+
+
+- name: Trigger Git Handlers before moving on.
+  meta: flush_handlers
+
+- name: save results
+  set_fact:
+    devshop_app_results:
+      build:
+        command: "{{ devshop_app_commands.build | default('None set.') }}"
+        exit: "{{ app_build_results.rc | default('n/a') }}"
+        output: "{{ app_build_results.stdout | default('') }}"
+
+      deploy:
+        command: "{{ devshop_app_commands.deploy | default('None set.') }}"
+        exit: "{{ app_deploy_results.rc | default('n/a') }}"
+        output: "{{ app_deploy_results.stdout | default('') }}"
+
+- name: devshop.app build results
+  when: devshop_app_results is defined
+  failed_when:
+    - (app_build_results is defined and app_build_results.rc != 0) or
+      (app_deploy_results is defined and app_build_results.rc != 0)
+  debug:
+    msg: |
+      {{ devshop_app_results | to_nice_yaml }}

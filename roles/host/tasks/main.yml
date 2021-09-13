@@ -1,0 +1,53 @@
+---
+
+- name: DevShop.Host Role
+  debug:
+    msg: |
+      ---------------------------------
+      Welcome to the DevShop.Host role.
+      ---------------------------------
+
+      inventory_hostname: {{ inventory_hostname }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+
+      playbook_dir : {{ playbook_dir }}
+
+      groups:
+      {{ group_names | to_nice_yaml }}
+
+      devshop_host_services
+      {{ devshop_host_services | to_nice_yaml }}
+
+      devshop_host_app_services
+      {{ devshop_host_app_services | to_nice_yaml }}
+
+      devshop_host_service_apps:
+      {{ devshop_host_service_apps | default('None') | to_nice_yaml }}
+
+      devshop_host_service_roles:
+      {{ devshop_host_service_roles | default('None') | to_nice_yaml }}
+
+
+- name: Prepare Services
+  loop: "{{ devshop_host_services }}"
+  loop_control:
+    loop_var: loop_item
+  include_role:
+    name: devshop.service
+    public: true
+    tasks_from: "{{ loop_item }}.yml"
+    defaults_from: "{{ loop_item }}.yml"
+  vars:
+    devshop_host_service: "{{ loop_item }}"
+
+- name: Install common packages
+  apt:
+    update_cache: yes
+    name:
+      - openssh-server
+    state: latest
+
+- name: DevShop.Host Role Complete!
+  debug:
+    msg: "Next up: DevShop.Services."

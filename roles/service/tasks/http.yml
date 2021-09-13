@@ -1,0 +1,38 @@
+---
+- name: "Preparing DevShop Service: http"
+  debug:
+    msg: |
+      Current Host: {{ inventory_hostname }}
+
+      {{ devshop_host_service_apps | to_nice_yaml }}
+
+- name: "Prepare Apache VHosts."
+  with_items: "{{ devshop_host_service_apps[devshop_host_service] }}"
+  set_fact:
+    devshop_app_apache_vhost:
+
+      servername: "{{ hostvars[item]['ansible_host'] }}"
+      documentroot: "{{ hostvars[item]['devshop_app_source_path'] }}/{{ hostvars[item]['devshop_app_data']['document_root'] | default(devshop_service_http_document_root) }}"
+      extra_parameters: |
+        {% if 'domains' in hostvars[item]['devshop_app_environment_data']: %}
+          {% for domain in hostvars[item]['devshop_app_environment_data']['domains'] %}
+        ServerAlias {{ domain }}
+          {% endfor %}
+        {% endif %}
+
+  register: apache_vhost_register
+
+- name: "Set Facts for host."
+  set_fact:
+    apache_vhosts: "{{ apache_vhost_register.results | map(attribute='ansible_facts.devshop_app_apache_vhost') | list }}"
+
+    # Override role defaults with service defaults.
+    apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
+
+
+- name: "Variables prepared."
+  debug:
+    msg: |
+      Current Host: {{ inventory_hostname }}
+      apache_vhosts: {{ apache_vhosts }}
+      apache_mods_enabled: {{ apache_mods_enabled }}
