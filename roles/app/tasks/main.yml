@@ -1,4 +1,9 @@
 ---
+- name: Prevent the role from running as root.
+  fail:
+    msg: "The devshop.app role should not be run as root."
+  when: devshop_app_user == 'root'
+
 
 - name: DevShop.App Role
   debug:
@@ -6,37 +11,36 @@
       ---------------------------------
       Welcome to the DevShop.App role.
       ---------------------------------
-      Name: {{ devshop_app_data.name }}
-      Description: {{ devshop_app_data.description | default('None') }}
-      ---------------------------------
       http://{{ ansible_host }}
-      devshop_app_environment_name: {{ devshop_app_environment_name }}
-      devshop_app_environment_id: {{ devshop_app_environment_id }}
-      ---------------------------------
       devshop_app_git_repository: {{ devshop_app_git_repository }}
       devshop_app_git_reference: {{ devshop_app_git_reference }}
-      devshop_app_source_path: {{ devshop_app_source_path }}
-      devshop_app_host: {{ devshop_app_host }}
+      devshop_app_git_root: {{ devshop_app_git_root }}
       ---------------------------------
-      devshop_app_servers:
-      {{ devshop_app_servers | to_nice_yaml }}
-      ---------------------------------
-      inventory_hostname: {{ inventory_hostname }}
-      ansible_host: {{ ansible_host }}
-      ansible_connection: {{ ansible_connection }}
-      nodename: {{ ansible_facts.nodename }}
-      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+      devshop_app_user: {{ devshop_app_user }}
+      ansible_user_id: {{ ansible_user_id }}
 
-      groups:
-      {{ group_names | to_nice_yaml }}
-
-      devshop_service_db_user: {{ devshop_service_db_user }}
-      devshop_service_db_name: {{ devshop_service_db_name }}
-      devshop_service_db_host: {{ devshop_service_db_host }}
+#      devshop_app_git_root: {{ devshop_app_git_root }}
+#      devshop_app_host: {{ devshop_app_host }}
+#      ---------------------------------
+#      devshop_app_servers:
+#      {{ devshop_app_servers | to_nice_yaml }}
+#      ---------------------------------
+#      inventory_hostname: {{ inventory_hostname }}
+#      ansible_host: {{ ansible_host }}
+#      ansible_connection: {{ ansible_connection }}
+#      nodename: {{ ansible_facts.nodename }}
+#      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+#
+#      groups:
+#      {{ group_names | to_nice_yaml }}
+#
+#      devshop_service_db_user: {{ devshop_service_db_user }}
+#      devshop_service_db_name: {{ devshop_service_db_name }}
+#      devshop_service_db_host: {{ devshop_service_db_host }}
 
 - name: Prepare Parent Directory
   file:
-    path: "{{ devshop_app_source_path | dirname }}"
+    path: "{{ devshop_app_git_root }}"
     state: directory
     owner: "{{ devshop_app_user }}"
     group: "{{ devshop_app_user }}"
@@ -48,7 +52,7 @@
   git:
     repo: "{{ devshop_app_git_repository }}"
     version: "{{ devshop_app_git_reference }}"
-    dest: "{{ devshop_app_source_path }}"
+    dest: "{{ devshop_app_git_root }}"
     accept_hostkey: yes
 
   register: git_results

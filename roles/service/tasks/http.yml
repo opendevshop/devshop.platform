@@ -12,7 +12,7 @@
     devshop_app_apache_vhost:
 
       servername: "{{ hostvars[item]['ansible_host'] }}"
-      documentroot: "{{ hostvars[item]['devshop_app_source_path'] }}/{{ hostvars[item]['devshop_app_data']['document_root'] | default(devshop_service_http_document_root) }}"
+      documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_data']['document_root'] | default(devshop_service_http_document_root) }}"
       extra_parameters: |
         {% if 'domains' in hostvars[item]['devshop_app_environment_data']: %}
           {% for domain in hostvars[item]['devshop_app_environment_data']['domains'] %}

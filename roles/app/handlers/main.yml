@@ -4,7 +4,7 @@
 - name: run build
   shell:
     cmd: "{{ devshop_app_commands.build }} 2>&1"
-    chdir: "{{ devshop_app_source_path }}"
+    chdir: "{{ devshop_app_git_root }}"
   become: yes
   become_user: "{{ devshop_app_user }}"
   when: devshop_app_commands.build is defined
@@ -14,7 +14,7 @@
 - name: run deploy
   shell:
     cmd: "{{ devshop_app_commands.deploy }} 2>&1"
-    chdir: "{{ devshop_app_source_path }}"
+    chdir: "{{ devshop_app_git_root }}"
   become: yes
   become_user: "{{ devshop_app_user }}"
   when: devshop_app_commands.deploy is defined

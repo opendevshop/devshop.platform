@@ -1,23 +1,15 @@
 ---
-devshop_app_example_git_repository: https://github.com/drupal-composer/drupal-project.git
-
-# Set to true, and there are no git changes, the handlers will be triggered anyway.
-# This allows the playbook run to trigger handlers if there were no git changes, if desired.
-devshop_app_force_git_handlers: no
-
+# The user to clone code and run commands with.
 devshop_app_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
 
-# Overridden by devshop_apps inventory.
-devshop_app: example
-devshop_app_environment: default
+# The path to clone the "devshop_app_git_repository" to.
+devshop_app_git_root: "{{ playbook_dir }}/app"
 
-devshop_app_git_repository: "{{ devshop_app_environment_data.git_repository | default(devshop_app_data.git_repository) | default(devshop_app_example_git_repository) }}"
-devshop_app_git_reference: "{{ devshop_app_environment_data.git_reference | default(devshop_app_data.git_reference) | default('') }}"
+# The git remote to clone.
+devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-template.git"
 
-# The path to clone devshop_app_git_repository
-devshop_app_source_path: "{{ devshop_platform_path | default('/var/platform') }}/apps/{{ devshop_app }}/{{ devshop_app_environment }}"
-devshop_app_source_docroot: "web"
+# The git reference to check out. (optional. If left blank, git repository default branch will be used.)
+devshop_app_git_reference: ""
 
-devshop_app_commands:
-  build: "{{ devshop_app_environment_data.commands.build | default(devshop_app_data.commands.build) | default('echo No build command set.') }}"
-  deploy: "{{ devshop_app_environment_data.commands.deploy | default(devshop_app_data.commands.deploy) | default('echo No deploy command set.') }}"
+# Notify git handlers even if git repo did not change.
+devshop_app_force_git_handlers: false

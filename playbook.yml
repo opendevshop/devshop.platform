@@ -26,5 +26,8 @@
   tags:
     - apps
 
+  vars:
+    devshop_app_user: "jon"
+
   roles:
     - name: app

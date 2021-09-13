@@ -11,7 +11,7 @@
   set_fact:
     apache_vhosts: "{{ apache_vhosts + [{
         'servername': devshop_app_hostname,
-        'documentroot': devshop_app_source_path + '/' + devshop_app_source_docroot,
+        'documentroot': devshop_app_git_root + '/' + devshop_app_source_docroot,
         'serveralias': devshop_app_environment.domains | default([])
 
     }] }}"
