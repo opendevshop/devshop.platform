@@ -4,18 +4,17 @@
     msg: |
       Current Host: {{ inventory_hostname }}
 
-      {{ devshop_host_service_apps | to_nice_yaml }}
-
 - name: "Prepare Apache VHosts."
-  with_items: "{{ devshop_host_service_apps[devshop_host_service] }}"
+  with_items: "{{ groups['apps'] }}"
+  when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
   set_fact:
     devshop_app_apache_vhost:
 
-      servername: "{{ hostvars[item]['ansible_host'] }}"
+      servername: "{{ item }}"
       documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_data']['document_root'] | default(devshop_service_http_document_root) }}"
       extra_parameters: |
-        {% if 'domains' in hostvars[item]['devshop_app_environment_data']: %}
-          {% for domain in hostvars[item]['devshop_app_environment_data']['domains'] %}
+        {% if 'devshop_app_domains' in hostvars[item]: %}
+          {% for domain in hostvars[item]['devshop_app_domains'] %}
         ServerAlias {{ domain }}
           {% endfor %}
         {% endif %}
