@@ -21,6 +21,11 @@
       devshop_app_server_http: {{ devshop_app_server_http }}
       devshop_app_server_db: {{ devshop_app_server_db }}
 
+      ---------------------------------
+      inventory_hostname: {{ inventory_hostname }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+
 #      devshop_app_git_root: {{ devshop_app_git_root }}
 #      devshop_app_host: {{ devshop_app_host }}
 #      ---------------------------------
