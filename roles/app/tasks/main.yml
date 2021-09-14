@@ -7,6 +7,11 @@
     msg: "The devshop.app role should not be run as root."
   when: devshop_app_user == 'root'
 
+- name: Set App Host Facts from devshop_app_host
+  set_fact:
+    devshop_app_user: "{{ hostvars[devshop_app_host]['devshop_host_app_user'] }}"
+    devshop_app_git_root: "{{ hostvars[devshop_app_host]['devshop_host_apps_root'] }}/{{ devshop_app_id }}/{{ inventory_hostname }}"
+
 - name: Whoami?
   command: "{{ item }}"
   with_items:

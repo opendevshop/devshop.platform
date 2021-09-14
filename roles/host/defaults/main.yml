@@ -1,23 +1,7 @@
 ---
-devshop_host_service_roles: {}
+devshop_host_roles: {}
 
 devshop_host_default_roles:
   - geerlingguy.security
   - geerlingguy.github-users
-
-devshop_host_roles: "{{ devshop_host_default_roles }}"
-
-devshop_host_roles_watched:
-  - tenequm.icinga-director-client
-
-devshop_host_roles_http:
-  - geerlingguy.apache
-  - geerlingguy.php
-  - geerlingguy.php-mysql
-  - geerlingguy.php-versions
-  - geerlingguy.composer
-  - geerlingguy.drush
-
-devshop_host_roles_db:
-  - geerlingguy.mysql
 
