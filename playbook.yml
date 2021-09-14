@@ -23,11 +23,10 @@
   hosts: apps
   become: yes
   gather_facts: yes
+
   tags:
     - apps
 
-  vars:
-    devshop_app_user: "jon"
-
   roles:
     - name: app
+      delegate_to: "{{ devshop_app_host }}"
