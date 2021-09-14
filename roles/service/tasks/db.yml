@@ -7,19 +7,20 @@
 
 
 - name: "Prepare Databases."
-  with_items: "{{ devshop_host_service_apps[devshop_host_service] }}"
+  with_items: "{{ groups['apps'] }}"
+  when: hostvars[item]['devshop_app_server_db'] == inventory_hostname
   set_fact:
     devshop_app_mysql_host: "{{ item }}"
     devshop_app_mysql_database:
       # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
-      name: "{{ hostvars[item]['devshop_app_environment_id'] }}"
+      name: "{{ hostvars[item]['devshop_app_id'] }}_{{ hostvars[item]['devshop_app_environment'] }}"
       encoding: utf8mb4
       collation: utf8mb4_general_ci
     devshop_app_mysql_user:
-      name: "{{ hostvars[item]['devshop_app_environment_id'] }}"
+      name: "{{ hostvars[item]['devshop_app_id'] }}_{{ hostvars[item]['devshop_app_environment'] }}"
       host: "%"
       password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
-      priv: "{{ hostvars[item]['devshop_app_environment_id'] }}.*:ALL"
+      priv: "{{ hostvars[item]['devshop_app_id'] }}_{{ hostvars[item]['devshop_app_environment'] }}.*:ALL"
 
   register: devshop_service_app_register
 

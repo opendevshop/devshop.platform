@@ -21,6 +21,8 @@
     msg: |
       ---------------------------------
       Welcome to the DevShop.App role.
+
+      devshop_app_environment_id: {{ devshop_app_environment_id }}
       ---------------------------------
       http://{{ ansible_host }}
       devshop_app_git_repository: {{ devshop_app_git_repository }}
@@ -37,6 +39,7 @@
       inventory_hostname: {{ inventory_hostname }}
       nodename: {{ ansible_facts.nodename }}
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+
 
 #      devshop_app_git_root: {{ devshop_app_git_root }}
 #      devshop_app_host: {{ devshop_app_host }}
