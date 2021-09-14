@@ -1,0 +1,7 @@
+---
+servers:
+  children:
+    db:
+      vars:
+        devshop_service_roles_db:
+          - geerlingguy.mysql
