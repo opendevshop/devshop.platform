@@ -7,15 +7,6 @@
     msg: "The devshop.app role should not be run as root."
   when: devshop_app_user == 'root'
 
-- name: Whoami?
-  command: "{{ item }}"
-  with_items:
-    - "whoami"
-    - "hostname -f"
-  become: yes
-  become_user: "{{ devshop_app_user }}"
-
-
 - name: DevShop.App Role
   debug:
     msg: |
