@@ -24,3 +24,9 @@ build_ignore:
 # https://docs.ansible.com/ansible/devel/dev_guide/developing_collections.html#ignoring-files-and-folders
   - .gitignore
   - changelogs/.plugin-cache.yaml
+dependencies:
+  community.general: ">=3.6.0"
+  community.aws: ">=1.5.0"
+  community.digitalocean: ">=1.10.0"
+  community.docker: ">=1.9.1"
+  community.mysql: ">=2.1.1"
