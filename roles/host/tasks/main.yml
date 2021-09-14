@@ -10,6 +10,15 @@
     devshop_host_services: []
   with_items: "{{ group_names }}"
 
+- name: Set App Host vars from this host
+  with_items: "{{ groups['apps'] }}"
+  when: hostvars[item]['devshop_app_host'] == inventory_hostname
+  delegate_to: "{{ item }}"
+  delegate_facts: yes
+  set_fact:
+    devshop_app_user: "{{ devshop_host_app_user }}"
+    devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ hostvars[item]['devshop_app_id'] }}/{{ item }}"
+
 - name: DevShop.Host Role
   debug:
     msg: |

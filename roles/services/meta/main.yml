@@ -43,13 +43,8 @@ dependencies:
     tags:
       - services
 
-  - name: geerlingguy.php
-    when: '"geerlingguy.php" in devshop_host_roles'
-    tags:
-      - services
-
   - name: geerlingguy.php-mysql
-    when: '"geerlingguy.php-mysql" in devshop_host_roles'
+    when: '"geerlingguy.php" in devshop_host_roles'
     tags:
       - services
 
