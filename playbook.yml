@@ -22,7 +22,7 @@
 - name: Apps
   hosts: apps
   become: yes
-  gather_facts: yes
+  gather_facts: no
 
   tags:
     - apps

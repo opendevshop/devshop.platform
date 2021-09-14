@@ -1,8 +1,19 @@
 ---
+- name: Gather App Host facts.
+  gather_facts:
+
 - name: Prevent the role from running as root.
   fail:
     msg: "The devshop.app role should not be run as root."
   when: devshop_app_user == 'root'
+
+- name: Whoami?
+  command: "{{ item }}"
+  with_items:
+    - "whoami"
+    - "hostname -f"
+  become: yes
+  become_user: "{{ devshop_app_user }}"
 
 
 - name: DevShop.App Role
@@ -18,6 +29,7 @@
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
 
+      devshop_app_host: {{ devshop_app_server_http }}
       devshop_app_server_http: {{ devshop_app_server_http }}
       devshop_app_server_db: {{ devshop_app_server_db }}
 
