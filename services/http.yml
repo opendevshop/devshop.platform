@@ -10,3 +10,6 @@ servers:
           - geerlingguy.php-versions
           - geerlingguy.composer
           - geerlingguy.drush
+
+        php_packages_extra:
+          - libapache2-mod-php
