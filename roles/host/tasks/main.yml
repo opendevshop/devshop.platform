@@ -22,8 +22,6 @@
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
       ansible_connection: {{ ansible_connection }}
 
-      playbook_dir : {{ playbook_dir }}
-
       groups:
       {{ group_names | to_nice_yaml }}
 
