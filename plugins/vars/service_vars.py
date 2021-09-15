@@ -69,11 +69,45 @@ class VarsModule(BaseVarsPlugin):
                         self._display.v('Found app host: %s ' % entity)
                         self.apps[entity] = entity
                         vars['devshop_ansible_host_type'] = 'app'
+                        vars['devshop_app_servers'] = {}
 
                     if group.name == 'servers':
                         self._display.v('Found server host: %s ' % entity)
                         self.servers[entity] = entity
                         vars['devshop_ansible_host_type'] = 'server'
+
+                        # Loop through all of the Server Host's groups.
+                        devshop_host_services = []
+                        if entity.vars.get('devshop_host_services'):
+                            devshop_host_services = entity.vars.get('devshop_host_services')
+
+                        devshop_host_roles = []
+                        if entity.vars.get('devshop_host_roles'):
+                            devshop_host_roles = entity.vars.get('devshop_host_roles')
+
+                        for host_group in entity.groups:
+
+                             # If service group, add to the list of this hosts services.
+                             if host_group.vars.get('devshop_service_%s' % host_group):
+                                 service_group = host_group
+                                 self._display.v('Found server service: %s ' % service_group)
+                                 devshop_host_services.append("%s" % service_group)
+
+                                 if service_group.vars.get('devshop_service_roles_%s' % service_group):
+                                    service_roles = service_group.vars.get('devshop_service_roles_%s' % service_group)
+                                    devshop_host_roles = devshop_host_roles + service_roles
+
+                        # Save list of services this server offers.
+                        vars['devshop_host_services'] = devshop_host_services
+                        vars['devshop_host_roles'] = devshop_host_roles
+
+                        # @TODO:
+                        # Set facts:
+                        #   - devshop_host_services
+                        #   - devshop_host_roles
+                        #   - devshop_host_apps
+
+                        #print(entity.groups)
 
             elif isinstance(entity, Group):
                 self._display.debug('parent_groups: %s ' % (entity.parent_groups))
@@ -90,5 +124,10 @@ class VarsModule(BaseVarsPlugin):
 
             else:
                 raise AnsibleParserError("Supplied entity must be Host or Group, got %s instead" % (type(entity)))
+
+        self._display.warning("End of get_vars")
+        self._display.warning(self.services)
+        self._display.warning(self.apps)
+        self._display.warning(self.servers)
 
         return vars
