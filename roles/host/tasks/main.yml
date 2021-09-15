@@ -1,15 +1,5 @@
 ---
 
-- name: "Gather this Server's roles."
-  when: lookup('vars', 'devshop_service_roles_' + item, default=false)
-  set_fact:
-    devshop_host_roles: "{{ devshop_host_roles }} + {{ lookup('vars', 'devshop_service_roles_' + item, default=[]) }}"
-    devshop_host_services: "{{ devshop_host_services + [item] }}"
-  vars:
-    devshop_host_roles: "{{ devshop_host_default_roles }}"
-    devshop_host_services: []
-  with_items: "{{ group_names }}"
-
 - name: Set App Host vars from this host
   with_items: "{{ groups['apps'] }}"
   when: hostvars[item]['devshop_app_host'] == inventory_hostname
