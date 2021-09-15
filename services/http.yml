@@ -3,6 +3,9 @@ servers:
   children:
     http:
       vars:
+        devshop_service_http:
+          name: Web Service for Drupal
+
         devshop_service_roles_http:
           - geerlingguy.apache
           - geerlingguy.php
