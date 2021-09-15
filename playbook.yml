@@ -1,4 +1,18 @@
 ---
+#
+# devshop.platform.playbook
+#
+# Global playbook for a devshop platform.
+#
+# Import this playbook in your own playbook in your own platform codebase.
+# Optionally, set vars in the task or include a vars file by setting 'platform_vars_file'
+#
+# - name: Import the DevShop.Platform Playbook.
+#   import_playbook: roles/contrib/ansible_collections/devshop/platform/playbook.yml
+#
+#   vars:
+#    platform_vars_file: "vars.yml" # Path relative to this playbook file.
+#
 
 - name: Servers
   collections:
@@ -9,6 +23,11 @@
   gather_facts: yes
   tags:
     - servers
+
+  pre_tasks:
+    - name: Include platform vars file from importing playbook.
+      include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
+      when: platform_vars_file is defined
 
   roles:
     - role: host
@@ -26,6 +45,12 @@
 
   tags:
     - apps
+
+  pre_tasks:
+
+    - name: Include platform vars file from importing playbook.
+      include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
+      when: platform_vars_file is defined
 
   roles:
     - name: app
