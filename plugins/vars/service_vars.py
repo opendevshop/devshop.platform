@@ -77,25 +77,23 @@ class VarsModule(BaseVarsPlugin):
                         vars['devshop_ansible_host_type'] = 'server'
 
                         # Loop through all of the Server Host's groups.
+                        # @TODO: Load common roles
                         devshop_host_services = []
-                        if entity.vars.get('devshop_host_services'):
-                            devshop_host_services = entity.vars.get('devshop_host_services')
-
                         devshop_host_roles = []
-                        if entity.vars.get('devshop_host_roles'):
-                            devshop_host_roles = entity.vars.get('devshop_host_roles')
 
-                        for host_group in entity.groups:
+                        for service_group in entity.groups:
 
-                             # If service group, add to the list of this hosts services.
-                             if host_group.vars.get('devshop_service_%s' % host_group):
-                                 service_group = host_group
-                                 self._display.v('Found server service: %s ' % service_group)
-                                 devshop_host_services.append("%s" % service_group)
+                             # If this is a service group, add to the list of this hosts services.
+                             if service_group.vars.get('devshop_service_%s' % service_group):
+                                 devshop_service_meta = service_group.vars.get('devshop_service_%s' % service_group)
+                                 self._display.v('Found server service: %s ' % devshop_service_meta)
+                                 if devshop_service_meta.get('no_service'):
+                                     self._display.v('no_service was set for %s. Not adding to this servers advertised services.' % devshop_service_meta)
+                                 else:
+                                     devshop_host_services.append("%s" % service_group)
 
-                                 if service_group.vars.get('devshop_service_roles_%s' % service_group):
-                                    service_roles = service_group.vars.get('devshop_service_roles_%s' % service_group)
-                                    devshop_host_roles = devshop_host_roles + service_roles
+                                 if devshop_service_meta.get('roles'):
+                                    devshop_host_roles = devshop_host_roles + devshop_service_meta.get('roles')
 
                         # Save list of services this server offers.
                         vars['devshop_host_services'] = devshop_host_services

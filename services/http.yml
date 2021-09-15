@@ -5,14 +5,13 @@ servers:
       vars:
         devshop_service_http:
           name: Web Service for Drupal
-
-        devshop_service_roles_http:
-          - geerlingguy.apache
-          - geerlingguy.php
-          - geerlingguy.php-mysql
-          - geerlingguy.php-versions
-          - geerlingguy.composer
-          - geerlingguy.drush
+          roles:
+            - geerlingguy.apache
+            - geerlingguy.php
+            - geerlingguy.php-mysql
+            - geerlingguy.php-versions
+            - geerlingguy.composer
+            - geerlingguy.drush
 
         php_packages_extra:
           - libapache2-mod-php

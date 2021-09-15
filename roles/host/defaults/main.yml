@@ -1,8 +1,4 @@
 ---
 devshop_host_roles: {}
 
-devshop_host_default_roles:
-  - geerlingguy.security
-  - geerlingguy.github-users
-
 devshop_app_git_document_root: web

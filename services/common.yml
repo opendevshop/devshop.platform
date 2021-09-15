@@ -1,0 +1,16 @@
+---
+servers:
+  children:
+    common:
+      vars:
+        devshop_service_common:
+          name: Common roles to run on all servers.
+          roles:
+            - geerlingguy.security
+            - geerlingguy.github-users
+
+          # set to true to remove this service from devshop_host_services
+          # Use when this service does not have tasks or defaults files in devshop.service.
+          no_service: yes
+
+

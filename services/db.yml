@@ -5,6 +5,5 @@ servers:
       vars:
         devshop_service_db:
           name: Database service for Drupal (using MySQL
-
-        devshop_service_roles_db:
-          - geerlingguy.mysql
+          roles:
+            - geerlingguy.mysql
