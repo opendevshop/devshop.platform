@@ -125,9 +125,4 @@ class VarsModule(BaseVarsPlugin):
             else:
                 raise AnsibleParserError("Supplied entity must be Host or Group, got %s instead" % (type(entity)))
 
-        self._display.warning("End of get_vars")
-        self._display.warning(self.services)
-        self._display.warning(self.apps)
-        self._display.warning(self.servers)
-
         return vars

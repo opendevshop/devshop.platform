@@ -4,6 +4,7 @@
     msg: |
       Current Host: {{ inventory_hostname }}
 
+# @TODO: Move lookup of apps using this server to server_vars.py
 - name: "Prepare Apache VHosts."
   with_items: "{{ groups['apps'] }}"
   when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
