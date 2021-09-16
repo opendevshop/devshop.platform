@@ -25,19 +25,21 @@ DOCUMENTATION = '''
     description: test loading host and group vars from a collection
     options:
       stage:
-          choices: ['all', 'inventory', 'task']
-          type: str
-          ini:
-            - key: stage
-              section: vars_service_vars
-          env:
-            - name: ANSIBLE_VARS_PLUGIN_STAGE
+        ini:
+          - key: stage
+            section: vars_service_vars
+            default: all
+        env:
+          - name: ANSIBLE_VARS_PLUGIN_STAGE
+    extends_documentation_fragment:
+      - vars_plugin_staging
 '''
 
 from ansible.errors import AnsibleParserError
 from ansible.plugins.vars import BaseVarsPlugin
 from ansible.inventory.host import Host
 from ansible.inventory.group import Group
+
 
 class VarsModule(BaseVarsPlugin):
 
@@ -49,7 +51,6 @@ class VarsModule(BaseVarsPlugin):
         self.apps = {}
         self.services = {}
         self.servers = {}
-
 
     def get_vars(self, loader, path, entities, cache=True):
         super(VarsModule, self).get_vars(loader, path, entities)
@@ -83,16 +84,15 @@ class VarsModule(BaseVarsPlugin):
 
                         for service_group in entity.groups:
 
-                             # If this is a service group, add to the list of this hosts services.
-                             if service_group.vars.get('devshop_service_%s' % service_group):
-                                 devshop_service_meta = service_group.vars.get('devshop_service_%s' % service_group)
-                                 self._display.v('Found server service: %s ' % devshop_service_meta)
-                                 if devshop_service_meta.get('no_service'):
-                                     self._display.v('no_service was set for %s. Not adding to this servers advertised services.' % devshop_service_meta)
-                                 else:
-                                     devshop_host_services.append("%s" % service_group)
-
-                                 if devshop_service_meta.get('roles'):
+                            # If this is a service group, add to the list of this hosts services.
+                            if service_group.vars.get('devshop_service_%s' % service_group):
+                                devshop_service_meta = service_group.vars.get('devshop_service_%s' % service_group)
+                                self._display.v('Found server service: %s ' % devshop_service_meta)
+                                if devshop_service_meta.get('no_service'):
+                                    self._display.v('no_service was set for %s. Not adding to this servers advertised services.' % devshop_service_meta)
+                                else:
+                                    devshop_host_services.append("%s" % service_group)
+                                if devshop_service_meta.get('roles'):
                                     devshop_host_roles = devshop_host_roles + devshop_service_meta.get('roles')
 
                         # Save list of services this server offers.
@@ -105,19 +105,17 @@ class VarsModule(BaseVarsPlugin):
                         #   - devshop_host_roles
                         #   - devshop_host_apps
 
-                        #print(entity.groups)
-
             elif isinstance(entity, Group):
                 self._display.debug('parent_groups: %s ' % (entity.parent_groups))
 
                 for parent in entity.parent_groups:
-                   if parent.name == 'servers':
-                       variable_name = 'devshop_service_%s' % entity
-                       if variable_name not in entity.vars:
-                           raise AnsibleParserError("From devshop.platform.service_vars: The Host Group '%s' is a child of 'servers', but it is missing the required variable '%s'. If the group '%s' is not intended to be a service group, remove it from the parent group 'servers'. If the group '%s' *is* intended to be a Service Group, add the variable '%s'." % (entity, variable_name, entity, entity, variable_name))
+                    if parent.name == 'servers':
+                        variable_name = 'devshop_service_%s' % entity
+                        if variable_name not in entity.vars:
+                            raise AnsibleParserError("From devshop.platform.service_vars: The Host Group '%s' is a child of 'servers', but it is missing the required variable '%s'. If the group '%s' is not intended to be a service group, remove it from the parent group 'servers'. If the group '%s' *is* intended to be a Service Group, add the variable '%s'." % (entity, variable_name, entity, entity, variable_name))
 
-                       self._display.v('Found service group: %s (%s)' % (entity, path))
-                       self.services[entity] = entity
+                        self._display.v('Found service group: %s (%s)' % (entity, path))
+                        self.services[entity] = entity
 
 
             else:
