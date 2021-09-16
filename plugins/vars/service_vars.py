@@ -79,6 +79,12 @@ class VarsModule(BaseVarsPlugin):
                         vars['devshop_ansible_host_type'] = 'app'
                         vars['devshop_app_servers'] = {}
 
+                        if not entity.vars.get('devshop_app_name'):
+                            vars['devshop_app_name'] = 'app'
+
+                        if not entity.vars.get('devshop_app_environment'):
+                            vars['devshop_app_environment'] = 'default'
+
                     if group.name == 'servers':
                         self._display.v('Found server host: %s ' % entity)
                         self.servers[entity] = entity
