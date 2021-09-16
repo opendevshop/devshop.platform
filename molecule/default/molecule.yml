@@ -21,6 +21,8 @@ platforms:
       - /var/lib/docker
     privileged: true
     pre_build_image: true
+    exposed_ports:
+      - '80:80'
 
 playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
