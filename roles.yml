@@ -18,10 +18,11 @@ roles:
   - name: geerlingguy.repo-epel
   - name: tenequm.icinga-director-client
 
-# @TODO: Remove if we can confirm our galaxy.yml meta can handle this.
-#collections:
-#  - name: community.general
-#  - name: community.aws
-#  - name: community.digitalocean
-#  - name: community.docker
-#  - name: community.mysql
+# Ensure this matches galaxy.yml.
+collections:
+  - ansible.posix
+  - community.general
+  - community.aws
+  - community.digitalocean
+  - community.docker
+  - community.mysql

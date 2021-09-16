@@ -5,7 +5,8 @@ dependency:
     role-file: roles.yml
     requirements-file: roles.yml
     roles-path: roles/contrib
-    collections-path: roles/contrib
+    # Collections are not roles. Don't include in the platform codebase unless necessary.
+    # collections-path: roles/contrib
     force: false
 
 driver:
@@ -29,15 +30,35 @@ playbooks:
 
 provisioner:
   name: ansible
+  inventory:
+    links:
+      # Gets added as a symlink called "inventory" in the test.
+      hosts: ../../${ANSIBLE_INVENTORY:-examples/single-site}
+
   ansible_args:
     - "--inventory=services"
-    - "--inventory=${ANSIBLE_INVENTORY:-examples/single-site}"
     - "${ARGS:--vv}"
+
   connection_options:
     ansible_connection: docker
+
   env:
-    ANSIBLE_CONFIG: ansible.cfg
     ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
+
+  # Explicitly set ansible.cfg here. Do not use ansible.cfg to ensure the platform works regardless of that config.
+  config_options:
+    defaults:
+      stdout_callback: yaml
+      vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
+
+      # NOT ALLOWED.
+      # roles_path: ./roles:./roles/contrib
+      # collections_path: ../../roles/contrib
+
+    vars_service_vars:
+      stage: all
+    connection:
+      pipelining: true
 
 verifier:
   name: ansible
