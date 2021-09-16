@@ -49,6 +49,7 @@ provisioner:
   config_options:
     defaults:
       stdout_callback: yaml
+      vars_plugins: ../../plugins/vars
       vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
 
       # NOT ALLOWED.
