@@ -12,6 +12,6 @@ ansible-galaxy install \
   --force
 
 ansible-galaxy collection install \
-  --collections-path $DEVSHOP_ROLES_PATH \
+  --collections-path $DEVSHOP_COLLECTIONS_PATH \
   --requirements-file $DEVSHOP_ROLES_FILE \
   --force
