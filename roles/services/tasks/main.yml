@@ -15,4 +15,3 @@
 
       devshop_host_roles:
       {{ devshop_host_roles | default('None') | to_nice_yaml }}
-

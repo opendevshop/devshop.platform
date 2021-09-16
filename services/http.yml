@@ -15,4 +15,3 @@ servers:
 
         php_packages_extra:
           - libapache2-mod-php
-
