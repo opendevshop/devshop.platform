@@ -3,6 +3,3 @@
   debug:
     msg: |
       Debug
-      --------------------------------
-      Ansible Facts:
-      {{ ansible_facts | to_nice_yaml }}
