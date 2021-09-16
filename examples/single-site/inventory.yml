@@ -1,46 +1,26 @@
 #
+# Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
-#
+apps:
 
-all:
-  children:
+  # Defaults for all App hosts in "apps" group.
+  vars:
+    devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
+    devshop_app_git_root: "{{ playbook_dir }}/app"
 
-    # App Hosts
-    apps:
-      # Defaults for all App hosts in "apps" group.
-      vars:
-        devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
-        devshop_app_git_root: "{{ playbook_dir }}/app"
+  # Environments.
+  hosts:
 
-      # Environments.
-      hosts:
-        thinkdrop.local.computer:
-          devshop_app_git_reference: 8.x
+    # App Host
+    thinkdrop.local.computer:
+      devshop_app_git_reference: 8.x
 
-    # Server Hosts
-    servers:
 
-      # Service Groups
-      children:
-
-        # Drupal Web Server
-        service_http:
-          vars:
-            devshop_service_roles_http:
-              - geerlingguy.apache
-              - geerlingguy.php
-              - geerlingguy.php-mysql
-              - geerlingguy.php-versions
-              - geerlingguy.composer
-              - geerlingguy.drush
-          hosts:
-            thinkdrop.local.computer:
-
-        # Drupal Database Server
-        service_db:
-          vars:
-            devshop_service_roles_db:
-              - geerlingguy.mysql
-
-          hosts:
-            thinkdrop.local.computer:
+http:
+  hosts:
+    # Server Host
+    thinkdrop.local.computer:
+db:
+  hosts:
+    # Server Host
+    thinkdrop.local.computer:

@@ -16,7 +16,6 @@ roles:
   - name: geerlingguy.php-versions
   - name: geerlingguy.repo-remi
   - name: geerlingguy.repo-epel
-
   - name: tenequm.icinga-director-client
 
 collections:
