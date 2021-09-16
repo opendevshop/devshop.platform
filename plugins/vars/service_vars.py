@@ -35,6 +35,13 @@ DOCUMENTATION = '''
       - vars_plugin_staging
 '''
 
+ERROR_SERVICE_GROUP_MISSING_DATA = '''
+    From devshop.platform.service_vars: The Host Group '%s' is a child of 'servers', but it
+    is missing the required variable '%s'. If the group '%s' is not intended to be a service
+    group, remove it from the parent group 'servers'. If the group '%s' *is* intended to be
+    a Service Group, add the variable '%s'.
+'''
+
 from ansible.errors import AnsibleParserError
 from ansible.plugins.vars import BaseVarsPlugin
 from ansible.inventory.host import Host
@@ -112,11 +119,10 @@ class VarsModule(BaseVarsPlugin):
                     if parent.name == 'servers':
                         variable_name = 'devshop_service_%s' % entity
                         if variable_name not in entity.vars:
-                            raise AnsibleParserError("From devshop.platform.service_vars: The Host Group '%s' is a child of 'servers', but it is missing the required variable '%s'. If the group '%s' is not intended to be a service group, remove it from the parent group 'servers'. If the group '%s' *is* intended to be a Service Group, add the variable '%s'." % (entity, variable_name, entity, entity, variable_name))
+                            raise AnsibleParserError(ERROR_SERVICE_GROUP_MISSING_DATA % (entity, variable_name, entity, entity, variable_name))
 
                         self._display.v('Found service group: %s (%s)' % (entity, path))
                         self.services[entity] = entity
-
 
             else:
                 raise AnsibleParserError("Supplied entity must be Host or Group, got %s instead" % (type(entity)))
