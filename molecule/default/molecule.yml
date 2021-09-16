@@ -30,7 +30,7 @@ provisioner:
   ansible_args:
     - "--inventory=services"
     - "--inventory=${ANSIBLE_INVENTORY:-examples/single-site}"
-    - "${ARGS}"
+    - "${ARGS:--vv}"
   connection_options:
     ansible_connection: docker
   env:
