@@ -1,12 +1,3 @@
 ---
-- name: Converge
-  hosts: all
-
-  roles:
-    - role: host
-      tags:
-        - servers
-
-    - role: services
-      tags:
-        - services
+- name: Global DevShop.Platform Playbook
+  import_playbook: ../../playbook.yml
