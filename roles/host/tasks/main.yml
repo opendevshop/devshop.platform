@@ -7,7 +7,7 @@
   delegate_facts: yes
   set_fact:
     devshop_app_user: "{{ devshop_host_app_user }}"
-    devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ hostvars[item]['devshop_app_id'] }}/{{ item }}"
+    devshop_host_apps_root: "{{ devshop_host_apps_root }}"
 
 - name: DevShop.Host Role
   debug:

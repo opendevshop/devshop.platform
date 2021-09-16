@@ -1,5 +1,0 @@
----
-- name: Welcome to the Platform Tests
-  debug:
-    msg: |
-      Debug

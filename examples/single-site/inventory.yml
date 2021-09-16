@@ -2,25 +2,28 @@
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
 apps:
-
-  # Defaults for all App hosts in "apps" group.
   vars:
-    devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
-    devshop_app_git_root: "{{ playbook_dir }}/app"
+    devshop_app_git_repository: git@github.com:drupal-composer/drupal-project.git
+    devshop_app_git_root: "/app"
+
+    # @TODO: Make it possible for these to be optional.
+    # @TODO: throw an error when these don't exist.
+    devshop_app_host: site.local.computer
+    devshop_app_server_http: site.local.computer
+    devshop_app_server_db: site.local.computer
 
   # Environments.
   hosts:
 
     # App Host
-    thinkdrop.local.computer:
-      devshop_app_git_reference: 8.x
+    site.local.computer:
+      devshop_app_git_reference: 9.x
 
-
+# Server Host
 http:
   hosts:
-    # Server Host
-    thinkdrop.local.computer:
+    site.local.computer:
+
 db:
   hosts:
-    # Server Host
-    thinkdrop.local.computer:
+    site.local.computer:

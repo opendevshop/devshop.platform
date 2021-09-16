@@ -1,0 +1,41 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: roles.yml
+    requirements-file: roles.yml
+    roles-path: roles/contrib
+    collections-path: roles/contrib
+    force: false
+
+driver:
+  name: docker
+
+platforms:
+  # Set to match inventory hosts
+  - name: site.local.computer
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker
+    privileged: true
+    pre_build_image: true
+
+playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+
+provisioner:
+  name: ansible
+  ansible_args:
+    - "--inventory=services"
+    - "--inventory=${ANSIBLE_INVENTORY:-examples/single-site}"
+    - "${ARGS}"
+  connection_options:
+    ansible_connection: docker
+  env:
+    ANSIBLE_CONFIG: ansible.cfg
+    ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
+
+verifier:
+  name: ansible

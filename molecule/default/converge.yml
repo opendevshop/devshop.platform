@@ -1,0 +1,12 @@
+---
+- name: Converge
+  hosts: all
+
+  roles:
+    - role: host
+      tags:
+        - servers
+
+    - role: services
+      tags:
+        - services

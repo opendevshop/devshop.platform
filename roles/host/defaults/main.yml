@@ -1,4 +1,8 @@
 ---
+
+devshop_host_app_user: "platform"
+devshop_host_apps_root: "/var/platform"
+
 devshop_host_roles: {}
 
 devshop_app_git_document_root: web

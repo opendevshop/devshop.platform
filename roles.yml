@@ -18,9 +18,10 @@ roles:
   - name: geerlingguy.repo-epel
   - name: tenequm.icinga-director-client
 
-collections:
-  - name: community.general
-  - name: community.aws
-  - name: community.digitalocean
-  - name: community.docker
-  - name: community.mysql
+# @TODO: Remove if we can confirm our galaxy.yml meta can handle this.
+#collections:
+#  - name: community.general
+#  - name: community.aws
+#  - name: community.digitalocean
+#  - name: community.docker
+#  - name: community.mysql
