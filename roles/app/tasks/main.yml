@@ -60,7 +60,7 @@
     group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
-- name: Clone app source code
+- name: Prepare app source code.
   become: yes
   become_user: "{{ devshop_app_user }}"
   git:
@@ -68,6 +68,7 @@
     version: "{{ devshop_app_git_reference }}"
     dest: "{{ devshop_app_git_root }}"
     accept_hostkey: yes
+    force: "{{ devshop_app_git_force }}"
 
   register: git_results
   notify:
