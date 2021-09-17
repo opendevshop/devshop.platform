@@ -38,7 +38,9 @@ provisioner:
   ansible_args:
     - "--inventory=services"
     - "${ARGS:---diff}"
-    - "-e force_build=true"
+
+    # - "-e force_build=true"
+    # - "-e skip_stages=[install,deploy]"
 
   connection_options:
     ansible_connection: docker

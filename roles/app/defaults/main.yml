@@ -34,3 +34,6 @@ devshop_app_playbook_stages:
   - install
   - deploy
   - test
+
+# Tell the playbook to skip these stages.
+skip_stages: []

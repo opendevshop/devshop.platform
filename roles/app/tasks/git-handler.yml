@@ -9,7 +9,9 @@
     chdir: "{{ devshop_app_git_root }}"
   become: yes
   become_user: "{{ devshop_app_user }}"
-  when: lookup('vars', 'devshop_app_command_' + stage)
+  when:
+    - lookup('vars', 'devshop_app_command_' + stage)
+    - stage not in skip_stages | list | join
   register: devshop_app_playbook_stage_register
   ignore_errors: yes
 
@@ -17,6 +19,9 @@
   loop: "{{ devshop_app_playbook_stage_register.results }}"
   loop_control:
     loop_var: result
+  failed_when:
+    - result.rc is defined
+    - result.rc != 0
   debug:
     msg: |
       Command: {{ result.cmd }}
