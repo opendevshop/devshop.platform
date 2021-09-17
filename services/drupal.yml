@@ -15,5 +15,7 @@ apps:
           {{ drupal_site_install_extra_args | join(" ") }}
 
         devshop_app_command_deploy: vendor/bin/drush cache:rebuild
-        devshop_app_command_test: vendor/bin/drush status
+        devshop_app_command_test: |
+          vendor/bin/drush status
+          vendor/bin/drush uli
 
