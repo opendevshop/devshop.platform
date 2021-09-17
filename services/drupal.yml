@@ -4,7 +4,7 @@ apps:
     drupal:
       vars:
         drush_path: vendor/bin/drush
-        drupal_install_profile: umami
+        drupal_install_profile: standard
         drupal_site_install_extra_args: []
 
         devshop_app_command_build: composer install
