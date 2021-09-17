@@ -45,12 +45,12 @@ provisioner:
 
   env:
     ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
+    ANSIBLE_VARS_PLUGINS: ./plugins/vars
 
   # Explicitly set ansible.cfg here. Do not use ansible.cfg to ensure the platform works regardless of that config.
   config_options:
     defaults:
       stdout_callback: yaml
-      vars_plugins: ../../plugins/vars
       vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
 
       # NOT ALLOWED.
