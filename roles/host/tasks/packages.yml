@@ -1,0 +1,8 @@
+---
+
+- name: Install common packages
+  apt:
+    update_cache: yes
+    name: "{{ devshop_host_common_packages_apt }}"
+    state: "{{ devshop_host_common_packages_state }}"
+  when: ansible_os_family == 'Debian'

@@ -1,0 +1,19 @@
+---
+
+- name: Platform group {{ devshop_platform_user_group }}
+  group:
+    name: "{{ devshop_platform_user_group }}"
+    gid: "{{ devshop_platform_user_gid | default(omit)}}"
+  when: devshop_platform_user_group
+
+- name: Platform user {{ devshop_platform_user }}
+  user:
+    name: "{{ devshop_platform_user }}"
+    comment: "{{ devshop_platform_user_comment | default(omit) }}"
+    uid: "{{ devshop_platform_user_uid | default(omit) }}"
+    group: "{{ devshop_platform_user_group | default(omit) }}"
+    generate_ssh_key: "{{ devshop_platform_user_generate_ssh_key }}"
+    ssh_key_bits: "{{ devshop_platform_user_ssh_key_bits | default(omit) }}"
+    ssh_key_file: "{{ devshop_platform_user_ssh_key_file | default(omit) }}"
+
+

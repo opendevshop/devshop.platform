@@ -1,9 +1,45 @@
 ---
 
-devshop_host_app_user: "platform"
-devshop_host_apps_root: "/var/platform"
+# Control User
+# The user that clones the platform code and runs ansible-playbook.
+# Has root access to hosts on the platform.
+devshop_control_user: "{{ ansible_user | default(ansible_env.SUDO_USER) | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
+devshop_control_user_home: "{{ ansible_env.HOME | default(ansible_user_dir, true) }}"
+
+# Platform User
+# The user that clones app code and runs app commands.
+# Does not have root access anywhere.
+devshop_platform_user: "platform"
+devshop_platform_user_home: "/var/platform"
+devshop_platform_user_generate_ssh_key: yes
+devshop_platform_user_group: devshop
+devshop_platform_user_comment: "The DevShop Platform User"
+
+# Set if needed.
+# See https://docs.ansible.com/ansible/latest/collections/ansible/posix/user_module.html
+# devshop_platform_user_uid: 1001
+# devshop_platform_user_gid: 1001
+# devshop_platform_user_comment: "The DevShop Platform User"
+# devshop_platform_user_ssh_key_bits: 2048
+# devshop_platform_user_ssh_key_file: .ssh/id_rsa
+
+devshop_host_prepare_task_files:
+  - 'packages.yml'
+  - 'users.yml'
+
+# Passed to App Hosts as devshop_app_user.
+devshop_host_app_user: "{{ devshop_platform_user }}"
+devshop_host_apps_root: "{{ devshop_platform_user_home }}/apps"
 
 devshop_host_roles: []
 devshop_host_services: []
 
 devshop_app_git_document_root: web
+
+devshop_host_common_packages_apt:
+  - openssh-client
+  - vim
+  - git
+
+# Set to "latest" to update packages
+devshop_host_common_packages_state: present
