@@ -38,8 +38,8 @@ jobs:
     name: Molecule
     runs-on: ubuntu-latest
     strategy:
-      fail_fast: false
       matrix:
+        fail_fast: false
         include:
           - distro: centos8
             playbook: converge.yml
