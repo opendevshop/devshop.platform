@@ -1,5 +1,5 @@
 ---
-name: CI
+name: DevShop.Platform CI
 'on':
   pull_request:
   push:
@@ -38,6 +38,7 @@ jobs:
     name: Molecule
     runs-on: ubuntu-latest
     strategy:
+      fail_fast: false
       matrix:
         include:
           - distro: centos8
