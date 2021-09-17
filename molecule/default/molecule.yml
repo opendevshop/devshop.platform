@@ -37,8 +37,8 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
-    - "${ARGS:--vv}"
-    # - "-e force_build=true"
+    - "${ARGS:---diff}"
+    - "-e force_build=true"
 
   connection_options:
     ansible_connection: docker
