@@ -1,7 +1,7 @@
 #
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
-apps:
+drupal:
   vars:
     devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
     devshop_app_git_root: "/app"
@@ -11,6 +11,12 @@ apps:
     devshop_app_host: site.local.computer
     devshop_app_server_http: site.local.computer
     devshop_app_server_db: site.local.computer
+
+    devshop_app_command_build: composer install --no-dev
+    devshop_app_command_deploy: |
+      drush updb -y
+
+    # drush cim -y --diff
 
   # Environments.
   hosts:
