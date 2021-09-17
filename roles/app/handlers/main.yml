@@ -1,22 +1,6 @@
 ---
 # handlers file for devshop.app
 
-- name: run build
-  shell:
-    cmd: "{{ devshop_app_command_build }} 2>&1"
-    chdir: "{{ devshop_app_git_root }}"
-  become: yes
-  become_user: "{{ devshop_app_user }}"
-  when: devshop_app_command_build is defined
-  register: app_build_results
-  ignore_errors: yes
-
-- name: run deploy
-  shell:
-    cmd: "{{ devshop_app_command_deploy }} 2>&1"
-    chdir: "{{ devshop_app_git_root }}"
-  become: yes
-  become_user: "{{ devshop_app_user }}"
-  when: devshop_app_command_deploy is defined
-  register: app_deploy_results
-  ignore_errors: yes
+- name: git changed
+  include_tasks:
+    file: "git-handler.yml"

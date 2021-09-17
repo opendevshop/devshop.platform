@@ -1,0 +1,26 @@
+---
+
+- name: Run DevShop App command stages.
+  loop: "{{ devshop_app_playbook_stages }}"
+  loop_control:
+    loop_var: stage
+  shell:
+    cmd: "{{ lookup('vars', 'devshop_app_command_' + stage) }} 2>&1"
+    chdir: "{{ devshop_app_git_root }}"
+  become: yes
+  become_user: "{{ devshop_app_user }}"
+  when: lookup('vars', 'devshop_app_command_' + stage)
+  register: devshop_app_playbook_stage_register
+  ignore_errors: yes
+
+- name: DevShop.App command stages complete.
+  loop: "{{ devshop_app_playbook_stage_register.results }}"
+  loop_control:
+    loop_var: result
+  debug:
+    msg: |
+      Command: {{ result.cmd }}
+      Duration: {{ result.delta }}
+      Output:
+      {{ result.stdout }}
+
