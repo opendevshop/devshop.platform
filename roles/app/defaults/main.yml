@@ -26,3 +26,11 @@ devshop_app_git_track_submodules: false
 
 # Notify git handlers even if git repo did not change.
 force_build: false
+
+# Tell the app what to do when running the app playbook.
+# Override in your inventory or playbook extra vars.
+devshop_app_playbook_stages:
+  - build
+  - install
+  - deploy
+  - test
