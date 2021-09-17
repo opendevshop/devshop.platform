@@ -58,7 +58,9 @@ provisioner:
       # collections_path: ../../roles/contrib
 
     vars_service_vars:
-      stage: all
+      # Vars plugin will load on every step unless this is set.
+      stage: inventory
+
     connection:
       pipelining: true
 
