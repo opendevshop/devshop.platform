@@ -13,5 +13,5 @@ servers:
             - geerlingguy.composer
             - geerlingguy.drush
 
-        extra_packages:
+        php_extra_packages:
           - "libapache2-mod-php{{ php_version }}"
