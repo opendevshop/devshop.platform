@@ -10,6 +10,10 @@
     devshop_app_user_group: "{{ devshop_host_app_user_group }}"
     devshop_host_apps_root: "{{ devshop_host_apps_root }}"
 
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+
 - name: DevShop.Host Role
   debug:
     msg: |

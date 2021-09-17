@@ -37,10 +37,5 @@ devshop_host_services: []
 
 devshop_app_git_document_root: web
 
-devshop_host_common_packages_apt:
-  - openssh-client
-  - vim
-  - git
-
 # Set to "latest" to update packages
 devshop_host_common_packages_state: present
