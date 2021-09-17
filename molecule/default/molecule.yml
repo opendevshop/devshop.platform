@@ -37,7 +37,6 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
-    - "-v"
     - "${ARGS:--e run_from=molecule}"
 
     # - "-e force_build=true"
