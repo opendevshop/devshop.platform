@@ -57,7 +57,7 @@
     path: "{{ devshop_app_git_root }}"
     state: directory
     owner: "{{ devshop_app_user }}"
-    group: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
 - name: Clone app source code

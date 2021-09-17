@@ -12,7 +12,7 @@ devshop_control_user_home: "{{ ansible_env.HOME | default(ansible_user_dir, true
 devshop_platform_user: "platform"
 devshop_platform_user_home: "/var/platform"
 devshop_platform_user_generate_ssh_key: yes
-devshop_platform_user_group: devshop
+devshop_platform_user_group: "{{ devshop_platform_user }}"
 devshop_platform_user_comment: "The DevShop Platform User"
 
 # Set if needed.
@@ -29,6 +29,7 @@ devshop_host_prepare_task_files:
 
 # Passed to App Hosts as devshop_app_user.
 devshop_host_app_user: "{{ devshop_platform_user }}"
+devshop_host_app_user_group: "{{ devshop_platform_user_group }}"
 devshop_host_apps_root: "{{ devshop_platform_user_home }}/apps"
 
 devshop_host_roles: []

@@ -1,6 +1,7 @@
 ---
 # The user to clone code and run commands with.
 devshop_app_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
+devshop_app_user_group: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
 
 # The path to clone the "devshop_app_git_repository" to.
 devshop_host_apps_root: "/var/platform"
