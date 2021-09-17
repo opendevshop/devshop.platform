@@ -59,7 +59,6 @@
     file: "{{ file }}"
 
 - name: Prepare Services
-  tags: [services]
   loop: "{{ devshop_host_services }}"
   loop_control:
     loop_var: loop_item
