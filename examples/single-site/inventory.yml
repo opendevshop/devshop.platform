@@ -1,7 +1,7 @@
 #
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
-drupal:
+apps:
   vars:
     devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
     devshop_app_git_root: "/app"
@@ -31,5 +31,10 @@ http:
     site.local.computer:
 
 db:
+  hosts:
+    site.local.computer:
+
+# Add the site to the "drupal" group to inherit that group's variables, such as for the build commands.
+drupal:
   hosts:
     site.local.computer:
