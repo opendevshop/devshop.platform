@@ -48,6 +48,15 @@
 
   pre_tasks:
 
+    - name: Gather Server Facts
+      server_facts:
+        name: whatever
+      register: server_facts_register
+
+    - name: Define App Servers
+      set_fact:
+        devshop_app_servers: "{{ server_facts_register.server_facts }}"
+
     - name: Include platform vars file from importing playbook.
       include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
       when: platform_vars_file is defined

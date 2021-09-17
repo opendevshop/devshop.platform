@@ -21,8 +21,7 @@
       devshop_app_user: {{ devshop_app_user }}
 
       devshop_app_host: {{ devshop_app_server_http }}
-      devshop_app_server_http: {{ devshop_app_server_http }}
-      devshop_app_server_db: {{ devshop_app_server_db }}
+      devshop_app_servers: {{ devshop_app_servers }}
 
       devshop_app_command_build: {{ devshop_app_command_build }}
       devshop_app_command_deploy: {{ devshop_app_command_deploy }}
