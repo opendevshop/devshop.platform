@@ -37,7 +37,8 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
-    - "${ARGS:---diff}"
+    - "-v"
+    - "${ARGS:--e run_from=molecule}"
 
     # - "-e force_build=true"
     # - "-e skip_stages=[install,deploy]"
