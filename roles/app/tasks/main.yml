@@ -71,19 +71,18 @@
     - run build
     - run deploy
 
-- name: Git Clone and Checkout Complete!
-  debug:
-    msg: "{{ git_results }}"
-
-- name: Force git handlers.
+- name: Forced build requested.
   when:
-  - devshop_app_force_git_handlers
-  - git_results.changed == false
-  command: "echo Triggering git handlers because 'devshop_app_force_git_handlers' is true..."
+    - force_build
+    - git_results.changed == false
+  command: "echo Forcing git handlers, force_build variable was set."
   notify:
     - run build
     - run deploy
 
+- name: Git Clone and Checkout Complete!
+  debug:
+    msg: "{{ git_results }}"
 
 - name: Trigger Git Handlers before moving on.
   meta: flush_handlers

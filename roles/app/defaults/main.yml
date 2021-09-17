@@ -13,4 +13,4 @@ devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-templ
 devshop_app_git_reference: ""
 
 # Notify git handlers even if git repo did not change.
-devshop_app_force_git_handlers: false
+force_build: false
