@@ -14,6 +14,7 @@ devshop_platform_user_home: "/var/platform"
 devshop_platform_user_generate_ssh_key: yes
 devshop_platform_user_group: "{{ devshop_platform_user }}"
 devshop_platform_user_comment: "The DevShop Platform User"
+devshop_platform_user_shell: "/bin/bash"
 
 # Set if needed.
 # See https://docs.ansible.com/ansible/latest/collections/ansible/posix/user_module.html

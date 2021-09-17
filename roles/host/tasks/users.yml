@@ -10,6 +10,7 @@
   user:
     name: "{{ devshop_platform_user }}"
     comment: "{{ devshop_platform_user_comment | default(omit) }}"
+    shell: "{{ devshop_platform_user_shell }}"
     uid: "{{ devshop_platform_user_uid | default(omit) }}"
     group: "{{ devshop_platform_user_group | default(omit) }}"
     generate_ssh_key: "{{ devshop_platform_user_generate_ssh_key }}"
