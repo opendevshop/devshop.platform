@@ -60,11 +60,13 @@
     mode: '0755'
 
 - name: Prepare app source code.
-  tags:
-    # On idempotence runs, any changes to the working copy cause failure.
-    # This can happen when build scripts are run.
-    # To allow molecule idempotency to pass, this tag is added.
-    - molecule-idempotence-notest
+
+  # On idempotent test runs, any changes to the working copy cause failure.
+  # This can happen when build scripts are run.
+  # To allow molecule idempotency to pass, this tag is added.
+  changed_when:
+    - '"molecule-idempotence-notest" not in ansible_skip_tags'
+    - git_results.changed
   become: yes
   become_user: "{{ devshop_app_user }}"
   git:
