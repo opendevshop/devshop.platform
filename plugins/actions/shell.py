@@ -63,7 +63,7 @@ class ActionModule(ActionBase):
 
             except OSError as e:
                 if e.errno == errno.ENOENT:
-                    output = {'exists': False}
-                    module.exit_json(changed=False, stat=output)
+                    raise AnsibleError('No file found at %s' % (arg_output_file))
+
 
         return result
