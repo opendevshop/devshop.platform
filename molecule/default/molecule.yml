@@ -36,6 +36,7 @@ provisioner:
       hosts: ../../${ANSIBLE_INVENTORY:-examples/single-site}
 
   ansible_args:
+    - "--skip-tags=services"
     - "--inventory=services"
     - "${ARGS:--e molecule_args=false}"
 
@@ -45,6 +46,9 @@ provisioner:
   env:
     ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
     ANSIBLE_VARS_PLUGINS: ./plugins/vars
+    ANSIBLE_ACTION_PLUGINS: ./plugins/actions
+    ANSIBLE_LIBRARY: ./plugins/modules
+
 
   # Explicitly set ansible.cfg here. Do not use ansible.cfg to ensure the platform works regardless of that config.
   config_options:

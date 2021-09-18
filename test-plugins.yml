@@ -1,0 +1,9 @@
+---
+
+- name: Run a command with piping.
+  hosts: all
+  gather_facts: no
+  tasks:
+    - shell:
+        cmd: "whoami"
+        output_file: "{{ playbook_dir }}/test-plugins.log"
