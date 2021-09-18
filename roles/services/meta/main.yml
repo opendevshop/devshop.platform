@@ -1,5 +1,20 @@
 dependencies:
 
+  - name: geerlingguy.repo-epel
+    when:
+      - '"geerlingguy.repo-epel" in devshop_host_roles'
+      - ansible_os_family == 'RedHat'
+
+  - name: geerlingguy.repo-remi
+    when:
+      - '"geerlingguy.repo-remi" in devshop_host_roles'
+      - ansible_os_family == 'RedHat'
+
+  - role: geerlingguy.repo-dotdeb
+    when:
+      - '"geerlingguy.repo-dotdeb" in devshop_host_roles'
+      - ansible_distribution == 'Debian'
+
   - name: geerlingguy.security
     when: '"geerlingguy.security" in devshop_host_roles'
     tags:
