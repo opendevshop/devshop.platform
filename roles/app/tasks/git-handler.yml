@@ -13,5 +13,5 @@
     - lookup('vars', 'devshop_app_command_' + stage)
     - stage not in skip_stages | list | join
   register: devshop_app_playbook_stage_register
-  ignore_errors: "{{ devshop_app_commands_fail_playbook }}"
+  ignore_errors: "{{ not devshop_app_commands_fail_playbook }}"
   environment: "{{ devshop_app_shell_environment | combine(devshop_app_shell_environment_extra ) }}"
