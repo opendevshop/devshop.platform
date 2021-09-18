@@ -5,5 +5,10 @@
   gather_facts: no
   tasks:
     - shell:
-        cmd: "whoami"
+        cmd: "echo {{ item }}"
         output_file: "{{ playbook_dir }}/test-plugins.log"
+        append: yes
+      with_items:
+        - testing 1
+        - 2
+        - 3

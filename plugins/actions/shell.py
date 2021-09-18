@@ -25,19 +25,21 @@ class ActionModule(ActionBase):
         # Any invalid task args passed to the ansible.legacy.command action will fail.
         # self._task.args['will_break'] = True
 
-        # @TODO:
-        # 1. Add properties for file and redirect_X
-
         arg_output_file = self._task.args.get('output_file')
         arg_redirect_stderr = self._task.args.get('redirect_stderr')
 
+        pipe = ">"
+        if self._task.args.get('append'):
+            pipe = ">>"
+            del self._task.args['append']
+
         cmd = copy.copy(self._task.args['_raw_params'])
         if arg_output_file:
-            cmd = "%s > %s 2>&1" % (cmd, arg_output_file)
+            cmd = "%s %s %s 2>&1" % (cmd, pipe, arg_output_file)
             del self._task.args['output_file']
 
         if arg_redirect_stderr:
-            cmd = "%s 2>&1" % (cmd)
+            cmd = "%s 2 %s &1" % (cmd, pip)
             del self._task.args['redirect_stderr']
 
         self._task.args['_raw_params'] = cmd
@@ -51,12 +53,12 @@ class ActionModule(ActionBase):
         result = command_action.run(task_vars=task_vars)
         result['output_file'] = arg_output_file
         result['redirect_stderr'] = arg_redirect_stderr
+        result['output_file_contents'] = False
 
         if arg_output_file:
             try:
                 file_object = open(arg_output_file)
-                # @TODO: Stick with output? or overwrite stdout?
-                result['output'] = file_object.read()
+                result['output_file_contents'] = file_object.read()
 
             except OSError as e:
                 if e.errno == errno.ENOENT:
