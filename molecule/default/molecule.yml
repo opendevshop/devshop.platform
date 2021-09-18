@@ -37,10 +37,7 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
-    - "${ARGS:--e run_from=molecule}"
-
-    # - "-e force_build=true"
-    # - "-e skip_stages=[install,deploy]"
+    - "${ARGS:--e molecule_args=false}"
 
   connection_options:
     ansible_connection: docker
