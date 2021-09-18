@@ -16,6 +16,7 @@ roles:
   - name: geerlingguy.php-versions
   - name: geerlingguy.repo-remi
   - name: geerlingguy.repo-epel
+  - name: geerlingguy.repo-dotdeb
   - name: tenequm.icinga-director-client
 
 # Ensure this matches galaxy.yml.
