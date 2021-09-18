@@ -31,6 +31,7 @@
       nodename: {{ ansible_facts.nodename }}
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
 
+      force_build: {{ force_build }}
 
 #      devshop_app_git_root: {{ devshop_app_git_root }}
 #      devshop_app_host: {{ devshop_app_host }}
@@ -59,7 +60,7 @@
     group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
-- name: Prepare app source code.
+- name: Deploy code from Git
 
   # On idempotent test runs, any changes to the working copy cause failure.
   # This can happen when build scripts are run.
@@ -77,22 +78,32 @@
     force: "{{ devshop_app_git_force }}"
     recursive: "{{ devshop_app_git_recursive }}"
     track_submodules: "{{ devshop_app_git_track_submodules }}"
-
   register: git_results
-  notify:
-    - git changed
 
-- name: Forced build requested.
-  when:
-    - force_build
-    - git_results.changed == false
-  command: "echo Forcing git handlers, force_build variable was set."
-  notify:
-    - git changed
-
-- name: Git Clone and Checkout Complete!
+# Launch Logic:
+# Task will RUN if:
+#  - there are git changes OR
+#  - force_build is set.
+# Task is changed_when:
+#   - Play run is NOT the molecule idempotency test.
+#   - changed_when is otherwise always TRUE in order to trigger the "git changed" handler.
+- name: Launching Command Stages
+  when: force_build or git_results.changed == true
+  changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
-    msg: "{{ git_results }}"
+    msg: |
+      Launching app command stages in {{ devshop_app_git_root }}
+      {% if force_build: %}
+        force_build was set.
+      {% endif %}
+
+      {% if git_results.changed: %}
+        Deploy code from Git detected changes.
+      {% endif %}
+
+      {{ git_results | to_nice_yaml }}
+  notify:
+    - git changed
 
 - meta: flush_handlers
 
