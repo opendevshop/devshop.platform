@@ -16,7 +16,7 @@ on:
 env:
   NAMESPACE: devshop
   COLLECTION_NAME: platform
-
+  ANSIBLE_ROLES_PATH: ./roles:./roles/contrib
 jobs:
 
 ###
