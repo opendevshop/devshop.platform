@@ -4,11 +4,10 @@
   hosts: localhost
   gather_facts: no
   tasks:
-    - shell:
-        cmd: "echo {{ item }}"
-        output_file: "{{ playbook_dir }}/test-plugins.log"
-        append: yes
-      with_items:
-        - testing 1
-        - 2
-        - 3
+    - command:
+        cmd: "bash print-err-out.sh"
+        stdout_file: ping.log
+        stderr_file: ping.log
+        stdout_pipe: ">>"
+        stderr_pipe: ">>"
+
