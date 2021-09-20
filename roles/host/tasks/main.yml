@@ -69,7 +69,3 @@
     defaults_from: "{{ loop_item }}.yml"
   vars:
     devshop_host_service: "{{ loop_item }}"
-
-#- name: DevShop.Host Role Complete!
-#  debug:
-#    msg: "Next up: DevShop.Services."

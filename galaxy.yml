@@ -1,3 +1,4 @@
+---
 # See https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
 
 namespace: devshop
@@ -17,11 +18,13 @@ tags:
   - qa
   - qc
 repository: https://github.com/opendevshop/devshop.platform
-#documentation: https://github.com/ansible-collection-migration/community.REPO_NAME/tree/main/docs
+
+# documentation: https://github.com/ansible-collection-migration/community.REPO_NAME/tree/main/docs
 homepage: https://github.com/opendevshop/devshop.platform
 issues: https://github.com/opendevshop/devshop.platform/issues
-build_ignore:
+
 # https://docs.ansible.com/ansible/devel/dev_guide/developing_collections.html#ignoring-files-and-folders
+build_ignore:
   - .gitignore
   - changelogs/.plugin-cache.yaml
 dependencies:

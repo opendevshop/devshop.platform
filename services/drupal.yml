@@ -17,4 +17,3 @@ apps:
         devshop_app_command_test: |
           vendor/bin/drush status
           vendor/bin/drush uli
-

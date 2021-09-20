@@ -16,5 +16,3 @@
     generate_ssh_key: "{{ devshop_platform_user_generate_ssh_key }}"
     ssh_key_bits: "{{ devshop_platform_user_ssh_key_bits | default(omit) }}"
     ssh_key_file: "{{ devshop_platform_user_ssh_key_file | default(omit) }}"
-
-

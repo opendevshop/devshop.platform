@@ -32,6 +32,11 @@ dependency:
 driver:
   name: docker
 
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+
 platforms:
   # Set to match inventory hosts
   - name: site.local.computer
