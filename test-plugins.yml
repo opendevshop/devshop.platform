@@ -7,7 +7,7 @@
     - command:
         cmd: "bash print-err-out.sh"
         stdout_file: ping.log
-        stderr_file: ping.log
-        stdout_pipe: ">>"
-        stderr_pipe: ">>"
+        stderr_file: ping.bad.log
+        stdout_pipe: ">"
+        stderr_pipe: ">"
 

@@ -413,6 +413,28 @@ def main():
         r['msg'] = "Command would have run if not in check mode"
         r['skipped'] = True
 
+    r['stdout_from'] = 'stdout'
+    if stdout_file:
+        try:
+            file_object = open(stdout_file)
+            r['stdout'] = file_object.read()
+            r['stdout_from'] = stdout_file
+
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                module.fail_json(**r)
+
+    r['stderr_from'] = 'stderr'
+    if stderr_file:
+        try:
+            file_object = open(stderr_file)
+            r['stderr'] = file_object.read()
+            r['stderr_from'] = stderr_file
+
+        except OSError as e:
+            if e.errno == errno.ENOENT:
+                module.fail_json(**r)
+
     r['changed'] = True
 
     # convert to text for jsonization and usability
@@ -425,6 +447,7 @@ def main():
     if strip:
         r['stdout'] = to_text(r['stdout']).rstrip("\r\n")
         r['stderr'] = to_text(r['stderr']).rstrip("\r\n")
+
 
     if r['rc'] != 0:
         r['msg'] = 'non-zero return code'
