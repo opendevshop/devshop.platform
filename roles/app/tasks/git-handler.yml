@@ -36,4 +36,4 @@
 
 - name: DevShop.App Command Stages Complete.
   debug:
-    var: "{{ devshop_app_playbook_stage_register }}"
+    var: devshop_app_playbook_stage_register
