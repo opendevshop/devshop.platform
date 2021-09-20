@@ -45,7 +45,7 @@ provisioner:
 
   env:
     ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
-#    ANSIBLE_VARS_PLUGINS: ./plugins/vars
+    ANSIBLE_VARS_PLUGINS: ./plugins/vars
     ANSIBLE_LIBRARY: ./library_modules
 
 
@@ -53,15 +53,15 @@ provisioner:
   config_options:
     defaults:
       stdout_callback: yaml
-#      vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
+      vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
 
       # NOT ALLOWED.
       # roles_path: ./roles:./roles/contrib
       # collections_path: ../../roles/contrib
 
-#    vars_service_vars:
-#      # Vars plugin will load on every step unless this is set.
-#      stage: inventory
+    vars_service_vars:
+      # Vars plugin will load on every step unless this is set.
+      stage: inventory
 
     connection:
       pipelining: true
