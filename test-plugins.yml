@@ -10,4 +10,3 @@
         stderr_file: ping.bad.log
         stdout_pipe: ">"
         stderr_pipe: ">"
-
