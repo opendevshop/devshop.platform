@@ -8,15 +8,23 @@
     group: "{{ devshop_app_commands_log_file_group }}"
     mode: "{{ devshop_app_commands_log_file_mode }}"
 
+- name: Remove command logs file.
+  file:
+    path: "{{ devshop_app_commands_log_file }}"
+    state: absent
+  when: devshop_app_command_log_file_delete_before_start
+
 - name: Run DevShop App command stages.
   loop: "{{ devshop_app_playbook_stages }}"
   loop_control:
     loop_var: stage
-  shell:
+  command:
     cmd: "{{ lookup('vars', 'devshop_app_command_' + stage) }}"
     chdir: "{{ devshop_app_git_root }}"
-    output_file: "{{ devshop_app_commands_log_file }}"
-    append: yes
+    stdout_file: "{{ devshop_app_commands_log_file }}"
+    stdout_pipe: ">>"
+    stderr_file: "{{ devshop_app_commands_log_file }}"
+    stderr_pipe: ">>"
   become: yes
   become_user: "{{ devshop_app_user }}"
   when:

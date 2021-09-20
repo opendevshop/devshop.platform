@@ -64,3 +64,6 @@ devshop_app_commands_log_file: "{{ devshop_app_git_root }}/logs/build.log"
 devshop_app_commands_log_file_mode: "0700"
 devshop_app_commands_log_file_owner: "{{ devshop_app_user }}"
 devshop_app_commands_log_file_group: "{{ devshop_app_user_group }}"
+
+# Delete any existing log file before running a command stages.
+devshop_app_command_log_file_delete_before_start: yes
