@@ -40,9 +40,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        example:
-          - single-site
-          - ten-sites
         include:
           - distro: centos8
             example: single-site
@@ -54,7 +51,10 @@ jobs:
             example: single-site
 
           - distro: ubuntu2004
-            example: single-site
+            example: single-sites
+
+          - distro: ubuntu2004
+            example: ten-sites
 
           - distro: debian10
             example: single-site
