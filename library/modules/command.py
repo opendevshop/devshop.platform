@@ -321,7 +321,8 @@ def main():
     if stdout_file:
         shell = True
         if args:
-            args = "%s %s %s" % (args, stdout_pipe, stdout_file)
+            # Use () to enable multi-line commands.
+            args = "(%s) %s %s" % (args, stdout_pipe, stdout_file)
 
         if argv:
             argv.append(stdout_pipe)
@@ -330,7 +331,7 @@ def main():
     if stderr_file:
         shell = True
         if args:
-            args = "%s 2%s %s" % (args, stderr_pipe, stderr_file)
+            args = "(%s) 2%s %s" % (args, stderr_pipe, stderr_file)
 
         if argv:
             argv.append("2%s" % stderr_pipe)
