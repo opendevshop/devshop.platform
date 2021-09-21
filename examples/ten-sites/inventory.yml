@@ -13,9 +13,9 @@ apps:
         devshop_app_server_db: server.local.computer
         devshop_app_git_root: "/apps/{{ inventory_hostname }}"
 
-        # @TODO: Automatically set this for app hosts.
-        ansible_host: server.local.computer
-        ansible_connection: "{{ hostvars['server.local.computer']['ansible_connection'] }}"
+        # @TODO: Decide between this and devshop_app_host and delegate_to: in playbook.yml.
+#        ansible_host: server.local.computer
+#        ansible_connection: "{{ hostvars['server.local.computer']['ansible_connection'] }}"
 
       hosts:
         site1.local.computer:
