@@ -81,20 +81,20 @@ class VarsModule(BaseVarsPlugin):
 
                         if not service_requirements:
                             self._display.warning('Unable to determine service requirements from "app" group or host "%s". Add the variable "devshop_app_service_requirements" to resolve.')
+                        else:
+                            for service in service_requirements:
 
-                        for service in service_requirements:
+                                # If inventory var defines the server to use.
+                                app_service_server = (
+                                    entity.vars.get("devshop_app_server_%s" % service)
+                                    or group.vars.get("devshop_app_server_%s" % service)
+                                    or None
+                                    )
 
-                            # If inventory var defines the server to use.
-                            app_service_server = (
-                                entity.vars.get("devshop_app_server_%s" % service)
-                                or group.vars.get("devshop_app_server_%s" % service)
-                                or None
-                                )
+                                if not entity.vars.get("devshop_app_server_%s" % service):
+                                    vars["devshop_app_server_%s" % service] = app_service_server
 
-                            if not entity.vars.get("devshop_app_server_%s" % service):
-                                vars["devshop_app_server_%s" % service] = app_service_server
-
-                            vars['devshop_app_servers'][service] = app_service_server
+                                vars['devshop_app_servers'][service] = app_service_server
 
                         if not entity.vars.get('devshop_app_name'):
                             vars['devshop_app_name'] = 'app'
