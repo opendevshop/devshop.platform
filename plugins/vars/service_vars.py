@@ -76,8 +76,18 @@ class VarsModule(BaseVarsPlugin):
                     if group.name == 'apps':
                         self._display.v('Found app host: %s ' % entity)
                         self.apps[entity] = entity
-                        vars['devshop_ansible_host_type'] = 'app'
                         vars['devshop_app_servers'] = {}
+
+                        # @TODO: Load services from app type thing.
+                        required_services = ['db', 'http']
+                        for service in required_services:
+
+                            # Assign service group.
+                            vars['devshop_app_servers'][service] = service
+
+                            # If inventory defines this apps server, use that.
+                            if entity.vars.get("devshop_app_server_%s" % service):
+                                vars['devshop_app_servers'][service] = entity.vars.get("devshop_app_server_%s" % service)
 
                         if not entity.vars.get('devshop_app_name'):
                             vars['devshop_app_name'] = 'app'
