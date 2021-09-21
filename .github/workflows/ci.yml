@@ -35,25 +35,20 @@ jobs:
 #        run: |
 #          yamllint .
   molecule:
-    name: Molecule
+    name: "Platform Example: ${{ matrix.example }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        example:
+          - single-site
+          - ten-sites
         include:
           - distro: centos8
-            playbook: converge.yml
           - distro: centos7
-            playbook: converge.yml
           - distro: ubuntu1804
-            playbook: converge.yml
           - distro: ubuntu2004
-            playbook: converge.yml
           - distro: debian10
-            playbook: converge.yml
-
-#          - distro: debian10
-#            playbook: calico.yml
 
     steps:
       - name: Check out the codebase.
@@ -78,10 +73,10 @@ jobs:
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
         if: ${{ startsWith(matrix.distro, 'debian') }}
 
-      - name: Run Molecule tests.
+      - name: Test Molecule Example ${{ matrix.example }}.
         run: molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
           MOLECULE_DISTRO: ${{ matrix.distro }}
-          MOLECULE_PLAYBOOK: ${{ matrix.playbook }}
+          MOLECULE_EXAMPLE: ${{ matrix.example }}

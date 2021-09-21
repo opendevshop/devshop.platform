@@ -6,28 +6,24 @@ dependency:
   options:
     role-file: roles.yml
     requirements-file: roles.yml
-    roles-path: roles/contrib
+    roles-path: $MOLECULE_PROJECT_DIRECTORY/roles/contrib
+
     # Collections are not roles. Don't include in the platform codebase unless necessary.
-    # collections-path: roles/contrib
+    collections-path: $MOLECULE_PROJECT_DIRECTORY/roles/contrib
     force: false
 
 driver:
   name: docker
 
-# Skip lint in molecule test. We will use yamllint for now.
-#lint: |
-#  set -e
-#  yamllint .
-#  ansible-lint
-
 platforms:
   # Set to match inventory hosts
-  - name: site.local.computer
+  - name: server.local.computer
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
     command: ${MOLECULE_DOCKER_COMMAND:-""}
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /var/lib/docker
+      - $MOLECULE_PROJECT_DIRECTORY/logs:/logs
     privileged: true
     pre_build_image: true
     exposed_ports:
@@ -35,46 +31,26 @@ platforms:
     published_ports:
       - "0.0.0.0:80:80/tcp"
 
-playbooks:
-    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
-
 provisioner:
   name: ansible
+  playbooks:
+    converge: ../../playbook.yml
   inventory:
     links:
       # Gets added as a symlink called "inventory" in the test.
-      hosts: ../../${ANSIBLE_INVENTORY:-examples/single-site}
+      hosts: $MOLECULE_PROJECT_DIRECTORY/examples/${MOLECULE_EXAMPLE:-single-site}
 
   ansible_args:
-#    - "--skip-tags=services"
     - "--inventory=services"
-    - "${ARGS:--e molecule_args=false}"
 
   connection_options:
     ansible_connection: docker
 
   env:
-    ANSIBLE_ROLES_PATH: ../../roles:../../roles/contrib
-    ANSIBLE_VARS_PLUGINS: ./plugins/vars
-    ANSIBLE_LIBRARY: ./library_modules
-
-
-  # Explicitly set ansible.cfg here. Do not use ansible.cfg to ensure the platform works regardless of that config.
-  config_options:
-    defaults:
-      stdout_callback: yaml
-      vars_plugins_enabled: host_group_vars,devshop.platform.service_vars
-
-      # NOT ALLOWED.
-      # roles_path: ./roles:./roles/contrib
-      # collections_path: ../../roles/contrib
-
-    vars_service_vars:
-      # Vars plugin will load on every step unless this is set.
-      stage: inventory
-
-    connection:
-      pipelining: true
+    ANSIBLE_CONFIG: ${MOLECULE_PROJECT_DIRECTORY}/ansible.cfg
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles:${MOLECULE_PROJECT_DIRECTORY}/roles/contrib
+    ANSIBLE_COLLECTIONS_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles/contrib
+    ANSIBLE_VARS_PLUGINS: ${MOLECULE_PROJECT_DIRECTORY}/plugins/vars
 
 verifier:
   name: ansible

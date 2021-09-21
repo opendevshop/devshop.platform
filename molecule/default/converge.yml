@@ -1,3 +1,0 @@
----
-- name: Global DevShop.Platform Playbook
-  import_playbook: ../../playbook.yml
