@@ -13,19 +13,19 @@
       ---------------------------------
       Welcome to the DevShop.App role.
       ---------------------------------
-      http://{{ inventory_hostname }}
+      App Name: {{ devshop_app_name }}
+      Environment Name: {{ devshop_app_environment }}
+      ---------------------------------
       devshop_app_git_repository: {{ devshop_app_git_repository }}
       devshop_app_git_reference: {{ devshop_app_git_reference }}
       devshop_app_git_root: {{ devshop_app_git_root }}
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
-
       devshop_app_host: {{ devshop_app_server_http }}
       devshop_app_servers: {{ devshop_app_servers }}
-
+      ---------------------------------
       devshop_app_command_build: {{ devshop_app_command_build }}
       devshop_app_command_deploy: {{ devshop_app_command_deploy }}
-
       ---------------------------------
       inventory_hostname: {{ inventory_hostname }}
       nodename: {{ ansible_facts.nodename }}
