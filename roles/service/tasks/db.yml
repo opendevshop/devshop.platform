@@ -10,7 +10,7 @@
   with_items: "{{ groups['apps'] }}"
   when: hostvars[item]['devshop_app_server_db'] == inventory_hostname
   set_fact:
-    devshop_app_mysql_host: "{{ inventory_hostname }}"
+    devshop_app_host: "{{ item }}"
     # @TODO: Allow users to set by IP or whatever.
     devshop_app_mysql_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
     devshop_app_mysql_backend: "mysql"
@@ -34,7 +34,7 @@
 
 - name: "Set facts on app hosts."
   with_items: "{{ devshop_service_app_register.results }}"
-  delegate_to: "{{ item.ansible_facts.devshop_app_mysql_host }}"
+  delegate_to: "{{ item.ansible_facts.devshop_app_host }}"
   delegate_facts: yes
   set_fact:
     devshop_service_db_user: "{{ item.ansible_facts.devshop_app_mysql_user.name }}"
