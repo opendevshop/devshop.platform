@@ -9,17 +9,28 @@ apps:
     devshop_app_host: site.local.computer
     devshop_app_server_http: site.local.computer
     devshop_app_server_db: site.local.computer
+    devshop_app_git_root: "/apps/{{ inventory_hostname }}"
   hosts:
     site1.local.computer:
+      devshop_app_environment: site1
     site2.local.computer:
+      devshop_app_environment: site2
     site3.local.computer:
+      devshop_app_environment: site3
     site4.local.computer:
+      devshop_app_environment: site4
     site5.local.computer:
+      devshop_app_environment: site5
     site6.local.computer:
+      devshop_app_environment: site6
     site7.local.computer:
+      devshop_app_environment: site7
     site8.local.computer:
+      devshop_app_environment: site8
     site9.local.computer:
+      devshop_app_environment: site9
     site10.local.computer:
+      devshop_app_environment: site10
 
 # Server Host
 http:
