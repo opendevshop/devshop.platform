@@ -35,7 +35,7 @@ jobs:
 #        run: |
 #          yamllint .
   molecule:
-    name: "Platform Example: ${{ matrix.example }}"
+    name: "Platform Example: ${{ matrix.example }} on ${{ matrix.distro }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -45,10 +45,19 @@ jobs:
           - ten-sites
         include:
           - distro: centos8
+            example: single-site
+
           - distro: centos7
+            example: single-site
+
           - distro: ubuntu1804
+            example: single-site
+
           - distro: ubuntu2004
+            example: single-site
+
           - distro: debian10
+            example: single-site
 
     steps:
       - name: Check out the codebase.
