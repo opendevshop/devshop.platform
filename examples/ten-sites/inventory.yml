@@ -3,45 +3,43 @@
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
 apps:
-  vars:
-    devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
-    devshop_app_git_reference: 9.x
-    devshop_app_host: site.local.computer
-    devshop_app_server_http: site.local.computer
-    devshop_app_server_db: site.local.computer
-    devshop_app_git_root: "/apps/{{ inventory_hostname }}"
-  hosts:
-    site1.local.computer:
-      devshop_app_environment: site1
-    site2.local.computer:
-      devshop_app_environment: site2
-    site3.local.computer:
-      devshop_app_environment: site3
-    site4.local.computer:
-      devshop_app_environment: site4
-    site5.local.computer:
-      devshop_app_environment: site5
-    site6.local.computer:
-      devshop_app_environment: site6
-    site7.local.computer:
-      devshop_app_environment: site7
-    site8.local.computer:
-      devshop_app_environment: site8
-    site9.local.computer:
-      devshop_app_environment: site9
-    site10.local.computer:
-      devshop_app_environment: site10
+  children:
+    drupal:
+      vars:
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+        devshop_app_git_reference: 9.x
+        devshop_app_host: server.local.computer
+        devshop_app_server_http: server.local.computer
+        devshop_app_server_db: server.local.computer
+        devshop_app_git_root: "/apps/{{ inventory_hostname }}"
+
+      hosts:
+        site1.local.computer:
+          devshop_app_environment: site1
+        site2.local.computer:
+          devshop_app_environment: site2
+        site3.local.computer:
+          devshop_app_environment: site3
+        site4.local.computer:
+          devshop_app_environment: site4
+        site5.local.computer:
+          devshop_app_environment: site5
+        site6.local.computer:
+          devshop_app_environment: site6
+        site7.local.computer:
+          devshop_app_environment: site7
+        site8.local.computer:
+          devshop_app_environment: site8
+        site9.local.computer:
+          devshop_app_environment: site9
+        site10.local.computer:
+          devshop_app_environment: site10
 
 # Server Host
 http:
   hosts:
-    site.local.computer:
+    server.local.computer:
 
 db:
   hosts:
-    site.local.computer:
-
-# Add the site to the "drupal" group to inherit that group's variables, such as for the build commands.
-drupal:
-  hosts:
-    site.local.computer:
+    server.local.computer:
