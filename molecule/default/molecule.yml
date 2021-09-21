@@ -2,23 +2,6 @@
 # @see https://molecule.readthedocs.io/en/latest/configuration.html
 scenario:
 
-  # See https://molecule.readthedocs.io/en/latest/configuration.html#root-scenario
-
-  test_sequence:
-    - dependency
-    - lint
-    - cleanup
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    - idempotence
-    - side_effect
-    - verify
-    # No need to destroy. Use 'molecule test --destroy=always' if needed.
-    # - ${MOLECULE_TEST_SEQUENCE_:-destroy}
-
 dependency:
   name: galaxy
   options:
