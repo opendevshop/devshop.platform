@@ -51,7 +51,7 @@ jobs:
             example: single-site
 
           - distro: ubuntu2004
-            example: single-sites
+            example: single-site
 
           - distro: ubuntu2004
             example: ten-sites
