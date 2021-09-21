@@ -315,8 +315,8 @@ def main():
     stdout_file = module.params['stdout_file']
     stdout_pipe = module.params['stdout_pipe']
 
-    stderr_file = module.params['stdout_file']
-    stderr_pipe = module.params['stdout_pipe']
+    stderr_file = module.params['stderr_file']
+    stderr_pipe = module.params['stderr_pipe']
 
     if stdout_file:
         shell = True
