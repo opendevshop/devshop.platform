@@ -32,10 +32,11 @@ dependency:
 driver:
   name: docker
 
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
+# Skip lint in molecule test. We will use yamllint for now.
+#lint: |
+#  set -e
+#  yamllint .
+#  ansible-lint
 
 platforms:
   # Set to match inventory hosts
