@@ -50,3 +50,24 @@
 
       mysql_databases: {{ mysql_databases }}
       mysql_users: {{ mysql_users }}
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+# See https://github.com/geerlingguy/ansible-role-mysql#later-versions-of-mysql-on-centos-7
+- name: Prepare RedHat 7 MySQL Repos
+  when:
+    - ansible_distribution_major_version == "7"
+    - ansible_os_family == "RedHat"
+    - devshop_service_db_mysql_repo
+  block:
+    - name: Install the MySQL repo
+      yum:
+        name: "{{ devshop_service_db_mysql_repo }}"
+        state: present
+    - name: Override variables for MySQL (RedHat).
+      set_fact:
+        mysql_daemon: mysqld
+        mysql_packages: [ 'mysql-server' ]
+        mysql_log_error: /var/log/mysqld.err
+        mysql_syslog_tag: mysqld
+        mysql_pid_file: /var/run/mysqld/mysqld.pid
+        mysql_socket: /var/lib/mysql/mysql.sock
