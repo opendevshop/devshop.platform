@@ -72,3 +72,7 @@ devshop_app_commands_log_file_start_content: |
   ### DevShop.App Command Stages Log File.
   ### Written by the devshop.app git-handler.yml tasks file.
   ### {{ '%Y-%m-%d %H:%M:%S' | strftime }}
+
+# Passed to the "command" task to limit the number of calls to trigger at once.
+# If not set to 1, calls to things like composer that cache files might collide when all being called at the same time.
+devshop_app_command_stages_throttle: 1

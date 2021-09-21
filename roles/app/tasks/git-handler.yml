@@ -27,6 +27,7 @@
       {{ devshop_app_playbook_stages | to_nice_yaml}}
 
 - name: Run DevShop App command stages.
+  throttle: "{{ devshop_app_command_stages_throttle }}"
   loop: "{{ devshop_app_playbook_stages }}"
   loop_control:
     loop_var: stage
