@@ -1,6 +1,5 @@
 ---
 # @see https://molecule.readthedocs.io/en/latest/configuration.html
-scenario:
 
 dependency:
   name: galaxy
