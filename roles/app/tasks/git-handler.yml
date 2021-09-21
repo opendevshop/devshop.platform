@@ -12,6 +12,8 @@
   copy:
     content: "{{ devshop_app_commands_log_file_start_content }}"
     dest: "{{ devshop_app_commands_log_file }}"
+    owner: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user }}"
   when: devshop_app_commands_log_file_delete_before_start
 
 - name: Run DevShop App command stages.
