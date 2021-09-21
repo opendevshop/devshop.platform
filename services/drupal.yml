@@ -1,5 +1,17 @@
 ---
 apps:
+  vars:
+
+    # Needs to be here for service_vars to look it up.
+    devshop_app_service_requirements:
+      http:
+        required: yes
+      db:
+        required: yes
+      solr:
+      redis:
+      varnish:
+
   children:
     drupal:
       vars:

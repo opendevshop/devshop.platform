@@ -62,8 +62,6 @@ class VarsModule(BaseVarsPlugin):
     def get_vars(self, loader, path, entities, cache=True):
         super(VarsModule, self).get_vars(loader, path, entities)
 
-        self._display.vv("get_vars(path=%s)" % path)
-
         vars = {}
 
         for entity in entities:
@@ -79,15 +77,24 @@ class VarsModule(BaseVarsPlugin):
                         vars['devshop_app_servers'] = {}
 
                         # @TODO: Load services from app type thing.
-                        required_services = ['db', 'http']
-                        for service in required_services:
+                        service_requirements = entity.vars.get("devshop_app_service_requirements") or group.vars.get("devshop_app_service_requirements")
 
-                            # Assign service group.
-                            vars['devshop_app_servers'][service] = service
+                        if not service_requirements:
+                            self._display.warning('Unable to determine service requirements from "app" group or host "%s". Add the variable "devshop_app_service_requirements" to resolve.')
 
-                            # If inventory defines this apps server, use that.
-                            if entity.vars.get("devshop_app_server_%s" % service):
-                                vars['devshop_app_servers'][service] = entity.vars.get("devshop_app_server_%s" % service)
+                        for service in service_requirements:
+
+                            # If inventory var defines the server to use.
+                            app_service_server = (
+                                entity.vars.get("devshop_app_server_%s" % service)
+                                or group.vars.get("devshop_app_server_%s" % service)
+                                or None
+                                )
+
+                            if not entity.vars.get("devshop_app_server_%s" % service):
+                                vars["devshop_app_server_%s" % service] = app_service_server
+
+                            vars['devshop_app_servers'][service] = app_service_server
 
                         if not entity.vars.get('devshop_app_name'):
                             vars['devshop_app_name'] = 'app'
@@ -98,7 +105,6 @@ class VarsModule(BaseVarsPlugin):
                     if group.name == 'servers':
                         self._display.v('Found server host: %s ' % entity)
                         self.servers[entity] = entity
-                        vars['devshop_ansible_host_type'] = 'server'
 
                         # Loop through all of the Server Host's groups.
                         # @TODO: Load common roles

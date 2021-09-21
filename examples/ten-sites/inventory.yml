@@ -3,8 +3,8 @@
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
 apps:
-  children:
-    drupal:
+#  children:
+#    drupal:
       vars:
         devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
         devshop_app_git_reference: 9.x
@@ -12,6 +12,10 @@ apps:
         devshop_app_server_http: server.local.computer
         devshop_app_server_db: server.local.computer
         devshop_app_git_root: "/apps/{{ inventory_hostname }}"
+
+        # @TODO: Automatically set this for app hosts.
+        ansible_host: server.local.computer
+        ansible_connection: "{{ hostvars['server.local.computer']['ansible_connection'] }}"
 
       hosts:
         site1.local.computer:
