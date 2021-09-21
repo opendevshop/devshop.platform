@@ -9,7 +9,7 @@ apps:
 
     # @TODO: Make it possible for these to be optional.
     # @TODO: throw an error when these don't exist.
-    devshop_app_host: site.local.computer
+    devshop_app_host: server.local.computer
     devshop_app_server_http: site.local.computer
     devshop_app_server_db: site.local.computer
 
@@ -29,11 +29,11 @@ apps:
 # Server Host
 http:
   hosts:
-    site.local.computer:
+    server.local.computer:
 
 db:
   hosts:
-    site.local.computer:
+    server.local.computer:
 
 # Add the site to the "drupal" group to inherit that group's variables, such as for the build commands.
 drupal:
