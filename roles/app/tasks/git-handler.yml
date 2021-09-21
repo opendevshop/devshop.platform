@@ -19,6 +19,7 @@
 - name: Preparing to launch command stages...
   debug:
     msg: |
+      Preparing to launch command stages for http://{{ inventory_hostname }}
       Log File: {{ devshop_app_commands_log_file }}
       App User: {{ devshop_app_user }}
 
@@ -51,6 +52,7 @@
     label: "{{ item.stage }}"
   debug:
     msg: |
+      App: http://{{ inventory_hostname }}
       Stage: {{ item.stage }}
       Command: {{ item.cmd }}
       Time: {{ item.delta }}
