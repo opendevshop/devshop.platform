@@ -1,6 +1,6 @@
 ---
 #
-# Host "thinkdrop.local.computer" is an App Host AND a Server Host.
+# Host "site.local.computer" is an App Host AND a Server Host.
 #
 apps:
   vars:
