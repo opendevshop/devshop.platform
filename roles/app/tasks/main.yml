@@ -13,44 +13,31 @@
       ---------------------------------
       Welcome to the DevShop.App role.
       ---------------------------------
-      App Name: {{ devshop_app_name }}
-      Environment Name: {{ devshop_app_environment }}
+
+      {{ inventory_hostname }}
+      {{ devshop_app_name }}.{{ devshop_app_environment }}
+
       ---------------------------------
-      devshop_app_git_repository: {{ devshop_app_git_repository }}
-      devshop_app_git_reference: {{ devshop_app_git_reference }}
-      devshop_app_git_root: {{ devshop_app_git_root }}
+      Git Repository: {{ devshop_app_git_repository }}
+      Git Reference:  {{ devshop_app_git_reference }}
+      Git Root:       {{ devshop_app_git_root }}
+      ---------------------------------
+      ansible_host:   {{ ansible_host }}
+      nodename:       {{ ansible_facts.nodename }}
+      Default IP:     {{ ansible_default_ipv4.address }}
+      ---------------------------------
+      Servers:
+      {{ devshop_app_servers | to_nice_yaml }}
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
-      devshop_app_host: {{ devshop_app_server_http }}
-      devshop_app_servers: {{ devshop_app_servers }}
       ---------------------------------
-      devshop_app_command_build: {{ devshop_app_command_build }}
-      devshop_app_command_deploy: {{ devshop_app_command_deploy }}
+      devshop_app_command_build: {{ devshop_app_command_build | default('Not Set') }}
+      devshop_app_command_deploy: {{ devshop_app_command_deploy | default('Not Set') }}
+      devshop_app_command_install: {{ devshop_app_command_test | default('Not Set') }}
+      devshop_app_command_test: {{ devshop_app_command_test | default('Not Set') }}
       ---------------------------------
-      inventory_hostname: {{ inventory_hostname }}
-      nodename: {{ ansible_facts.nodename }}
-      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
 
       force_build: {{ force_build }}
-
-#      devshop_app_git_root: {{ devshop_app_git_root }}
-#      devshop_app_host: {{ devshop_app_host }}
-#      ---------------------------------
-#      devshop_app_servers:
-#      {{ devshop_app_servers | to_nice_yaml }}
-#      ---------------------------------
-#      inventory_hostname: {{ inventory_hostname }}
-#      ansible_host: {{ ansible_host }}
-#      ansible_connection: {{ ansible_connection }}
-#      nodename: {{ ansible_facts.nodename }}
-#      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
-#
-#      groups:
-#      {{ group_names | to_nice_yaml }}
-#
-#      devshop_service_db_user: {{ devshop_service_db_user }}
-#      devshop_service_db_name: {{ devshop_service_db_name }}
-#      devshop_service_db_host: {{ devshop_service_db_host }}
 
 - name: Prepare Parent Directory
   file:
