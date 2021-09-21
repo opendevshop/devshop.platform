@@ -32,6 +32,8 @@ platforms:
     pre_build_image: true
     exposed_ports:
       - '80:80'
+    published_ports:
+      - "0.0.0.0:80:80/tcp"
 
 playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
