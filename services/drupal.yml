@@ -32,7 +32,7 @@ apps:
         #   --partial and --preview are config:import options.
         # Leave --preview until there is config to import.
         devshop_app_command_deploy: |
-          drush deploy -v -y --preview
+          drush deploy -v -y --partial
 
         devshop_app_command_test: |
           vendor/bin/drush status
