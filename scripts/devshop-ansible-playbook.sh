@@ -58,5 +58,8 @@ echo "> $ANSIBLE_PLAYBOOK_FULL_COMMAND"
 # Do not exit on error so we can run additional commands.
 set +e
 time $ANSIBLE_PLAYBOOK_FULL_COMMAND || \
-    echo "Playbook Failed! (exit $?)"; \
-    exit $?
+    (
+      EXIT=$?
+      echo "Playbook Failed! (exit $EXIT)"
+      exit $EXIT
+    )
