@@ -30,7 +30,7 @@ jobs:
 
           - distro: ubuntu2004
             example: drupal-upgrade
-            playbook: examples/upgrade/playbook-upgrade.yml
+            playbook: examples/drupal-upgrade/playbook-upgrade.yml
 
     env:
       PY_COLORS: '1'
