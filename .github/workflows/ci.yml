@@ -41,7 +41,7 @@ jobs:
       fail-fast: false
       matrix:
         distro: [centos8, centos7, ubuntu1804, ubuntu2004, debian10]
-        examples: [single-site, ten-sites]
+        example: [single-site, ten-sites]
 
     steps:
       - name: Check out the codebase.
