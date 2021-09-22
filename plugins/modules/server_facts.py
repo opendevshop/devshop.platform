@@ -104,5 +104,6 @@ def main():
     # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
+
 if __name__ == '__main__':
     main()

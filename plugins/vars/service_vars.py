@@ -21,8 +21,8 @@ __metaclass__ = type
 DOCUMENTATION = '''
     name: devshop.platform.service_vars
     version_added: 0.1.0
-    short_description: load host and group vars
-    description: test loading host and group vars from a collection
+    short_description: Load service variables into app hosts.
+    description: Load service variables into app hosts.
     options:
       stage:
         ini:
@@ -80,7 +80,8 @@ class VarsModule(BaseVarsPlugin):
                         service_requirements = entity.vars.get("devshop_app_service_requirements") or group.vars.get("devshop_app_service_requirements")
 
                         if not service_requirements:
-                            self._display.warning('Unable to determine service requirements from "app" group or host "%s". Add the variable "devshop_app_service_requirements" to resolve.')
+                            self._display.warning('Unable to determine service requirements from "app" group or host "%s" \
+                                Add the variable "devshop_app_service_requirements" to resolve.')
                         else:
                             for service in service_requirements:
 
@@ -89,7 +90,7 @@ class VarsModule(BaseVarsPlugin):
                                     entity.vars.get("devshop_app_server_%s" % service)
                                     or group.vars.get("devshop_app_server_%s" % service)
                                     or None
-                                    )
+                                )
 
                                 if not entity.vars.get("devshop_app_server_%s" % service):
                                     vars["devshop_app_server_%s" % service] = app_service_server
