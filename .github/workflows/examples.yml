@@ -36,7 +36,7 @@ jobs:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
       MOLECULE_DISTRO: ${{ matrix.distro }}
-      MOLECULE_EXAMPLE: ${{ matrix.example }}
+      PLATFORM_EXAMPLE: ${{ matrix.example }}
       ANSIBLE_PLAYBOOK: ${{ matrix.playbook }}
 
     steps:
@@ -69,7 +69,7 @@ jobs:
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${MOLECULE_EXAMPLE} \
+          --inventory ./examples/${PLATFORM_EXAMPLE} \
           --inventory ./services \
           --connection docker \
           --tags about
@@ -78,7 +78,7 @@ jobs:
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${MOLECULE_EXAMPLE} \
+          --inventory ./examples/${PLATFORM_EXAMPLE} \
           --inventory ./services \
           --connection docker
 
