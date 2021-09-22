@@ -30,6 +30,13 @@
     apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
 
 
+- name: "Set Facts for Debian hosts."
+  set_fact:
+    php_packages_extra:
+      - "libapache2-mod-php{{ php_version }}"
+  when: ansible_os_family == 'Debian'
+
+
 - name: "Variables prepared."
   debug:
     msg: |

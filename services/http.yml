@@ -16,7 +16,4 @@ servers:
             - geerlingguy.repo-remi
             - geerlingguy.repo-epel
 
-        php_packages_extra:
-          - "libapache2-mod-php{{ php_version }}"
-
         apache_remove_default_vhost: true
