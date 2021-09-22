@@ -24,9 +24,9 @@ devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-templ
 devshop_app_git_reference: ""
 
 # relative internal path to expose to the web server via the devshop_app_domain URL.
-# TODO: THESE ARE NOT USED. the host role needs access to these so right now, they must be in inventory.
-# devshop_app_git_document_root: web
-# devshop_app_git_document_root_path: "{{ devshop_app_git_root }}/{{ devshop_app_git_document_root }}"
+# Used by tasks/commands. Not by apache vhost, (yet).
+devshop_app_git_document_root: web
+devshop_app_git_document_root_path: "{{ devshop_app_git_root }}/{{ devshop_app_git_document_root }}"
 
 # Whether the git checkout should be forced. If set to true, any local modifications to files will be lost.
 devshop_app_git_force: true
