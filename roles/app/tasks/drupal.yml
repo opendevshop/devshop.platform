@@ -17,4 +17,4 @@
   set_fact:
     skip_stages: "{{ skip_stages + ['install']}}"
   when:
-    - force_install | bool == false
+    - force_install is not defined or force_install == false
