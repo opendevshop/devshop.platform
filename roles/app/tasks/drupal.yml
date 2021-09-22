@@ -1,23 +1,5 @@
 ---
-- name: "Hi App Host"
+- name: "Welcome to the DevShop.App role: Drupal."
   debug:
-    msg: "{{ devshop_app_hostname }}"
-
-- set_fact:
-    apache_vhosts: []
-
-- name: "Gather Vhosts"
-  loop: "{{ devshop_app_host['devshop_app_data']['environments'] | list }}"
-  set_fact:
-    apache_vhosts: "{{ apache_vhosts + [{
-        'servername': devshop_app_hostname,
-        'documentroot': devshop_app_git_root + '/' + devshop_app_source_docroot,
-        'serveralias': devshop_app_environment.domains | default([])
-
-    }] }}"
-  vars:
-    apache_vhosts: []
-
-- name: "Vhosts Set!"
-  debug:
-    msg: "{{ apache_vhosts | to_nice_yaml }}"
+    msg: |
+      inventory_hostname: {{ inventory_hostname }}"
