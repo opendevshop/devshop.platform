@@ -53,8 +53,8 @@ jobs:
           - distro: debian10
             example: single-site
 
-          - distro: centos7
-            example: single-site
+#          - distro: centos7
+#            example: single-site
 
           - distro: centos8
             example: single-site
