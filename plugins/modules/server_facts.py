@@ -65,7 +65,7 @@ from ansible.module_utils.basic import AnsibleModule
 def main():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
-        name=dict(type='str', required=True),
+        # name=dict(type='str', required=True),
     )
 
     # seed the result dict in the object
@@ -97,7 +97,7 @@ def main():
 #     }
     result = {}
     result['server_facts'] = {}
-    result['server_facts']['db'] = {}
+    result['server_facts']['apps'] = {}
     result['server_facts']['http'] = {}
 
     # in the event of a successful module execution, you will want to
@@ -106,4 +106,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
