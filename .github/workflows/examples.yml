@@ -78,5 +78,4 @@ jobs:
       - name: Upload artifacts.
         uses: actions/upload-artifact@v2
         with:
-          name: build-logs-${MOLECULE_EXAMPLE}
-          path: molecule/default/artifacts
+          path: devshop.platform/molecule/default/artifacts
