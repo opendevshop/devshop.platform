@@ -10,4 +10,4 @@
 devshop_app_commands_log_file: "/artifacts/{{ inventory_hostname }}.build.log"
 
 # Allow docker host user to read the files.
-devshop_app_commands_log_file_mode: 777
+devshop_app_commands_log_file_mode: "0777"
