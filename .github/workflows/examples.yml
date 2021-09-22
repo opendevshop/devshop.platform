@@ -22,18 +22,22 @@ jobs:
         include:
           - distro: ubuntu2004
             example: single-site
+            playbook: playbook.yml
 
           - distro: ubuntu2004
             example: ten-sites
+            playbook: playbook.yml
 
           - distro: ubuntu2004
             example: drupal-upgrade
+            playbook: examples/upgrade/playbook-upgrade.yml
 
     env:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
       MOLECULE_DISTRO: ${{ matrix.distro }}
       MOLECULE_EXAMPLE: ${{ matrix.example }}
+      ANSIBLE_PLAYBOOK: ${{ matrix.playbook }}
 
     steps:
       - name: Check out the codebase.
