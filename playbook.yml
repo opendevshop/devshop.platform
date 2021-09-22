@@ -34,6 +34,7 @@
     - name: Include platform vars file from importing playbook.
       include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
       when: platform_vars_file is defined
+      tags: [always]
 
   roles:
     - role: host
@@ -57,6 +58,7 @@
     - name: Include platform vars file from importing playbook.
       include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
       when: platform_vars_file is defined
+      tags: [always]
 
   roles:
     - name: app
