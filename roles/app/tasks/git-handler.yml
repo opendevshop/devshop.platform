@@ -55,13 +55,13 @@
   register: devshop_app_playbook_stage_register
   environment: "{{ devshop_app_shell_environment | combine(devshop_app_shell_environment_extra ) }}"
 
-- name: Set fact with stage run results grouped by stage.
-  set_fact:
-    devshop_app_stage_results:
-      rc: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'rc') }}"
-      cmd: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'cmd') }}"
-      stdout: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'stdout') }}"
-      delta: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'delta') }}"
+#- name: Set fact with stage run results grouped by stage.
+#  set_fact:
+#    devshop_app_stage_results:
+#      rc: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'rc') }}"
+#      cmd: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'cmd') }}"
+#      stdout: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'stdout') }}"
+#      delta: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'delta') }}"
 
 - name: DevShop.App Command Stages Complete.
   with_items: "{{ devshop_app_playbook_stage_register.results }}"
