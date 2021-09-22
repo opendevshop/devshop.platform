@@ -61,7 +61,7 @@ jobs:
       - name: Run d with 'about' tag.
         run: |
           ./d \
-          --extra-vars @.github/workflows/vars.yml \
+          --extra-vars @molecule/default/vars.yml \
           --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
           --connection docker \
@@ -70,7 +70,7 @@ jobs:
       - name: Run d.
         run: |
           ./d \
-          --extra-vars @.github/workflows/vars.yml \
+          --extra-vars @molecule/default/vars.yml \
           --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
           --connection docker
