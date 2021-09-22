@@ -337,8 +337,6 @@ def main():
             argv.append("2%s" % stderr_pipe)
             argv.append(stderr_file)
 
-
-
     # we promissed these in 'always' ( _lines get autoaded on action plugin)
     r = {'changed': False, 'stdout': '', 'stderr': '', 'rc': None, 'cmd': None, 'start': None, 'end': None, 'delta': None, 'msg': ''}
 
@@ -449,13 +447,11 @@ def main():
         r['stdout'] = to_text(r['stdout']).rstrip("\r\n")
         r['stderr'] = to_text(r['stderr']).rstrip("\r\n")
 
-
     if r['rc'] != 0:
         r['msg'] = 'non-zero return code'
         module.fail_json(**r)
 
     module.exit_json(**r)
-
 
 if __name__ == '__main__':
     main()

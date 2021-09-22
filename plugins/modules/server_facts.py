@@ -61,6 +61,7 @@ import platform
 import re
 from ansible.module_utils.basic import AnsibleModule
 
+
 def main():
     # define available arguments/parameters a user can pass to the module
     module_args = dict(
@@ -72,7 +73,6 @@ def main():
     # changed is if this module effectively modified the target
     # state will include any data that you want your module to pass back
     # for consumption, for example, in a subsequent task
-
 
     # the AnsibleModule object will be our abstraction working with Ansible
     # this includes instantiation, a couple of common attr would be the
@@ -100,10 +100,10 @@ def main():
     result['server_facts']['db'] = {}
     result['server_facts']['http'] = {}
 
-
     # in the event of a successful module execution, you will want to
     # simple AnsibleModule.exit_json(), passing the key/value results
     module.exit_json(**result)
 
 if __name__ == '__main__':
     main()
+
