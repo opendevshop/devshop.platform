@@ -42,9 +42,6 @@ jobs:
       matrix:
         include:
           - distro: ubuntu2004
-            example: ten-sites
-
-          - distro: ubuntu2004
             example: single-site
 
           - distro: ubuntu1804

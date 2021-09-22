@@ -1,0 +1,74 @@
+---
+name: DevShop.Platform Examples
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 4 * * 4"
+
+defaults:
+  run:
+    working-directory: 'devshop.platform'
+
+jobs:
+  examples:
+    name: "Platform Example: ${{ matrix.example }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: ubuntu2004
+            example: single-site
+
+          - distro: ubuntu2004
+            example: ten-sites
+
+    env:
+      PY_COLORS: '1'
+      ANSIBLE_FORCE_COLOR: '1'
+      MOLECULE_DISTRO: ${{ matrix.distro }}
+      MOLECULE_EXAMPLE: ${{ matrix.example }}
+
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: 'devshop.platform'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install ansible molecule[docker] docker
+
+      # See: https://github.com/geerlingguy/ansible-role-mysql/issues/422
+      - name: Disable AppArmor on Debian.
+        run: |
+          set -x
+          sudo apt-get install apparmor-profiles
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+        if: ${{ startsWith(matrix.distro, 'debian') }}
+
+      - name: Create a molecule instance.
+        run: molecule create
+
+      - name: Run d with 'about' tag.
+        run: |
+          ./d \
+          --inventory ./examples/${MOLECULE_EXAMPLE} \
+          --inventory ./services \
+          --connection docker \
+          --tags about
+
+      - name: Run d.
+        run: |
+          ./d \
+          --inventory ./examples/${MOLECULE_EXAMPLE} \
+          --inventory ./services \
+          --connection docker
