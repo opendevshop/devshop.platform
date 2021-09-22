@@ -12,8 +12,9 @@
   copy:
     content: "{{ devshop_app_commands_log_file_start_content }}"
     dest: "{{ devshop_app_commands_log_file }}"
-    owner: "{{ devshop_app_user }}"
-    group: "{{ devshop_app_user }}"
+    owner: "{{ devshop_app_commands_log_file_owner }}"
+    group: "{{ devshop_app_commands_log_file_group }}"
+    mode: "{{ devshop_app_commands_log_file_mode }}"
   when: devshop_app_commands_log_file_delete_before_start
 
 - name: Preparing to launch command stages...
