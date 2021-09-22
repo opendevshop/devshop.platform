@@ -13,8 +13,12 @@
   changed_when: false
   become: false
 
+- set_fact:
+    devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_site_installed.stdout }}"
+
 - name: Add install to skipped_stages unless force_install is set.
   set_fact:
     skip_stages: "{{ skip_stages + ['install']}}"
   when:
+    - devshop_app_installed
     - force_install is not defined or force_install == false
