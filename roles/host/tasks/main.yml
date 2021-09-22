@@ -1,5 +1,11 @@
 ---
+- name: Gather Server Host Facts
+  gather_facts:
+  tags:
+    - always
 
+# @TODO: Handle this with a facts or vars plugin.
+# Goal: Give App Hosts the variables they need from their servers.
 - name: Set App Host vars from this host
   with_items: "{{ groups['apps'] }}"
   when: hostvars[item]['devshop_app_host'] == inventory_hostname
@@ -15,6 +21,8 @@
   include_vars: "{{ ansible_os_family }}.yml"
 
 - name: DevShop.Host Role
+  tags:
+    - about
   debug:
     msg: |
       ---------------------------------

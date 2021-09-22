@@ -1,6 +1,8 @@
 ---
-- name: Gather App Host facts.
+- name: Gather App Host Facts
   gather_facts:
+  tags:
+    - always
 
 - name: Prevent the role from running as root.
   fail:
@@ -8,6 +10,8 @@
   when: devshop_app_user == 'root'
 
 - name: DevShop.App Role
+  tags:
+    - about
   debug:
     msg: |
       ---------------------------------

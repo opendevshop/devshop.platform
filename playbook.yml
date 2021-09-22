@@ -20,7 +20,13 @@
 
   hosts: servers
   become: yes
-  gather_facts: yes
+
+  # If the play has tags, `gather_facts` uses those tags.
+  # If the play does NOT have tags, `gather_facts` uses the `always` tag.
+  # So, instead of this chaos, just gather facts in pre_tasks.
+  gather_facts: no
+
+  # Run with --tags servers to include the entire play.
   tags:
     - servers
 
@@ -32,17 +38,17 @@
   roles:
     - role: host
       tags:
-        - servers
+        # Run with --tags hosts to only run the devshop.host role and skip service install.
+        - hosts
 
     - role: services
-      tags:
-        - services
 
 - name: Apps
   hosts: apps
   become: yes
   gather_facts: no
 
+  # Run with --tags servers to include the entire play.
   tags:
     - apps
 
