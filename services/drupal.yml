@@ -28,7 +28,7 @@ apps:
           {{ drupal_site_install_extra_args | join(" ") }}
 
         devshop_app_command_deploy: |
-          vendor/bin/drush pm:update
+          drush deploy -v -y
 
         devshop_app_command_test: |
           vendor/bin/drush status
