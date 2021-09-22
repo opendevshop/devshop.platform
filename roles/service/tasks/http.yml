@@ -12,7 +12,7 @@
     devshop_app_apache_vhost:
 
       servername: "{{ item }}"
-      documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
+      documentroot: "{{ hostvars[item]['devshop_app_git_document_root_path'] }}"
       extra_parameters: |
         {% if 'devshop_app_domains' in hostvars[item]: %}
           {% for domain in hostvars[item]['devshop_app_domains'] %}
