@@ -101,7 +101,7 @@ class VarsModule(BaseVarsPlugin):
                             vars['devshop_app_name'] = 'app'
 
                         if not entity.vars.get('devshop_app_environment'):
-                            vars['devshop_app_environment'] = 'default'
+                            vars['devshop_app_environment'] = ''.join(filter(str.isalnum, entity.name))
 
                     if group.name == 'servers':
                         self._display.v('Found server host: %s ' % entity)
