@@ -1,0 +1,9 @@
+---
+# This extra vars file is for use with molecule instances.
+#   - Automatically included in any `molecule` commands.
+#   - Included in github actions commands using --extra-vars.
+#   - Add `--extra-vars=@molecule/default/vars.yml` to any `ansible-playbook` or `d` invocation to use.
+
+# The /artifacts folder inside the instance is mapped to ./molecule/default/artifacts.
+
+devshop_app_commands_log_file: "/artifacts/{{ inventory_hostname }}.build.log"

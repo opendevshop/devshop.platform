@@ -4,7 +4,7 @@
 # 3. If your collection depends on other collections ensure they are installed, see "Install collection dependencies"
 # If you need help please ask in #ansible-community on the Libera.chat IRC network
 
-name: Ansible Collection Quality Assurance
+name: Ansible Quality Assurance
 on:
   pull_request:
 
@@ -25,7 +25,7 @@ jobs:
 # https://docs.ansible.com/ansible/latest/dev_guide/testing_sanity.html
 
   sanity:
-    name: Sanity (Ⓐ${{ matrix.ansible }})
+    name: Quality (Ⓐ${{ matrix.ansible }})
     strategy:
       matrix:
         ansible:

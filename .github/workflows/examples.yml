@@ -1,5 +1,5 @@
 ---
-name: DevShop.Platform Examples
+name: Platform Example Tests
 'on':
   pull_request:
   push:
@@ -61,6 +61,7 @@ jobs:
       - name: Run d with 'about' tag.
         run: |
           ./d \
+          --extra-vars @.github/workflows/vars.yml \
           --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
           --connection docker \
@@ -69,6 +70,13 @@ jobs:
       - name: Run d.
         run: |
           ./d \
+          --extra-vars @.github/workflows/vars.yml \
           --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
           --connection docker
+
+      - name: Upload artifacts.
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-logs-${MOLECULE_EXAMPLE}
+          path: molecule/default/artifacts

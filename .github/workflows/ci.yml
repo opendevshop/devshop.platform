@@ -1,5 +1,5 @@
 ---
-name: DevShop.Platform CI
+name: Cross Platform Support Tests
 'on':
   pull_request:
   push:

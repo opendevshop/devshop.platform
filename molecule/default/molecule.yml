@@ -23,7 +23,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /var/lib/docker
-      - $MOLECULE_PROJECT_DIRECTORY/logs:/logs
+      - $MOLECULE_SCENARIO_DIRECTORY/artifacts:/artifacts
     privileged: true
     pre_build_image: true
     exposed_ports:
@@ -42,6 +42,7 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
+    - "--extra_vars=@molecule/default/vars.yml"
 
   connection_options:
     ansible_connection: docker

@@ -35,6 +35,8 @@
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
       ---------------------------------
+      devshop_app_commands_log_file: {{ devshop_app_commands_log_file }}
+
       devshop_app_command_build: {{ devshop_app_command_build | default('Not Set') }}
       devshop_app_command_deploy: {{ devshop_app_command_deploy | default('Not Set') }}
       devshop_app_command_install: {{ devshop_app_command_test | default('Not Set') }}
