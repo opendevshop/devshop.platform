@@ -42,7 +42,7 @@ provisioner:
 
   ansible_args:
     - "--inventory=services"
-    - "--extra_vars=@molecule/default/vars.yml"
+    - "--extra-vars=platform_vars_file=molecule/default/vars.yml"
 
   connection_options:
     ansible_connection: docker
