@@ -10,8 +10,8 @@ apps:
     # @TODO: Make it possible for these to be optional.
     # @TODO: throw an error when these don't exist.
     devshop_app_host: server.local.computer
-    devshop_app_server_http: site.local.computer
-    devshop_app_server_db: site.local.computer
+    devshop_app_server_http: server.local.computer
+    devshop_app_server_db: serverk.local.computer
 
     devshop_app_command_build: composer install --no-dev
     devshop_app_command_deploy: |
