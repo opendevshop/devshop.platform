@@ -83,7 +83,6 @@ def main():
         supports_check_mode=True
     )
 
-
     # manipulate or modify the state as needed (this is going to be the
     # part where your module will do what it needs to do)
 #     result['original_message'] = module.params['name']
