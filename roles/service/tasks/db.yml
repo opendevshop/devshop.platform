@@ -27,12 +27,20 @@
 
   register: devshop_service_app_register
 
+- name: "Warn if no databases found."
+  when: devshop_service_app_register.results[0].ansible_facts is not defined
+  debug:
+    msg: |
+      WARNING: No App Hosts were found with 'devshop_app_server_db' set to this host ('{{ inventory_hostname }}').
+
 - name: "Set Facts for host."
+  when: devshop_service_app_register.results[0].ansible_facts is defined
   set_fact:
     mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
     mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
 
 - name: "Set facts on app hosts."
+  when: devshop_service_app_register.results[0].ansible_facts is defined
   with_items: "{{ devshop_service_app_register.results }}"
   delegate_to: "{{ item.ansible_facts.devshop_app_host }}"
   delegate_facts: yes
