@@ -1,0 +1,16 @@
+---
+
+- name: Import the DevShop.Platform Playbook.
+  import_playbook: ../../playbook.yml
+
+- name: Change devshop_app_git_reference fact.
+  hosts: apps
+  gather_facts: no
+
+  tasks:
+    - name: Set app host to a new git reference.
+      set_fact:
+        devshop_app_git_reference: 9.x
+
+- name: Run the DevShop.Platform Playbook again.
+  import_playbook: ../../playbook.yml

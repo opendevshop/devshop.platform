@@ -26,6 +26,9 @@ jobs:
           - distro: ubuntu2004
             example: ten-sites
 
+          - distro: ubuntu2004
+            example: drupal-upgrade
+
     env:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
