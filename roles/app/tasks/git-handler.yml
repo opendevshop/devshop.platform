@@ -27,6 +27,9 @@
       Stages:
       {{ devshop_app_playbook_stages | to_nice_yaml}}
 
+      Stages to Skip:
+      {{ skip_stages | to_nice_yaml}}
+
 - name: Run DevShop App command stages.
   throttle: "{{ devshop_app_command_stages_throttle }}"
   loop: "{{ devshop_app_playbook_stages }}"
@@ -42,10 +45,23 @@
   become: yes
   become_user: "{{ devshop_app_user }}"
   when:
+    # Run the stage command when...
+    # A stage command exists
     - lookup('vars', 'devshop_app_command_' + stage)
+
+    # and the stage is not in the skip_stages variable.
     - stage not in skip_stages | list | join
+
   register: devshop_app_playbook_stage_register
   environment: "{{ devshop_app_shell_environment | combine(devshop_app_shell_environment_extra ) }}"
+
+- name: Set fact with stage run results grouped by stage.
+  set_fact:
+    devshop_app_stage_results:
+      rc: "{{ devshop_app_playbook_stage_register.results | item2dict(key_name='stage', value_name: 'rc') }}"
+      cmd: "{{ devshop_app_playbook_stage_register.results | item2dict(key_name='stage', value_name: 'cmd') }}"
+      stdout: "{{ devshop_app_playbook_stage_register.results | item2dict(key_name='stage', value_name: 'stdout') }}"
+      delta: "{{ devshop_app_playbook_stage_register.results | item2dict(key_name='stage', value_name: 'delta') }}"
 
 - name: DevShop.App Command Stages Complete.
   with_items: "{{ devshop_app_playbook_stage_register.results }}"
