@@ -1,0 +1,5 @@
+---
+
+# We use the drush role, so we know global drush is installed.
+drush_path: drush
+drupal_core_path: "{{ devshop_app_git_document_root_path }}"
