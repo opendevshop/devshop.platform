@@ -35,13 +35,29 @@ jobs:
 #        run: |
 #          yamllint .
   molecule:
-    name: "${{ matrix.example }} on ${{ matrix.distro }}"
+    name: "${{ matrix.distro }} - ${{ matrix.example }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        distro: [centos8, centos7, ubuntu1804, ubuntu2004, debian10]
-        example: [single-site, ten-sites]
+        include:
+          - distro: ubuntu2004
+            example: ten-sites
+
+          - distro: ubuntu2004
+            example: single-site
+
+          - distro: ubuntu1804
+            example: single-site
+
+          - distro: debian10
+            example: single-site
+
+          - distro: centos7
+            example: single-site
+
+          - distro: centos8
+            example: single-site
 
     steps:
       - name: Check out the codebase.
