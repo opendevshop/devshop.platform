@@ -17,9 +17,16 @@
       ---------------------------------
       Welcome to the DevShop.App role.
       ---------------------------------
-
-      {{ inventory_hostname }}
       {{ devshop_app_name }}.{{ devshop_app_environment }}
+      ---------------------------------
+
+      inventory_hostname: {{ inventory_hostname }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+      ansible_connection: {{ ansible_connection }}
+
+      groups:
+      {{ group_names | to_nice_yaml }}
 
       ---------------------------------
       Git Repository: {{ devshop_app_git_repository }}
