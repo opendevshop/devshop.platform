@@ -17,7 +17,11 @@
 - set_fact:
     devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_site_installed_register.stdout }}"
 
-- name: Add install to skipped_stages unless force_install is set.
+- name: Site Install Check Output
+  debug:
+    var: drupal_site_installed_register
+
+- name: "Site installed: {{ devshop_app_installed }}"
   set_fact:
     skip_stages: "{{ skip_stages + ['install']}}"
   when:
