@@ -49,9 +49,9 @@ version7:
     devshop_app_git_reference: 7.x
 
     # Default drupal app group uses drupal 8/9 commands.
-    devshop_app_command_install: |
+    devshop_app_command_install: >
       drush site-install {{ drupal_install_profile | default('standard') }} -y
-      --root={{ devshop_app_git_root }}
+      --root={{ devshop_app_git_document_root_path }}
       --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
       {{ drupal_site_install_extra_args | join(" ") }}
 
