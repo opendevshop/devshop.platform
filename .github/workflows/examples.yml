@@ -92,7 +92,7 @@ jobs:
           ${OPTIONS}
 
       - name: Run d again.
-        if: ${{ matrix.ansible_options_2 }}
+        if: ${{ matrix.ansible_options_2 and always() }}
         env:
           OPTIONS: ${{ matrix.ansible_options_2 }}
         run: |
