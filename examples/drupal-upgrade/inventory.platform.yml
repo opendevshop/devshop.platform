@@ -50,8 +50,11 @@ version7:
 
     # Default drupal app group uses drupal 8/9 commands.
     devshop_app_command_install: |
-      cd web
-      drush site-install --yes
+      drush site-install {{ drupal_install_profile | default('standard') }} -y
+      --root={{ devshop_app_git_root }}
+      --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
+      {{ drupal_site_install_extra_args | join(" ") }}
+
 
     devshop_app_command_deploy: |
       cd web
