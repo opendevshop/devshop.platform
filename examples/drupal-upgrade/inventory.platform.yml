@@ -1,74 +1,42 @@
 ---
-apps:
-  vars:
-    devshop_app_host: server.local.computer
-    devshop_app_server_http: server.local.computer
-    devshop_app_server_db: server.local.computer
-
-  children:
-
-    # App Group.
-    # Any child groups of "apps" becomes App Name,
-    composertemplate:
-      vars:
-        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
-
-        # For now, these must be defined in inventory because the devshop.host role
-        # does not load defaults from devshop.app role.
-        devshop_app_name: composertemplate
-        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
-
-
-      # App Hosts for composertemplate group
-      hosts:
-        d7.local.computer:
-          # Override group variables on specific hosts by assigning directly to the host.
-          # devshop_app_git_reference: 7.x-fork
-          # devshop_app_git_repository: git@github.com:fork/drupal-project.git
-
-        d8.local.computer:
-        d9.local.computer:
-
-# Server Hosts
-http:
-  hosts:
-    server.local.computer:
-db:
-  hosts:
-    server.local.computer:
-
-# App Group: Drupal
 drupal:
   children:
 
-    # Being in the "drupal" parent group tells the devshop.platform what kind of application the App Hosts in "composertemplate" group are.
-    composertemplate:
+    # App: composerupgrade
+    composerupgrade:
+
+      # App Host defaults for "composerupgrade" app group.
+      vars:
+
+        # App Host defaults.
+        devshop_app_host: server.local.computer
+        devshop_app_server_http: server.local.computer
+        devshop_app_server_db: server.local.computer
+        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
+
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+        devshop_app_git_reference: 9.x
+        devshop_app_name: composerupgrade
+
+      # Environments in "composerupgrade' app group.
+      hosts:
+        d7.local.computer:
+        d8.local.computer:
+        d9.local.computer:
+
+      # Sub groups within the "composerupgrade" app.
       children:
 
-        # Special group to override build command.
-        upgrade_from_earlier:
-          hosts:
-            d7.local.computer:
-            d8.local.computer:
-          vars:
-            devshop_app_command_build: |
-              rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
-              chmod +w web/sites/default
-              composer install
-              chmod -w web/sites/default
-
-        # Version Groups. Being in the "composertemplate" parent group means vars are inherited from the "composertemplate" group.
+        # Version Groups.
+        # Add App Hosts to these groups to specify their version. See inventory.sites.yml
         version7:
           vars:
             devshop_app_git_reference: 7.x
-
-            # Default drupal app group uses drupal 8/9 commands.
             devshop_app_command_install: >
               drush site-install {{ drupal_install_profile | default('standard') }} -y
               --root={{ devshop_app_git_document_root_path }}
               --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
               {{ drupal_site_install_extra_args | join(" ") }}
-
             devshop_app_command_deploy: |
               cd web
               drush updb --yes
@@ -80,3 +48,24 @@ drupal:
         version9:
           vars:
             devshop_app_git_reference: 9.x
+
+        # Special group to override build command.
+        # The standard drupal build command wont work on sites that need to be upgraded.
+        upgrade_from_earlier:
+          hosts:
+            d7.local.computer:
+            d8.local.computer:
+          vars:
+            devshop_app_command_build: |
+              rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
+              chmod +w web/sites/default
+              composer install
+              chmod -w web/sites/default
+
+# Server Hosts
+http:
+  hosts:
+    server.local.computer:
+db:
+  hosts:
+    server.local.computer:
