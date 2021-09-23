@@ -14,21 +14,24 @@ defaults:
 
 jobs:
   examples:
-    name: "Platform Example: ${{ matrix.example }}"
+    name: "Example: ${{ matrix.job_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - distro: ubuntu2004
+          - job_name: Single Site
+            distro: ubuntu2004
             ansible_options: |
               --inventory ./examples/single-site
 
-          - distro: ubuntu2004
+          - job_name: Ten Sites
+            distro: ubuntu2004
             ansible_options: |
               --inventory ./examples/ten-sites
 
-          - distro: ubuntu2004
+          - job_name: Drupal Upgrades
+            distro: ubuntu2004
             ansible_options: |
               --inventory ./examples/drupal-upgrade/inventory.platform.yml \
               --inventory ./examples/drupal-upgrade/inventory.sites.yml
