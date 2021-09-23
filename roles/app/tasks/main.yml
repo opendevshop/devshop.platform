@@ -91,15 +91,16 @@
   changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
     msg: |
-      Launching app command stages in {{ devshop_app_git_root }}
-      {% if force_build: %}
-        force_build was set.
-      {% endif %}
-
+      Launching App Commands.
       {% if git_results.changed: %}
-        Deploy code from Git detected changes.
+      Reason: Git changes detected.
+      {% elif force_build: %}
+      Reason: force_build was set.
       {% endif %}
 
+      devshop_app_installed: {{ devshop_app_installed }}
+
+      Git State:
       {{ git_results | to_nice_yaml }}
   notify:
     - git changed

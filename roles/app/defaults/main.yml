@@ -49,6 +49,10 @@ devshop_app_git_recursive: true
 # Set to true to check out submodules on their specified branch.
 devshop_app_git_track_submodules: false
 
+# Set to TRUE to skip the "install" command stage.
+# The app playbooks set this variable as each app type will have a different way of detecting if it is installed.
+devshop_app_installed: false
+
 # Notify git handlers even if git repo did not change.
 force_build: false
 
