@@ -20,6 +20,7 @@ drupal:
         vars:
           # Drupal7 sites won't upgrade due to the missing $settings['hash_salt'].
           # This hack pushes the $settings['hash_salt'] onto the settings file.
+          # This is only needed because we set up the site settings files with drush install, so the drupal 7 one is being used after upgrade.
           devshop_app_command_build: |
             rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
             chmod +w web/sites/default
