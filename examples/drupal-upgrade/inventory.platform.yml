@@ -16,7 +16,7 @@ apps:
         # For now, these must be defined in inventory because the devshop.host role
         # does not load defaults from devshop.app role.
         devshop_app_name: composertemplate
-        devshop_app_git_root: "{{ devshop_host_apps_root }}//{{ devshop_app_environment }}"
+        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
 
 
       # App Hosts for composertemplate group
