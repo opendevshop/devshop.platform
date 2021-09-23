@@ -15,7 +15,7 @@
   become: false
 
 - set_fact:
-    devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_site_installed.stdout | default(false) }}"
+    devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_site_installed_register.stdout }}"
 
 - name: Add install to skipped_stages unless force_install is set.
   set_fact:
