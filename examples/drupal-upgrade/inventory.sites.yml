@@ -2,16 +2,14 @@
 # Version Groups
 # User-defined.
 # Allows controlling an App Host's version by putting it in this group.
-composertemplate:
-  children:
-    version7:
-      hosts:
-        d7.local.computer:
+version7:
+  hosts:
+    d7.local.computer:
 
-    version8:
-      hosts:
-        d8.local.computer:
+version8:
+  hosts:
+    d8.local.computer:
 
-    version9:
-      hosts:
-        d9.local.computer:
+version9:
+  hosts:
+    d9.local.computer:
