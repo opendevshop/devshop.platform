@@ -97,7 +97,8 @@ class VarsModule(BaseVarsPlugin):
 
                                 vars['devshop_app_servers'][service] = app_service_server
 
-                        # @TODO Move this somewhere else, or load from groups. App name can come from a group, so this overrides devshop_app_names coming from groups.
+                        # @TODO Move this somewhere else, or load from groups. App name can come from a group,
+                        # so this overrides devshop_app_names coming from groups.
                         # Assign app name, if not set.
                         # if not entity.vars.get('devshop_app_name'):
                         #    vars['devshop_app_name'] = 'app'
