@@ -1,5 +1,10 @@
 ---
 apps:
+  vars:
+    devshop_app_host: server.local.computer
+    devshop_app_server_http: server.local.computer
+    devshop_app_server_db: server.local.computer
+
   children:
 
     # App Group.
@@ -13,9 +18,6 @@ apps:
         devshop_app_name: composertemplate
         devshop_app_git_root: "{{ devshop_host_apps_root }}//{{ devshop_app_environment }}"
 
-        devshop_app_host: server.local.computer
-        devshop_app_server_http: server.local.computer
-        devshop_app_server_db: server.local.computer
 
       # App Hosts for composertemplate group
       hosts:
@@ -46,6 +48,10 @@ version7:
   vars:
     devshop_app_git_reference: 7.x
 
+    # Default drupal app group uses drupal 8/9 commands.
+    devshop_app_command_deploy: |
+      drush updb --yes
+
 version8:
   vars:
     devshop_app_git_reference: 8.x
@@ -57,4 +63,4 @@ version9:
     # Override the default build command coming from the drupal app group.
     # After git checkout from old drupal, the vendor directories must be reinstalled.
     devshop_app_command_build: |
-      composer reinstall "*" --no-dev --no-progress --profile
+      composer reinstall "*" --no-progress --profile
