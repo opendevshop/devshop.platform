@@ -3,34 +3,28 @@
 # Host "thinkdrop.local.computer" is an App Host AND a Server Host.
 #
 apps:
-#  children:
-#    drupal:
-      vars:
-        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
-        devshop_app_git_reference: 9.x
-        devshop_app_host: server.local.computer
+  vars:
+    devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+    devshop_app_git_reference: 9.x
+    devshop_app_host: server.local.computer
 
-        # Needed until service_vars plugin is more powerful.
-        devshop_app_name: app
-        devshop_app_server_http: server.local.computer
-        devshop_app_server_db: server.local.computer
-        devshop_app_git_root: "/apps/{{ inventory_hostname }}"
+    # Needed until service_vars plugin is more powerful.
+    devshop_app_name: app
+    devshop_app_server_http: server.local.computer
+    devshop_app_server_db: server.local.computer
+    devshop_app_git_root: "/apps/{{ inventory_hostname }}"
 
-        # @TODO: Decide between this and devshop_app_host and delegate_to: in playbook.yml.
-#        ansible_host: server.local.computer
-#        ansible_connection: "{{ hostvars['server.local.computer']['ansible_connection'] }}"
-
-      hosts:
-        site1.local.computer:
-        site2.local.computer:
-        site3.local.computer:
-        site4.local.computer:
-        site5.local.computer:
-        site6.local.computer:
-        site7.local.computer:
-        site8.local.computer:
-        site9.local.computer:
-        site10.local.computer:
+  hosts:
+    site1.local.computer:
+    site2.local.computer:
+    site3.local.computer:
+    site4.local.computer:
+    site5.local.computer:
+    site6.local.computer:
+    site7.local.computer:
+    site8.local.computer:
+    site9.local.computer:
+    site10.local.computer:
 
 # Server Host
 http:
