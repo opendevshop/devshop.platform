@@ -49,19 +49,6 @@ drupal:
           vars:
             devshop_app_git_reference: 9.x
 
-        # Special group to override build command.
-        # The standard drupal build command wont work on sites that need to be upgraded.
-        upgrade_from_earlier:
-          hosts:
-            d7.local.computer:
-            d8.local.computer:
-          vars:
-            devshop_app_command_build: |
-              rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
-              chmod +w web/sites/default
-              composer install
-              chmod -w web/sites/default
-
 # Server Hosts
 http:
   hosts:
