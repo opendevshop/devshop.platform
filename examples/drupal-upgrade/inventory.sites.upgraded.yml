@@ -2,10 +2,10 @@
 # Version Groups
 # User-defined.
 # Allows controlling an App Host's version by putting it in this group.
-drupal9:
-  hosts:
-    d7.local.computer:
-    d8.local.computer:
-    d9.local.computer:
-  vars:
-    devshop_app_git_reference: 9.x
+composertemplate:
+  children:
+    version9:
+      hosts:
+        d8.local.computer:
+        d7.local.computer:
+        d9.local.computer:
