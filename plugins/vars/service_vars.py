@@ -91,9 +91,9 @@ class VarsModule(BaseVarsPlugin):
                                     or group.vars.get("devshop_app_server_%s" % service)
                                     or None
                                 )
-
-                                if not entity.vars.get("devshop_app_server_%s" % service):
-                                    vars["devshop_app_server_%s" % service] = app_service_server
+                                # Dont do this either. then users cant use groups to set servers.
+                                # if not entity.vars.get("devshop_app_server_%s" % service):
+                                #     vars["devshop_app_server_%s" % service] = app_service_server
 
                                 vars['devshop_app_servers'][service] = app_service_server
 
