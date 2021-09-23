@@ -9,6 +9,9 @@ apps:
         devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
         devshop_app_git_reference: 9.x
         devshop_app_host: server.local.computer
+
+        # Needed until service_vars plugin is more powerful.
+        devshop_app_name: app
         devshop_app_server_http: server.local.computer
         devshop_app_server_db: server.local.computer
         devshop_app_git_root: "/apps/{{ inventory_hostname }}"
