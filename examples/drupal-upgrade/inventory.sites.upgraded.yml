@@ -11,20 +11,20 @@ version9:
 drupal:
   children:
     composerupgrade:
-
-      # Special group to override build command.
-      # The standard drupal build command wont work on sites that need to be upgraded.
-      upgrade_from_earlier:
-        hosts:
-          d7.local.computer:
-        vars:
-          # Drupal7 sites won't upgrade due to the missing $settings['hash_salt'].
-          # This hack pushes the $settings['hash_salt'] onto the settings file.
-          # This is only needed because we set up the site settings files with drush install, so the drupal 7 one is being used after upgrade.
-          devshop_app_command_build: |
-            rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
-            chmod +w web/sites/default
-            composer install
-            echo "$settings['config_sync_directory'] = '../config/sync';";
-            echo "$settings['hash_salt'] = $drupal_hash_salt; \n" >> web/sites/default/settings.php
-            chmod -w web/sites/default
+      children:
+        # Special group to override build command.
+        # The standard drupal build command wont work on sites that need to be upgraded.
+        upgrade_from_earlier:
+          hosts:
+            d7.local.computer:
+          vars:
+            # Drupal7 sites won't upgrade due to the missing $settings['hash_salt'].
+            # This hack pushes the $settings['hash_salt'] onto the settings file.
+            # This is only needed because we set up the site settings files with drush install, so the drupal 7 one is being used after upgrade.
+            devshop_app_command_build: |
+              rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
+              chmod +w web/sites/default
+              composer install
+              echo "$settings['config_sync_directory'] = '../config/sync';";
+              echo "$settings['hash_salt'] = $drupal_hash_salt; \n" >> web/sites/default/settings.php
+              chmod -w web/sites/default
