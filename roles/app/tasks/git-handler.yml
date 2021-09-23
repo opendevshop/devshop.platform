@@ -67,6 +67,7 @@
   with_items: "{{ devshop_app_playbook_stage_register.results }}"
   loop_control:
     label: "{{ item.stage }}"
+  when: item.cmd is defined
   debug:
     msg: |
       App: http://{{ inventory_hostname }}
