@@ -97,9 +97,10 @@ class VarsModule(BaseVarsPlugin):
 
                                 vars['devshop_app_servers'][service] = app_service_server
 
+                        # @TODO Move this somewhere else, or load from groups. App name can come from a group, so this overrides devshop_app_names coming from groups.
                         # Assign app name, if not set.
-                        if not entity.vars.get('devshop_app_name'):
-                            vars['devshop_app_name'] = 'app'
+                        # if not entity.vars.get('devshop_app_name'):
+                        #    vars['devshop_app_name'] = 'app'
                             # @TODO: Set app_name from group name.
                             # # If host is in a group who's parent is "apps", use that.
                             # for app_host_group in entity.groups:
@@ -107,6 +108,7 @@ class VarsModule(BaseVarsPlugin):
                             #         if app_host_group_parent.name == 'apps':
                             #             vars['devshop_app_name'] = app_host_group.name
 
+                        # @TODO Move this somewhere else also, or load from groups.
                         # Assign env name from hostname, if not set.
                         if not entity.vars.get('devshop_app_environment'):
                             vars['devshop_app_environment'] = ''.join(filter(str.isalnum, entity.name))

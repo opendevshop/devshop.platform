@@ -13,15 +13,25 @@ devshop_app_role_tasks_from: "{{ devshop_app_type }}.yml"
 devshop_app_user: "platform"
 devshop_app_user_group: "{{ devshop_app_user }}"
 
-# The path to clone the "devshop_app_git_repository" to.
 devshop_host_apps_root: "/var/platform"
-devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }}"
+
+# The app and environment codenames.
+# Used for various things like paths or system domains.
+#
+devshop_app_name: "app"
+devshop_app_environment: "default"
 
 # The git remote to clone.
 devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-template.git"
 
 # The git reference to check out. (optional. If left blank, git repository default branch will be used.)
 devshop_app_git_reference: ""
+
+# The path to clone the "devshop_app_git_repository" to. Default: /var/platform/apps/app.com
+devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }}"
+
+# Alternative: place apps in folders based on app and environment name.
+# devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ devshop_app_name }}/{{ devshop_app_environment }}"
 
 # relative internal path to expose to the web server via the devshop_app_domain URL.
 # Used by tasks/commands. Not by apache vhost, (yet).
@@ -41,6 +51,9 @@ devshop_app_git_track_submodules: false
 
 # Notify git handlers even if git repo did not change.
 force_build: false
+
+# Run install stage even if devshop_app_installed == true
+force_install: false
 
 # Tell the app what to do when running the app playbook.
 # Override in your inventory or playbook extra vars.
