@@ -20,15 +20,22 @@
 - name: Preparing to launch command stages...
   debug:
     msg: |
-      Preparing to launch command stages for http://{{ inventory_hostname }}
+      ================={{ inventory_hostname }}=================
+      User: {{ devshop_app_user }}
+      Directory: {{ devshop_app_git_root }}
       Log File: {{ devshop_app_commands_log_file }}
-      App User: {{ devshop_app_user }}
 
-      Stages:
-      {{ devshop_app_playbook_stages | to_nice_yaml}}
+      {% for stage in devshop_app_playbook_stages %}
+      ----------------{{ stage }}----------------
+      {% if stage == skip_stages or stage in skip_stages %} (skipping) {% endif %}
+      {{ lookup('vars', 'devshop_app_command_' + stage) | default('Not set.') }}
+      {% endfor %}
 
+      {% if skip_stages: %}
+      -------------------------------------------
       Stages to Skip:
       {{ skip_stages | to_nice_yaml}}
+      {% endif %}
 
 - name: Run DevShop App command stages.
   throttle: "{{ devshop_app_command_stages_throttle }}"

@@ -21,6 +21,7 @@
       ---------------------------------
 
       inventory_hostname: {{ inventory_hostname }}
+      ansible_host:   {{ ansible_host }}
       nodename: {{ ansible_facts.nodename }}
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
       ansible_connection: {{ ansible_connection }}
@@ -33,10 +34,6 @@
       Git Reference:  {{ devshop_app_git_reference }}
       Git Root:       {{ devshop_app_git_root }}
       ---------------------------------
-      ansible_host:   {{ ansible_host }}
-      nodename:       {{ ansible_facts.nodename }}
-      Default IP:     {{ ansible_default_ipv4.address }}
-      ---------------------------------
       Servers:
       {{ devshop_app_servers | to_nice_yaml }}
       ---------------------------------
@@ -44,13 +41,8 @@
       ---------------------------------
       devshop_app_commands_log_file: {{ devshop_app_commands_log_file }}
 
-      devshop_app_command_build: {{ devshop_app_command_build | default('Not Set') }}
-      devshop_app_command_deploy: {{ devshop_app_command_deploy | default('Not Set') }}
-      devshop_app_command_install: {{ devshop_app_command_test | default('Not Set') }}
-      devshop_app_command_test: {{ devshop_app_command_test | default('Not Set') }}
-      ---------------------------------
-
       force_build: {{ force_build }}
+      force_install: {{ force_install }}
 
 - name: Prepare Parent Directory
   file:
