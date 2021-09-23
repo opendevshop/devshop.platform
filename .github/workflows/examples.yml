@@ -21,23 +21,26 @@ jobs:
       matrix:
         include:
           - distro: ubuntu2004
-            example: single-site
-            playbook: playbook.yml
+            ansible_options: |
+              --inventory ./examples/single-site
 
           - distro: ubuntu2004
-            example: ten-sites
-            playbook: playbook.yml
+            ansible_options: |
+              --inventory ./examples/ten-sites
 
           - distro: ubuntu2004
-            example: drupal-upgrade
-            playbook: examples/drupal-upgrade/playbook-upgrade.yml
+            ansible_options: |
+              --inventory ./examples/drupal-upgrade/inventory.platform.yml \
+              --inventory ./examples/drupal-upgrade/inventory.sites.yml
+            ansible_options_2: |
+              --inventory ./examples/drupal-upgrade/inventory.platform.yml \
+              --inventory ./examples/drupal-upgrade/inventory.sites.upgraded.yml
 
     env:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
       MOLECULE_DISTRO: ${{ matrix.distro }}
-      PLATFORM_EXAMPLE: ${{ matrix.example }}
-      ANSIBLE_PLAYBOOK: ${{ matrix.playbook }}
+      ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options }}
 
     steps:
       - name: Check out the codebase.
@@ -69,16 +72,26 @@ jobs:
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${PLATFORM_EXAMPLE} \
           --inventory ./services \
           --connection docker \
           --tags about
 
       - name: Run d.
+        env:
+          ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${PLATFORM_EXAMPLE} \
+          --inventory ./services \
+          --connection docker
+
+      - name: Run d again.
+        if: ${{ matrix.ansible_options_2 }}
+        env:
+          ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options_2 }}
+        run: |
+          ./d \
+          --extra-vars @molecule/default/vars.yml \
           --inventory ./services \
           --connection docker
 

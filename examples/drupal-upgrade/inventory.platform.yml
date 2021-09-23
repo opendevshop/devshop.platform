@@ -1,0 +1,51 @@
+---
+apps:
+  children:
+
+    # App Group.
+    # Any child groups of "apps" becomes App Name,
+    composertemplate:
+      vars:
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+
+        # @TODO: Remove once these are set automatically.
+        devshop_app_host: server.local.computer
+        devshop_app_server_http: server.local.computer
+        devshop_app_server_db: server.local.computer
+
+      # App Hosts for composertemplate group
+      hosts:
+        d7.local.computer:
+          # Override group variables on specific hosts by assigning directly to the host.
+          # devshop_app_git_reference: 7.x-fork
+          # devshop_app_git_repository: git@github.com:fork/drupal-project.git
+
+        d8.local.computer:
+        d9.local.computer:
+
+# Server Hosts
+http:
+  hosts:
+    server.local.computer:
+db:
+  hosts:
+    server.local.computer:
+
+# App Group: Drupal
+# Tells the devshop.platform what kind of application this is.
+drupal:
+  children:
+    composertemplate:
+
+# Version Groups.
+version7:
+  vars:
+    devshop_app_git_reference: 7.x
+
+version8:
+  vars:
+    devshop_app_git_reference: 8.x
+
+version9:
+  vars:
+    devshop_app_git_reference: 9.x
