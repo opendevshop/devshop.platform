@@ -24,5 +24,6 @@ drupal:
             rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
             chmod +w web/sites/default
             composer install
+            echo "$settings['config_sync_directory'] = '../config/sync';";
             echo "$settings['hash_salt'] = $drupal_hash_salt; \n" >> web/sites/default/settings.php
             chmod -w web/sites/default
