@@ -84,6 +84,7 @@ jobs:
 
       - name: Upload artifacts.
         uses: actions/upload-artifact@v2
+        if: ${{ always() }}
         with:
           name: "artifact-${{ matrix.example }}"
           path: devshop.platform/molecule/default/artifacts
