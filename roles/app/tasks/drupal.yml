@@ -7,7 +7,7 @@
 # @TODO: This runs BEFORE git clone, so files won't exist the first time, which should result in devshop_app_installed = false.
 - name: Check if site is already installed.
   command:
-    cmd: "drush status"
+    cmd: "drush status --root={{ devshop_app_git_root }}"
     chdir: "{{ devshop_app_git_root }}"
   register: drupal_status_register
   failed_when: "drupal_status_register.stdout is undefined"
