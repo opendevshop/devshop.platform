@@ -8,7 +8,11 @@ apps:
       vars:
         devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
 
-        # @TODO: Remove once these are set automatically.
+        # For now, these must be defined in inventory because the devshop.host role
+        # does not load defaults from devshop.app role.
+        devshop_app_name: composertemplate
+        devshop_app_git_root: "{{ devshop_host_apps_root }}//{{ devshop_app_environment }}"
+
         devshop_app_host: server.local.computer
         devshop_app_server_http: server.local.computer
         devshop_app_server_db: server.local.computer
