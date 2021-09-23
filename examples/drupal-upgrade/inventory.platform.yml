@@ -49,7 +49,12 @@ version7:
     devshop_app_git_reference: 7.x
 
     # Default drupal app group uses drupal 8/9 commands.
+    devshop_app_command_install: |
+      cd web
+      drush site-install --yes
+
     devshop_app_command_deploy: |
+      cd web
       drush updb --yes
 
 version8:
@@ -59,8 +64,3 @@ version8:
 version9:
   vars:
     devshop_app_git_reference: 9.x
-
-    # Override the default build command coming from the drupal app group.
-    # After git checkout from old drupal, the vendor directories must be reinstalled.
-    devshop_app_command_build: |
-      composer reinstall "*" --no-progress --profile
