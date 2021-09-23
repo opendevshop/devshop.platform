@@ -12,8 +12,9 @@
   copy:
     content: "{{ devshop_app_commands_log_file_start_content }}"
     dest: "{{ devshop_app_commands_log_file }}"
-    owner: "{{ devshop_app_user }}"
-    group: "{{ devshop_app_user }}"
+    owner: "{{ devshop_app_commands_log_file_owner }}"
+    group: "{{ devshop_app_commands_log_file_group }}"
+    mode: "{{ devshop_app_commands_log_file_mode }}"
   when: devshop_app_commands_log_file_delete_before_start
 
 - name: Preparing to launch command stages...
@@ -25,6 +26,9 @@
 
       Stages:
       {{ devshop_app_playbook_stages | to_nice_yaml}}
+
+      Stages to Skip:
+      {{ skip_stages | to_nice_yaml}}
 
 - name: Run DevShop App command stages.
   throttle: "{{ devshop_app_command_stages_throttle }}"
@@ -41,15 +45,30 @@
   become: yes
   become_user: "{{ devshop_app_user }}"
   when:
+    # Run the stage command when...
+    # A stage command exists
     - lookup('vars', 'devshop_app_command_' + stage)
+
+    # and the stage is not in the skip_stages variable.
     - stage not in skip_stages | list | join
+
+  changed_when: false
   register: devshop_app_playbook_stage_register
   environment: "{{ devshop_app_shell_environment | combine(devshop_app_shell_environment_extra ) }}"
+
+#- name: Set fact with stage run results grouped by stage.
+#  set_fact:
+#    devshop_app_stage_results:
+#      rc: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'rc') }}"
+#      cmd: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'cmd') }}"
+#      stdout: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'stdout') }}"
+#      delta: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'delta') }}"
 
 - name: DevShop.App Command Stages Complete.
   with_items: "{{ devshop_app_playbook_stage_register.results }}"
   loop_control:
     label: "{{ item.stage }}"
+  when: item.cmd is defined
   debug:
     msg: |
       App: http://{{ inventory_hostname }}

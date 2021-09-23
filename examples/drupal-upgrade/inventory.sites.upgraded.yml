@@ -1,0 +1,24 @@
+---
+# Version Groups
+# User-defined.
+# Allows controlling an App Host's version by putting it in this group.
+composertemplate:
+  children:
+    version9:
+      hosts:
+        d9.local.computer:
+
+        # Override the default build command coming from the drupal app group.
+        # After git checkout from old drupal, the vendor directories must be reinstalled.
+        d8.local.computer:
+          devshop_app_command_build: |
+            rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
+            composer install
+        # The CHMOD is needed because drush site install removes write perms and the
+        # drupal 7 sites need to get it's first default.*.yml files.
+        d7.local.computer:
+          devshop_app_command_build: |
+            rm -rf composer.lock vendor web/core web/modules/contrib web/themes/contrib web/libraries
+            chmod +w web/sites/default
+            composer install
+            chmod -w web/sites/default

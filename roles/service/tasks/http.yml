@@ -12,6 +12,8 @@
     devshop_app_apache_vhost:
 
       servername: "{{ item }}"
+
+      # NOTE: hostvars are from inventory. They do NOT include app role defaults.
       documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
       extra_parameters: |
         {% if 'devshop_app_domains' in hostvars[item]: %}

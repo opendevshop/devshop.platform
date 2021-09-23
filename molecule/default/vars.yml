@@ -6,4 +6,8 @@
 
 # The /artifacts folder inside the instance is mapped to ./molecule/default/artifacts.
 
+# Save logs to /artifacts folder.
 devshop_app_commands_log_file: "/artifacts/{{ inventory_hostname }}.build.log"
+
+# Allow docker host user to read the files.
+devshop_app_commands_log_file_mode: "0777"

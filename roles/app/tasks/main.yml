@@ -73,6 +73,12 @@
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
 
+- name: Run App Tasks.
+  include_role:
+    name: "{{ devshop_app_role }}"
+    defaults_from: "{{ devshop_app_role_defaults_from }}"
+    tasks_from: "{{ devshop_app_role_tasks_from }}"
+
 # Launch Logic:
 # Task will RUN if:
 #  - there are git changes OR

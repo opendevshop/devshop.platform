@@ -1,0 +1,69 @@
+---
+apps:
+  vars:
+    devshop_app_host: server.local.computer
+    devshop_app_server_http: server.local.computer
+    devshop_app_server_db: server.local.computer
+
+  children:
+
+    # App Group.
+    # Any child groups of "apps" becomes App Name,
+    composertemplate:
+      vars:
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+
+        # For now, these must be defined in inventory because the devshop.host role
+        # does not load defaults from devshop.app role.
+        devshop_app_name: composertemplate
+        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
+
+
+      # App Hosts for composertemplate group
+      hosts:
+        d7.local.computer:
+          # Override group variables on specific hosts by assigning directly to the host.
+          # devshop_app_git_reference: 7.x-fork
+          # devshop_app_git_repository: git@github.com:fork/drupal-project.git
+
+        d8.local.computer:
+        d9.local.computer:
+
+# Server Hosts
+http:
+  hosts:
+    server.local.computer:
+db:
+  hosts:
+    server.local.computer:
+
+# App Group: Drupal
+# Tells the devshop.platform what kind of application this is.
+drupal:
+  children:
+    composertemplate:
+
+# Version Groups.
+version7:
+  vars:
+    devshop_app_git_reference: 7.x
+
+    # Default drupal app group uses drupal 8/9 commands.
+    devshop_app_command_install: >
+      drush site-install {{ drupal_install_profile | default('standard') }} -y
+      --root={{ devshop_app_git_document_root_path }}
+      --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
+      {{ drupal_site_install_extra_args | join(" ") }}
+
+
+    devshop_app_command_deploy: |
+      cd web
+      drush updb --yes
+
+version8:
+  vars:
+    devshop_app_git_reference: 8.x
+
+version9:
+  vars:
+    devshop_app_git_reference: 9.x

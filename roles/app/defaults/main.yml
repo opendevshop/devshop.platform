@@ -1,4 +1,14 @@
 ---
+
+devshop_app_type: drupal
+
+# The devshop.app role uses include_role after the git code is cloned to process the application.
+# These variables determine what role and what files to load from that role.
+# The role to include and the files to include.
+devshop_app_role: app
+devshop_app_role_defaults_from: "{{ devshop_app_type }}.yml"
+devshop_app_role_tasks_from: "{{ devshop_app_type }}.yml"
+
 # The user to clone code and run commands with.
 devshop_app_user: "platform"
 devshop_app_user_group: "{{ devshop_app_user }}"
@@ -12,6 +22,11 @@ devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-templ
 
 # The git reference to check out. (optional. If left blank, git repository default branch will be used.)
 devshop_app_git_reference: ""
+
+# relative internal path to expose to the web server via the devshop_app_domain URL.
+# Used by tasks/commands. Not by apache vhost, (yet).
+devshop_app_git_document_root: web
+devshop_app_git_document_root_path: "{{ devshop_app_git_root }}/{{ devshop_app_git_document_root }}"
 
 # Whether the git checkout should be forced. If set to true, any local modifications to files will be lost.
 devshop_app_git_force: true

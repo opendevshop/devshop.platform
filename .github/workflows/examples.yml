@@ -14,23 +14,35 @@ defaults:
 
 jobs:
   examples:
-    name: "Platform Example: ${{ matrix.example }}"
+    name: "Example: ${{ matrix.job_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - distro: ubuntu2004
-            example: single-site
+          - job_name: Single Site
+            distro: ubuntu2004
+            ansible_options: |
+              --inventory ./examples/single-site
 
-          - distro: ubuntu2004
-            example: ten-sites
+          - job_name: Ten Sites
+            distro: ubuntu2004
+            ansible_options: |
+              --inventory ./examples/ten-sites
+
+          - job_name: Drupal Upgrades
+            distro: ubuntu2004
+            ansible_options: |
+              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+              --inventory ./examples/drupal-upgrade/inventory.sites.yml
+            ansible_options_2: |
+              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+              --inventory ./examples/drupal-upgrade/inventory.sites.upgraded.yml
 
     env:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
       MOLECULE_DISTRO: ${{ matrix.distro }}
-      MOLECULE_EXAMPLE: ${{ matrix.example }}
 
     steps:
       - name: Check out the codebase.
@@ -47,7 +59,7 @@ jobs:
         run: pip3 install ansible molecule[docker] docker
 
       # See: https://github.com/geerlingguy/ansible-role-mysql/issues/422
-      - name: Disable AppArmor on Debian.
+      - name: Disable AppArmoDuring a workflow run, files are uploaded and downloaded individually using the upload-artifact and download-artifact actions. However, when a workflow run finishes and an artifact is downloaded from either the UI or through the download api, a zip is dynamically created with all the file contents that were uploaded. There is currently no way to download artifacts after a workflow run finishes in a format other than a zip or to download artifact contents individually. One of the consequences of this limitation is that if a zip is uploaded during a workflow run and then downloaded from the UI, there will be a double zip created.r on Debian.
         run: |
           set -x
           sudo apt-get install apparmor-profiles
@@ -59,23 +71,40 @@ jobs:
         run: molecule create
 
       - name: Run d with 'about' tag.
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
           --connection docker \
-          --tags about
+          --tags about \
+          ${OPTIONS}
 
       - name: Run d.
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
-          --inventory ./examples/${MOLECULE_EXAMPLE} \
           --inventory ./services \
-          --connection docker
+          --connection docker \
+          ${OPTIONS}
+
+      - name: Run d again.
+        if: ${{ matrix.ansible_options_2 }} and {{ always() }}
+        env:
+          OPTIONS: ${{ matrix.ansible_options_2 }}
+        run: |
+          ./d \
+          --extra-vars @molecule/default/vars.yml \
+          --inventory ./services \
+          --connection docker \
+          ${OPTIONS}
 
       - name: Upload artifacts.
         uses: actions/upload-artifact@v2
+        if: ${{ always() }}
         with:
+          name: "artifact-${{ matrix.example }}"
           path: devshop.platform/molecule/default/artifacts

@@ -1,23 +1,24 @@
 ---
-- name: "Hi App Host"
+- name: "Welcome to the DevShop.App role: Drupal."
   debug:
-    msg: "{{ devshop_app_hostname }}"
+    msg: |
+      inventory_hostname: {{ inventory_hostname }}"
+
+- name: Check if site is already installed.
+  command: "{{ drush_path }} --root={{ drupal_core_path }} status bootstrap"
+  args:
+    chdir: "{{ drupal_core_path }}"
+  register: drupal_site_installed
+  failed_when: "drupal_site_installed.stdout is undefined"
+  changed_when: false
+  become: false
 
 - set_fact:
-    apache_vhosts: []
+    devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_site_installed.stdout }}"
 
-- name: "Gather Vhosts"
-  loop: "{{ devshop_app_host['devshop_app_data']['environments'] | list }}"
+- name: Add install to skipped_stages unless force_install is set.
   set_fact:
-    apache_vhosts: "{{ apache_vhosts + [{
-        'servername': devshop_app_hostname,
-        'documentroot': devshop_app_git_root + '/' + devshop_app_source_docroot,
-        'serveralias': devshop_app_environment.domains | default([])
-
-    }] }}"
-  vars:
-    apache_vhosts: []
-
-- name: "Vhosts Set!"
-  debug:
-    msg: "{{ apache_vhosts | to_nice_yaml }}"
+    skip_stages: "{{ skip_stages + ['install']}}"
+  when:
+    - devshop_app_installed
+    - force_install is not defined or force_install == false
