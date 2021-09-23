@@ -37,5 +37,8 @@ db:
   hosts:
     server.local.computer:
 
-# Put all hosts in the "app" group in the "drupal" group, too.all:
+# Put all hosts in the "tensites" group in the "drupal" group, too.all:
 # This tells each app to inherit the variables in the "drupal" group, such as build commands.
+drupal:
+  children:
+    tensites:
