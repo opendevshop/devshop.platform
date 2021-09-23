@@ -40,7 +40,6 @@ jobs:
       PY_COLORS: '1'
       ANSIBLE_FORCE_COLOR: '1'
       MOLECULE_DISTRO: ${{ matrix.distro }}
-      ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options }}
 
     steps:
       - name: Check out the codebase.
@@ -69,31 +68,36 @@ jobs:
         run: molecule create
 
       - name: Run d with 'about' tag.
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
           --inventory ./services \
           --connection docker \
-          --tags about
+          --tags about \
+          ${OPTIONS}
 
       - name: Run d.
         env:
-          ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options }}
+          OPTIONS: ${{ matrix.ansible_options }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
           --inventory ./services \
-          --connection docker
+          --connection docker \
+          ${OPTIONS}
 
       - name: Run d again.
         if: ${{ matrix.ansible_options_2 }}
         env:
-          ANSIBLE_PLAYBOOK_COMMAND_OPTIONS: ${{ matrix.ansible_options_2 }}
+          OPTIONS: ${{ matrix.ansible_options_2 }}
         run: |
           ./d \
           --extra-vars @molecule/default/vars.yml \
           --inventory ./services \
-          --connection docker
+          --connection docker \
+          ${OPTIONS}
 
       - name: Upload artifacts.
         uses: actions/upload-artifact@v2
