@@ -44,7 +44,10 @@ drupal:
         version8:
           vars:
             devshop_app_git_reference: 8.x
-
+            
+            # Override the repo used for this environment. Remove if the PR is merged.
+            devshop_app_git_repository: https://github.com/jonpugh/drupal-project
+            devshop_app_git_reference: patch-1
         version9:
           vars:
             devshop_app_git_reference: 9.x
