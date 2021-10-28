@@ -28,3 +28,7 @@ drupal:
               echo "\$settings['config_sync_directory'] = '../config/sync';";
               echo "\$settings['hash_salt'] = $drupal_hash_salt; \n" >> web/sites/default/settings.php
               chmod -w web/sites/default web/sites/default/settings.php
+
+            # Check out site to a new directory, because direct checkout to new branch breaks due to "hash_salt" issue.
+            # @TODO: If/when this works, remove other hacks above.
+            devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}-upgraded"
