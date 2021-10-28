@@ -6,23 +6,26 @@ The DevShop.Platform Ansible collection extends Ansible's reach to track applica
 
 ## Components
 
-1. App Hosts. "Virtual" Ansible host entries that reference a running instance of an application. (a.k.a. an "app environment".).
-2. Service Groups. A "service" is an abstract list of roles that provides something to App Hosts. Any host assigned to a Service Group becomes a "Server Host".
-3. Server Hosts. Ansible host entries that provide "services" to applications. Once assigned, the list of `devshop_server_roles` is aggregated from the Service Group variable `devshop_service_roles_NAME`.
-4. App Roles. Meta roles to install applications of pre-defined types, such as Drupal or node.
-
-## Included content
-
-
-
-
-
-<!-- Galaxy will eventually list the module docs within the UI, but until that is ready, you may need to either describe your plugins etc here, or point to an external docsite to cover that information. -->
+1. App Hosts. 
+   - Ansible Hosts that refer to a single website, containing variables needed to deploy the site to one or many servers. 
+   - Multiple App Hosts can be assigned to a single Server Host, similar to Apache Vhosts. 
+   - App hosts store the Ansible facts/vars that are needed to install the site, such as Git repository, git reference, and web and database servers. 
+   - App Hosts can run App Roles, such as `geerlingguy.drupal` to finish set up of individual apps.
+2. Server Hosts. 
+   - Ansible Hosts that refer to real servers. 
+   - Server Hosts are assigned roles based on what "Service Groups" they are in. 
+   - Server Host list variables (such as `apache_vhosts` and `mysql_databases`) are aggregated from all App Hosts that are using each service to allow multiple App Hosts per Server.
+3. Service Groups. 
+  - A Service Group is an Ansible Host Group that provides a list of roles that get assigned to all members of the group. The groups are used to organize your Server Hosts by purpose, such as Web or DB.
+  - See [./services/http.yml](./services/http.yml) for an example.
+4. App Groups.
+  - An App Group contains default variables for App Hosts that are built from pre-defined apps such as Drupal. 
+  - Each App Group can set different "build" or "install" commands, such as `composer install` vs. `npm build` or `drush site-install` vs `app install`
+  - See [./services/drupal.yml](./services/drupal.yml) for an example.
 
 ## Using this collection
 
-<!--Include some quick examples that cover the most common use cases for your collection content. It can include the following examples of installation and upgrade (change NAMESPACE.COLLECTION_NAME correspondingly):-->
-
+See [examples folder](./examples) for samples implementations. 
 
 ## Code of Conduct
 

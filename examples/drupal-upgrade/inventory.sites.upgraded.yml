@@ -7,6 +7,9 @@ version9:
     d9.local.computer:
     d7.local.computer:
     d8.local.computer:
+      # Check out site to a new directory, because direct checkout to new branch breaks due to "hash_salt" issue.
+      devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}-upgraded"
+
 
 drupal:
   children:
