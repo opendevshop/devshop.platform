@@ -17,6 +17,13 @@
     mode: "{{ devshop_app_commands_log_file_mode }}"
   when: devshop_app_commands_log_file_delete_before_start
 
+- name: "If site installed, skip install stage."
+  set_fact:
+    skip_stages: "{{ skip_stages + ['install']}}"
+  when:
+    - devshop_app_installed
+    - force_install is not defined or force_install == false
+
 - name: Preparing to launch command stages...
   debug:
     msg: |

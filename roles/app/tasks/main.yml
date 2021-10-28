@@ -52,6 +52,13 @@
     group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
+# @TODO: Convert to pre-git tasks, then add post-command tasks as well.
+- name: Run App Tasks.
+  include_role:
+    name: "{{ devshop_app_role }}"
+    defaults_from: "{{ devshop_app_role_defaults_from }}"
+    tasks_from: "{{ devshop_app_role_tasks_from }}"
+
 - name: Deploy code from Git
 
   # On idempotent test runs, any changes to the working copy cause failure.
@@ -72,12 +79,6 @@
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
 
-- name: Run App Tasks.
-  include_role:
-    name: "{{ devshop_app_role }}"
-    defaults_from: "{{ devshop_app_role_defaults_from }}"
-    tasks_from: "{{ devshop_app_role_tasks_from }}"
-
 # Launch Logic:
 # Task will RUN if:
 #  - there are git changes OR
@@ -90,15 +91,16 @@
   changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
     msg: |
-      Launching app command stages in {{ devshop_app_git_root }}
-      {% if force_build: %}
-        force_build was set.
-      {% endif %}
-
+      Launching App Commands.
       {% if git_results.changed: %}
-        Deploy code from Git detected changes.
+      Reason: Git changes detected.
+      {% elif force_build: %}
+      Reason: force_build was set.
       {% endif %}
 
+      devshop_app_installed: {{ devshop_app_installed }}
+
+      Git State:
       {{ git_results | to_nice_yaml }}
   notify:
     - git changed

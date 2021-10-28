@@ -4,27 +4,29 @@
 #
 apps:
   vars:
-    devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
-    devshop_app_git_reference: 9.x
     devshop_app_host: server.local.computer
-
-    # Needed until service_vars plugin is more powerful.
-    devshop_app_name: app
     devshop_app_server_http: server.local.computer
     devshop_app_server_db: server.local.computer
     devshop_app_git_root: "/apps/{{ inventory_hostname }}"
 
-  hosts:
-    site1.local.computer:
-    site2.local.computer:
-    site3.local.computer:
-    site4.local.computer:
-    site5.local.computer:
-    site6.local.computer:
-    site7.local.computer:
-    site8.local.computer:
-    site9.local.computer:
-    site10.local.computer:
+  children:
+    tensites:
+      vars:
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+        devshop_app_git_reference: 9.x
+        devshop_app_name: tensites
+
+      hosts:
+        site1.local.computer:
+        site2.local.computer:
+        site3.local.computer:
+        site4.local.computer:
+        site5.local.computer:
+        site6.local.computer:
+        site7.local.computer:
+        site8.local.computer:
+        site9.local.computer:
+        site10.local.computer:
 
 # Server Host
 http:
@@ -35,8 +37,8 @@ db:
   hosts:
     server.local.computer:
 
-# Put all hosts in the "app" group in the "drupal" group, too.all:
+# Put all hosts in the "tensites" group in the "drupal" group, too.all:
 # This tells each app to inherit the variables in the "drupal" group, such as build commands.
 drupal:
   children:
-    apps:
+    tensites:
