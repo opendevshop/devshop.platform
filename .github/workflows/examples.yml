@@ -30,15 +30,16 @@ jobs:
             ansible_options: |
               --inventory ./examples/ten-sites
 
-          - job_name: Drupal Upgrades
-            distro: ubuntu2004
-            ansible_options: |
-              --inventory ./examples/drupal-upgrade/inventory.platform.yml
-              --inventory ./examples/drupal-upgrade/inventory.sites.yml
-            ansible_options_2: |
-              --inventory ./examples/drupal-upgrade/inventory.platform.yml
-              --inventory ./examples/drupal-upgrade/inventory.sites.upgraded.yml
-              --extra-vars artifact_suffix=upgrade
+# @TODO: Create a simpler upgrade process test/example.
+#          - job_name: Drupal Upgrades
+#            distro: ubuntu2004
+#            ansible_options: |
+#              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+#              --inventory ./examples/drupal-upgrade/inventory.sites.yml
+#            ansible_options_2: |
+#              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+#              --inventory ./examples/drupal-upgrade/inventory.sites.upgraded.yml
+#              --extra-vars artifact_suffix=upgrade
 
     env:
       PY_COLORS: '1'
