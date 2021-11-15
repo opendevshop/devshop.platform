@@ -1,0 +1,9 @@
+---
+servers:
+  children:
+    db:
+      vars:
+        devshop_service_db:
+          name: Database service for Drupal (using MySQL
+          roles:
+            - geerlingguy.mysql

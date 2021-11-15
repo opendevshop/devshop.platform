@@ -1,0 +1,8 @@
+---
+__devshop_host_common_packages:
+  - git
+  - vim
+  - nano
+  - openssh-client
+  - curl
+  - unzip

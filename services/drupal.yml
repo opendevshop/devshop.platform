@@ -1,0 +1,40 @@
+---
+apps:
+  vars:
+
+    # Needs to be here for service_vars to look it up.
+    devshop_app_service_requirements:
+      http:
+        required: yes
+      db:
+        required: yes
+      solr:
+      redis:
+      varnish:
+
+  children:
+    drupal:
+      vars:
+        drupal_install_profile: standard
+        drupal_site_install_extra_args: []
+
+        devshop_app_command_build: |
+          composer install
+
+        devshop_app_command_install: >
+          vendor/bin/drush site-install {{ drupal_install_profile | default('standard') }} -y
+          --root={{ devshop_app_git_root }}
+          --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
+          {{ drupal_site_install_extra_args | join(" ") }}
+
+        # The new "drush deploy" command includes all of these steps.
+        devshop_app_command_deploy: |
+          drush updatedb --no-cache-clear -y
+          drush cache:rebuild
+          drush config:import --preview -y
+          drush cache:rebuild
+          drush deploy:hook
+
+        devshop_app_command_test: |
+          vendor/bin/drush status
+          vendor/bin/drush uli

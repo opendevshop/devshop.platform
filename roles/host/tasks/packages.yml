@@ -1,0 +1,23 @@
+---
+
+- name: Define devshop_host_common_packages.
+  set_fact:
+    devshop_host_common_packages: "{{ __devshop_host_common_packages | list }}"
+  when: devshop_host_common_packages is not defined
+
+- name: Update package cache
+  apt:
+    update_cache: yes
+  when: ansible_os_family == "Debian"
+  tags: molecule-idempotence-notest
+
+- name: Update package cache
+  yum:
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+  tags: molecule-idempotence-notest
+
+- name: Install common packages
+  package:
+    name: "{{ devshop_host_common_packages }}"
+    state: "{{ devshop_host_common_packages_state }}"

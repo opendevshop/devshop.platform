@@ -1,0 +1,57 @@
+---
+# @see https://molecule.readthedocs.io/en/latest/configuration.html
+
+dependency:
+  name: galaxy
+  options:
+    role-file: roles.yml
+    requirements-file: roles.yml
+    roles-path: $MOLECULE_PROJECT_DIRECTORY/roles/contrib
+
+    # Collections are not roles. Don't include in the platform codebase unless necessary.
+    collections-path: $MOLECULE_PROJECT_DIRECTORY/roles/contrib
+    force: false
+
+driver:
+  name: docker
+
+platforms:
+  # Set to match inventory hosts
+  - name: server.local.computer
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu1804}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker
+      - $MOLECULE_SCENARIO_DIRECTORY/artifacts:/artifacts
+    privileged: true
+    pre_build_image: true
+    exposed_ports:
+      - '80:80'
+    published_ports:
+      - "0.0.0.0:80:80/tcp"
+
+provisioner:
+  name: ansible
+  playbooks:
+    converge: ../../playbook.yml
+  inventory:
+    links:
+      # Gets added as a symlink called "inventory" in the test.
+      hosts: $MOLECULE_PROJECT_DIRECTORY/examples/${MOLECULE_EXAMPLE:-single-site}
+
+  ansible_args:
+    - "--inventory=services"
+    - "--extra-vars=platform_vars_file=molecule/default/vars.yml"
+
+  connection_options:
+    ansible_connection: docker
+
+  env:
+    ANSIBLE_CONFIG: ${MOLECULE_PROJECT_DIRECTORY}/ansible.cfg
+    ANSIBLE_ROLES_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles:${MOLECULE_PROJECT_DIRECTORY}/roles/contrib
+    ANSIBLE_COLLECTIONS_PATH: ${MOLECULE_PROJECT_DIRECTORY}/roles/contrib
+    ANSIBLE_VARS_PLUGINS: ${MOLECULE_PROJECT_DIRECTORY}/plugins/vars
+
+verifier:
+  name: ansible

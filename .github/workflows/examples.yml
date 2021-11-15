@@ -1,0 +1,112 @@
+---
+name: Platform Example Tests
+'on':
+  pull_request:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 4 * * 4"
+
+defaults:
+  run:
+    working-directory: 'devshop.platform'
+
+jobs:
+  examples:
+    name: "Example: ${{ matrix.job_name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job_name: Single Site
+            distro: ubuntu2004
+            ansible_options: |
+              --inventory ./examples/single-site
+
+          - job_name: Ten Sites
+            distro: ubuntu2004
+            ansible_options: |
+              --inventory ./examples/ten-sites
+
+# @TODO: Create a simpler upgrade process test/example.
+#          - job_name: Drupal Upgrades
+#            distro: ubuntu2004
+#            ansible_options: |
+#              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+#              --inventory ./examples/drupal-upgrade/inventory.sites.yml
+#            ansible_options_2: |
+#              --inventory ./examples/drupal-upgrade/inventory.platform.yml
+#              --inventory ./examples/drupal-upgrade/inventory.sites.upgraded.yml
+#              --extra-vars artifact_suffix=upgrade
+
+    env:
+      PY_COLORS: '1'
+      ANSIBLE_FORCE_COLOR: '1'
+      MOLECULE_DISTRO: ${{ matrix.distro }}
+
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: 'devshop.platform'
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install ansible molecule[docker] docker
+
+      # See: https://github.com/geerlingguy/ansible-role-mysql/issues/422
+      - name: Disable AppArmoDuring a workflow run, files are uploaded and downloaded individually using the upload-artifact and download-artifact actions. However, when a workflow run finishes and an artifact is downloaded from either the UI or through the download api, a zip is dynamically created with all the file contents that were uploaded. There is currently no way to download artifacts after a workflow run finishes in a format other than a zip or to download artifact contents individually. One of the consequences of this limitation is that if a zip is uploaded during a workflow run and then downloaded from the UI, there will be a double zip created.r on Debian.
+        run: |
+          set -x
+          sudo apt-get install apparmor-profiles
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+        if: ${{ startsWith(matrix.distro, 'debian') }}
+
+      - name: Create a molecule instance.
+        run: molecule create
+
+      - name: Run d with 'about' tag.
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
+        run: |
+          ./d \
+          --extra-vars @molecule/default/vars.yml \
+          --inventory ./services \
+          --connection docker \
+          --tags about \
+          ${OPTIONS}
+
+      - name: Run d.
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
+        run: |
+          ./d \
+          --extra-vars @molecule/default/vars.yml \
+          --inventory ./services \
+          --connection docker \
+          ${OPTIONS}
+
+      - name: Run d again.
+        if: ${{ matrix.ansible_options_2 }} and {{ always() }}
+        env:
+          OPTIONS: ${{ matrix.ansible_options_2 }}
+        run: |
+          ./d \
+          --extra-vars @molecule/default/vars.yml \
+          --inventory ./services \
+          --connection docker \
+          ${OPTIONS}
+
+      - name: Upload artifacts.
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: "artifact-${{ matrix.job_name }}"
+          path: devshop.platform/molecule/default/artifacts

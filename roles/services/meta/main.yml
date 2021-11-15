@@ -1,21 +1,37 @@
+---
 dependencies:
 
+  - name: geerlingguy.repo-epel
+    when:
+      - '"geerlingguy.repo-epel" in devshop_host_roles'
+      - ansible_os_family == 'RedHat'
+
+  - name: geerlingguy.repo-remi
+    when:
+      - '"geerlingguy.repo-remi" in devshop_host_roles'
+      - ansible_os_family == 'RedHat'
+
+  - role: geerlingguy.repo-dotdeb
+    when:
+      - '"geerlingguy.repo-dotdeb" in devshop_host_roles'
+      - ansible_distribution == 'Debian'
+
   - name: geerlingguy.security
-    when: '"geerlingguy.security" in devshop_host_service_roles'
+    when: '"geerlingguy.security" in devshop_host_roles'
     tags:
       - services
     vars:
       security_sudoers_passwordless: "{{ devshop_host_admins }}"
 
   - name: geerlingguy.github-users
-    when: '"geerlingguy.github-users" in devshop_host_service_roles'
+    when: '"geerlingguy.github-users" in devshop_host_roles'
     tags:
       - services
     vars:
       github_users: "{{ devshop_host_github_users }}"
 
   - name: tenequm.icinga-director-client
-    when: '"tenequm.icinga-director-client" in devshop_host_service_roles'
+    when: '"tenequm.icinga-director-client" in devshop_host_roles'
     tags:
       - services
     vars:
@@ -33,37 +49,32 @@ dependencies:
       icinga_director_pass: admin
 
   - name: geerlingguy.apache
-    when: '"geerlingguy.apache" in devshop_host_service_roles'
+    when: '"geerlingguy.apache" in devshop_host_roles'
     tags:
       - services
 
   # Make sure this runs before gg.php
   - name: geerlingguy.php-versions
-    when: '"geerlingguy.php-versions" in devshop_host_service_roles'
-    tags:
-      - services
-
-  - name: geerlingguy.php
-    when: '"geerlingguy.php" in devshop_host_service_roles'
+    when: '"geerlingguy.php-versions" in devshop_host_roles'
     tags:
       - services
 
   - name: geerlingguy.php-mysql
-    when: '"geerlingguy.php-mysql" in devshop_host_service_roles'
+    when: '"geerlingguy.php" in devshop_host_roles'
     tags:
       - services
 
   - name: geerlingguy.composer
-    when: '"geerlingguy.composer" in devshop_host_service_roles'
+    when: '"geerlingguy.composer" in devshop_host_roles'
     tags:
       - services
 
   - name: geerlingguy.drush
-    when: '"geerlingguy.drush" in devshop_host_service_roles'
+    when: '"geerlingguy.drush" in devshop_host_roles'
     tags:
       - services
 
   - name: geerlingguy.mysql
-    when: '"geerlingguy.mysql" in devshop_host_service_roles'
+    when: '"geerlingguy.mysql" in devshop_host_roles'
     tags:
       - services

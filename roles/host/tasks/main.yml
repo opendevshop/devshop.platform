@@ -1,6 +1,30 @@
 ---
+- name: Gather Server Host Facts
+  gather_facts:
+  tags:
+    - always
+
+# @TODO: Handle this with a facts or vars plugin.
+# Goal: Give App Hosts the variables they need from their servers.
+- name: Set App Host vars from this host
+  with_items: "{{ groups['apps'] }}"
+  when: hostvars[item]['devshop_app_host'] == inventory_hostname
+  delegate_to: "{{ item }}"
+  delegate_facts: yes
+  set_fact:
+    devshop_app_user: "{{ devshop_host_app_user }}"
+    devshop_app_user_group: "{{ devshop_host_app_user_group }}"
+    devshop_host_apps_root: "{{ devshop_host_apps_root }}"
+  tags:
+    - about
+
+# Include variables and define needed variables.
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
 
 - name: DevShop.Host Role
+  tags:
+    - about
   debug:
     msg: |
       ---------------------------------
@@ -10,15 +34,20 @@
       inventory_hostname: {{ inventory_hostname }}
       nodename: {{ ansible_facts.nodename }}
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
-
-      playbook_dir : {{ playbook_dir }}
+      ansible_connection: {{ ansible_connection }}
 
       groups:
       {{ group_names | to_nice_yaml }}
 
-#
-#      devshop_host_services
-#      {{ devshop_host_services | to_nice_yaml }}
+      devshop_host_roles:
+      {{ devshop_host_roles | to_nice_yaml }}
+
+      devshop_host_services
+      {{ devshop_host_services | to_nice_yaml }}
+
+      devshop_control_user: {{ devshop_control_user }}
+      devshop_platform_user: {{ devshop_platform_user }}
+
 #
 #      devshop_host_app_services
 #      {{ devshop_host_app_services | to_nice_yaml }}
@@ -30,25 +59,23 @@
 #      {{ devshop_host_service_roles | default('None') | to_nice_yaml }}
 #
 #
-#- name: Prepare Services
-#  loop: "{{ devshop_host_services }}"
-#  loop_control:
-#    loop_var: loop_item
-#  include_role:
-#    name: devshop.service
-#    public: true
-#    tasks_from: "{{ loop_item }}.yml"
-#    defaults_from: "{{ loop_item }}.yml"
-#  vars:
-#    devshop_host_service: "{{ loop_item }}"
-#
-#- name: Install common packages
-#  apt:
-#    update_cache: yes
-#    name:
-#      - openssh-server
-#    state: latest
-#
-#- name: DevShop.Host Role Complete!
-#  debug:
-#    msg: "Next up: DevShop.Services."
+
+- name: Prepare Host
+  tags: [hosts]
+  loop: "{{ devshop_host_prepare_task_files }}"
+  loop_control:
+    loop_var: file
+  include_tasks:
+    file: "{{ file }}"
+
+- name: Prepare Services
+  loop: "{{ devshop_host_services }}"
+  loop_control:
+    loop_var: loop_item
+  include_role:
+    name: service
+    public: true
+    tasks_from: "{{ loop_item }}.yml"
+    defaults_from: "{{ loop_item }}.yml"
+  vars:
+    devshop_host_service: "{{ loop_item }}"

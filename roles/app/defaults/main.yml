@@ -1,9 +1,25 @@
 ---
-# The user to clone code and run commands with.
-devshop_app_user: "{{ ansible_env.SUDO_USER | default(ansible_env.USER, true) | default(ansible_user_id, true) }}"
 
-# The path to clone the "devshop_app_git_repository" to.
-devshop_app_git_root: "{{ playbook_dir }}/apps/{{ inventory_hostname }}"
+devshop_app_type: drupal
+
+# The devshop.app role uses include_role after the git code is cloned to process the application.
+# These variables determine what role and what files to load from that role.
+# The role to include and the files to include.
+devshop_app_role: app
+devshop_app_role_defaults_from: "{{ devshop_app_type }}.yml"
+devshop_app_role_tasks_from: "{{ devshop_app_type }}.yml"
+
+# The user to clone code and run commands with.
+devshop_app_user: "platform"
+devshop_app_user_group: "{{ devshop_app_user }}"
+
+devshop_host_apps_root: "/var/platform"
+
+# The app and environment codenames.
+# Used for various things like paths or system domains.
+#
+devshop_app_name: "app"
+devshop_app_environment: "default"
 
 # The git remote to clone.
 devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-template.git"
@@ -11,5 +27,84 @@ devshop_app_git_repository: "http://github.com/opendevshop/devshop-control-templ
 # The git reference to check out. (optional. If left blank, git repository default branch will be used.)
 devshop_app_git_reference: ""
 
+# The path to clone the "devshop_app_git_repository" to. Default: /var/platform/apps/app.com
+devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }}"
+
+# Alternative: place apps in folders based on app and environment name.
+# devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ devshop_app_name }}/{{ devshop_app_environment }}"
+
+# relative internal path to expose to the web server via the devshop_app_domain URL.
+# Used by tasks/commands. Not by apache vhost, (yet).
+devshop_app_git_document_root: web
+devshop_app_git_document_root_path: "{{ devshop_app_git_root }}/{{ devshop_app_git_document_root }}"
+
+# Whether the git checkout should be forced. If set to true, any local modifications to files will be lost.
+devshop_app_git_force: true
+
+# Passed to ansible.builtin.git recursive option.
+# Set to false to stop git from cloning the repo with the "recursive" option.
+devshop_app_git_recursive: true
+
+# Passed to ansible.builtin.git track_submodules option.
+# Set to true to check out submodules on their specified branch.
+devshop_app_git_track_submodules: false
+
+# Set to TRUE to skip the "install" command stage.
+# The app playbooks set this variable as each app type will have a different way of detecting if it is installed.
+devshop_app_installed: false
+
 # Notify git handlers even if git repo did not change.
-devshop_app_force_git_handlers: false
+force_build: false
+
+# Run install stage even if devshop_app_installed == true
+force_install: false
+
+# Tell the app what to do when running the app playbook.
+# Override in your inventory or playbook extra vars.
+devshop_app_playbook_stages:
+  - build
+  - install
+  - deploy
+  - test
+
+# Tell the playbook to skip these stages.
+skip_stages: []
+
+# The path inside the git root with app-local bin scripts. Will be added to PATH environment variable.
+# @TODO: Default to none, but add to app type groups. (ie drupal.yml: vendor/bin)
+devshop_app_bin_dir: "vendor/bin"
+
+# System Paths.
+devshop_app_path_system: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+devshop_app_path_bin: "{{ devshop_app_git_root }}/{{ devshop_app_bin_dir }}"
+
+# The PATH variable used for commands and shells.
+devshop_app_path: "{{ devshop_app_path_bin }}:{{ devshop_app_path_system }}"
+
+# Execution environment variables for commands and shells.
+devshop_app_shell_environment:
+  PATH: "{{ devshop_app_path }}"
+
+# Set additional execution environment variables to use when running commands.
+devshop_app_shell_environment_extra: {}
+
+# Set to false to ignore_errors from the command stages.
+devshop_app_commands_ignore_errors: false
+
+# The directory to store command logs.
+devshop_app_commands_log_file: "{{ devshop_app_git_root }}/logs/build.log"
+devshop_app_commands_log_file_mode: "0700"
+devshop_app_commands_log_file_owner: "{{ devshop_app_user }}"
+devshop_app_commands_log_file_group: "{{ devshop_app_user_group }}"
+
+# Delete any existing log file before running a command stages.
+devshop_app_commands_log_file_delete_before_start: yes
+
+devshop_app_commands_log_file_start_content: |
+  ### DevShop.App Command Stages Log File.
+  ### Written by the devshop.app git-handler.yml tasks file.
+  ### {{ '%Y-%m-%d %H:%M:%S' | strftime }}
+
+# Passed to the "command" task to limit the number of calls to trigger at once.
+# If not set to 1, calls to things like composer that cache files might collide when all being called at the same time.
+devshop_app_command_stages_throttle: 1

@@ -1,0 +1,15 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 200
+    level: warning
+
+  truthy: disable
+
+ignore: |
+  .github
+  molecule
+  roles/contrib
+  .galaxy.yml

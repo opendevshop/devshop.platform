@@ -1,4 +1,18 @@
 ---
+#
+# devshop.platform.playbook
+#
+# Global playbook for a devshop platform.
+#
+# Import this playbook in your own playbook in your own platform codebase.
+# Optionally, set vars in the task or include a vars file by setting 'platform_vars_file'
+#
+# - name: Import the DevShop.Platform Playbook.
+#   import_playbook: roles/contrib/ansible_collections/devshop/platform/playbook.yml
+#
+#   vars:
+#    platform_vars_file: "vars.yml" # Path relative to this playbook file.
+#
 
 - name: Servers
   collections:
@@ -6,28 +20,46 @@
 
   hosts: servers
   become: yes
-  gather_facts: yes
+
+  # If the play has tags, `gather_facts` uses those tags.
+  # If the play does NOT have tags, `gather_facts` uses the `always` tag.
+  # So, instead of this chaos, just gather facts in pre_tasks.
+  gather_facts: no
+
+  # Run with --tags servers to include the entire play.
   tags:
     - servers
+
+  pre_tasks:
+    - name: Include platform vars file from importing playbook.
+      include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
+      when: platform_vars_file is defined
+      tags: [always]
 
   roles:
     - role: host
       tags:
-        - servers
+        # Run with --tags hosts to only run the devshop.host role and skip service install.
+        - hosts
 
     - role: services
-      tags:
-        - services
 
 - name: Apps
   hosts: apps
   become: yes
-  gather_facts: yes
+  gather_facts: no
+
+  # Run with --tags servers to include the entire play.
   tags:
     - apps
 
-  vars:
-    devshop_app_user: "jon"
+  pre_tasks:
+
+    - name: Include platform vars file from importing playbook.
+      include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
+      when: platform_vars_file is defined
+      tags: [always]
 
   roles:
     - name: app
+      delegate_to: "{{ devshop_app_host }}"

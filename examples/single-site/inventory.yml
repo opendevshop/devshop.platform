@@ -1,46 +1,36 @@
-#
-#
-#
+---
+apps:
+  vars:
+    devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+    devshop_app_git_root: "/app"
 
-all:
-  children:
+    # Needed until service_vars plugin is more powerful.
+    devshop_app_name: app
+    devshop_app_host: server.local.computer
+    devshop_app_server_http: server.local.computer
+    devshop_app_server_db: server.local.computer
 
-    # App Hosts
-    apps:
-      # Defaults for all App hosts in "apps" group.
-      vars:
-        devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
-        devshop_app_git_root: "{{ playbook_dir }}/app"
+    devshop_app_command_build: composer install --no-dev
+    devshop_app_command_deploy: |
+      drush updb -y
 
-      # Environments.
-      hosts:
-        thinkdrop.local.computer:
-          devshop_app_git_reference: 8.x
+  # Environments.
+  hosts:
 
-    # Server Hosts
-    servers:
+    # App Host
+    site.local.computer:
+      devshop_app_git_reference: 9.x
 
-      # Service Groups
-      children:
+# Server Host
+http:
+  hosts:
+    server.local.computer:
 
-        # Drupal Web Server
-        service_http:
-          vars:
-            devshop_service_roles_http:
-              - geerlingguy.apache
-              - geerlingguy.php
-              - geerlingguy.php-mysql
-              - geerlingguy.php-versions
-              - geerlingguy.composer
-              - geerlingguy.drush
-          hosts:
-            thinkdrop.local.computer:
+db:
+  hosts:
+    server.local.computer:
 
-        # Drupal Database Server
-        service_db:
-          vars:
-            devshop_service_roles_db:
-              - geerlingguy.mysql
-
-          hosts:
-            thinkdrop.local.computer:
+# Add the site to the "drupal" group to inherit that group's variables, such as for the build commands.
+drupal:
+  hosts:
+    site.local.computer:

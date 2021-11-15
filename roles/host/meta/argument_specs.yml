@@ -1,0 +1,13 @@
+---
+argument_specs:
+  main:
+    short_description: DevShop.Host role.
+    options:
+      devshop_host_roles:
+        type: "list"
+        default: []
+        description: "A list of roles to run against this server. Automatically aggregated from Service Groups if 'devshop.platform.service_vars' plugin is enabled."
+      devshop_host_services:
+        type: "list"
+        default: []
+        description: "The list of services this host provides. For example: ['db', 'http']. Automatically aggregated from Service Groups if 'devshop.platform.service_vars' plugin is enabled."

@@ -1,54 +1,72 @@
 ---
+- name: Gather App Host Facts
+  gather_facts:
+  tags:
+    - always
+
 - name: Prevent the role from running as root.
   fail:
-    msg: "The devshop.app role should not be run as root."
+    msg: "The devshop_app_user role should not be root."
   when: devshop_app_user == 'root'
 
-
 - name: DevShop.App Role
+  tags:
+    - about
   debug:
     msg: |
       ---------------------------------
       Welcome to the DevShop.App role.
       ---------------------------------
-      http://{{ ansible_host }}
-      devshop_app_git_repository: {{ devshop_app_git_repository }}
-      devshop_app_git_reference: {{ devshop_app_git_reference }}
-      devshop_app_git_root: {{ devshop_app_git_root }}
+      {{ devshop_app_name }}.{{ devshop_app_environment }}
+      ---------------------------------
+
+      inventory_hostname: {{ inventory_hostname }}
+      ansible_host:   {{ ansible_host }}
+      nodename: {{ ansible_facts.nodename }}
+      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
+      ansible_connection: {{ ansible_connection }}
+
+      groups:
+      {{ group_names | to_nice_yaml }}
+
+      ---------------------------------
+      Git Repository: {{ devshop_app_git_repository }}
+      Git Reference:  {{ devshop_app_git_reference }}
+      Git Root:       {{ devshop_app_git_root }}
+      ---------------------------------
+      Servers:
+      {{ devshop_app_servers | to_nice_yaml }}
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
+      ---------------------------------
+      devshop_app_commands_log_file: {{ devshop_app_commands_log_file }}
 
-      devshop_app_server_http: {{ devshop_app_server_http }}
-      devshop_app_server_db: {{ devshop_app_server_db }}
-
-#      devshop_app_git_root: {{ devshop_app_git_root }}
-#      devshop_app_host: {{ devshop_app_host }}
-#      ---------------------------------
-#      devshop_app_servers:
-#      {{ devshop_app_servers | to_nice_yaml }}
-#      ---------------------------------
-#      inventory_hostname: {{ inventory_hostname }}
-#      ansible_host: {{ ansible_host }}
-#      ansible_connection: {{ ansible_connection }}
-#      nodename: {{ ansible_facts.nodename }}
-#      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
-#
-#      groups:
-#      {{ group_names | to_nice_yaml }}
-#
-#      devshop_service_db_user: {{ devshop_service_db_user }}
-#      devshop_service_db_name: {{ devshop_service_db_name }}
-#      devshop_service_db_host: {{ devshop_service_db_host }}
+      force_build: {{ force_build }}
+      force_install: {{ force_install }}
 
 - name: Prepare Parent Directory
   file:
     path: "{{ devshop_app_git_root }}"
     state: directory
     owner: "{{ devshop_app_user }}"
-    group: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
-- name: Clone app source code
+# @TODO: Convert to pre-git tasks, then add post-command tasks as well.
+- name: Run App Tasks.
+  include_role:
+    name: "{{ devshop_app_role }}"
+    defaults_from: "{{ devshop_app_role_defaults_from }}"
+    tasks_from: "{{ devshop_app_role_tasks_from }}"
+
+- name: Deploy code from Git
+
+  # On idempotent test runs, any changes to the working copy cause failure.
+  # This can happen when build scripts are run.
+  # To allow molecule idempotency to pass, this tag is added.
+  changed_when:
+    - '"molecule-idempotence-notest" not in ansible_skip_tags'
+    - git_results.changed
   become: yes
   become_user: "{{ devshop_app_user }}"
   git:
@@ -56,47 +74,35 @@
     version: "{{ devshop_app_git_reference }}"
     dest: "{{ devshop_app_git_root }}"
     accept_hostkey: yes
-
+    force: "{{ devshop_app_git_force }}"
+    recursive: "{{ devshop_app_git_recursive }}"
+    track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
-  notify:
-    - run build
-    - run deploy
 
-- name: Git Clone and Checkout Complete!
+# Launch Logic:
+# Task will RUN if:
+#  - there are git changes OR
+#  - force_build is set.
+# Task is changed_when:
+#   - Play run is NOT the molecule idempotency test.
+#   - changed_when is otherwise always TRUE in order to trigger the "git changed" handler.
+- name: Launching Command Stages
+  when: force_build or git_results.changed == true
+  changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
-    msg: "{{ git_results }}"
+    msg: |
+      Launching App Commands.
+      {% if git_results.changed: %}
+      Reason: Git changes detected.
+      {% elif force_build: %}
+      Reason: force_build was set.
+      {% endif %}
 
-- name: Force git handlers.
-  when:
-  - devshop_app_force_git_handlers
-  - git_results.changed == false
-  command: "echo Triggering git handlers because 'devshop_app_force_git_handlers' is true..."
+      devshop_app_installed: {{ devshop_app_installed }}
+
+      Git State:
+      {{ git_results | to_nice_yaml }}
   notify:
-    - run build
-    - run deploy
+    - git changed
 
-
-- name: Trigger Git Handlers before moving on.
-  meta: flush_handlers
-
-#- name: save results
-#  set_fact:
-#    devshop_app_results:
-#      build:
-#        command: "{{ devshop_app_commands.build | default('None set.') }}"
-#        exit: "{{ app_build_results.rc | default('n/a') }}"
-#        output: "{{ app_build_results.stdout | default('') }}"
-#
-#      deploy:
-#        command: "{{ devshop_app_commands.deploy | default('None set.') }}"
-#        exit: "{{ app_deploy_results.rc | default('n/a') }}"
-#        output: "{{ app_deploy_results.stdout | default('') }}"
-#
-#- name: devshop.app build results
-#  when: devshop_app_results is defined
-#  failed_when:
-#    - (app_build_results is defined and app_build_results.rc != 0) or
-#      (app_deploy_results is defined and app_build_results.rc != 0)
-#  debug:
-#    msg: |
-#      {{ devshop_app_results | to_nice_yaml }}
+- meta: flush_handlers

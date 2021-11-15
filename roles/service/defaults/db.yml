@@ -5,3 +5,5 @@ mysql_user_home: "{{ ansible_user | default('root') }}"
 
 # This role configures gg.mysql.
 devshop_service_db_backend: mysql
+
+devshop_service_db_mysql_repo: "http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm"

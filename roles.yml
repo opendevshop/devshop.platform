@@ -16,12 +16,14 @@ roles:
   - name: geerlingguy.php-versions
   - name: geerlingguy.repo-remi
   - name: geerlingguy.repo-epel
-
+  - name: geerlingguy.repo-dotdeb
   - name: tenequm.icinga-director-client
 
+# Ensure this matches galaxy.yml.
 collections:
-  - name: community.general
-  - name: community.aws
-  - name: community.digitalocean
-  - name: community.docker
-  - name: community.mysql
+  - ansible.posix
+  - community.general
+  - community.aws
+  - community.digitalocean
+  - community.docker
+  - community.mysql

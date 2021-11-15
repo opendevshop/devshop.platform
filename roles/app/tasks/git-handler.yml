@@ -1,0 +1,94 @@
+---
+
+- name: Prepare command logs directory
+  file:
+    path: "{{ devshop_app_commands_log_file | dirname }}"
+    state: directory
+    owner: "{{ devshop_app_commands_log_file_owner }}"
+    group: "{{ devshop_app_commands_log_file_group }}"
+    mode: "{{ devshop_app_commands_log_file_mode }}"
+
+- name: Create command logs file.
+  copy:
+    content: "{{ devshop_app_commands_log_file_start_content }}"
+    dest: "{{ devshop_app_commands_log_file }}"
+    owner: "{{ devshop_app_commands_log_file_owner }}"
+    group: "{{ devshop_app_commands_log_file_group }}"
+    mode: "{{ devshop_app_commands_log_file_mode }}"
+  when: devshop_app_commands_log_file_delete_before_start
+
+- name: "If site installed, skip install stage."
+  set_fact:
+    skip_stages: "{{ skip_stages + ['install']}}"
+  when:
+    - devshop_app_installed
+    - force_install is not defined or force_install == false
+
+- name: Preparing to launch command stages...
+  debug:
+    msg: |
+      ================={{ inventory_hostname }}=================
+      User: {{ devshop_app_user }}
+      Directory: {{ devshop_app_git_root }}
+      Log File: {{ devshop_app_commands_log_file }}
+
+      {% for stage in devshop_app_playbook_stages %}
+      ----------------{{ stage }}----------------
+      {% if stage == skip_stages or stage in skip_stages %} (skipping) {% endif %}
+      {{ lookup('vars', 'devshop_app_command_' + stage) | default('Not set.') }}
+      {% endfor %}
+
+      {% if skip_stages: %}
+      -------------------------------------------
+      Stages to Skip:
+      {{ skip_stages | to_nice_yaml}}
+      {% endif %}
+
+- name: Run DevShop App command stages.
+  throttle: "{{ devshop_app_command_stages_throttle }}"
+  loop: "{{ devshop_app_playbook_stages }}"
+  loop_control:
+    loop_var: stage
+  command:
+    cmd: "{{ lookup('vars', 'devshop_app_command_' + stage) }}"
+    chdir: "{{ devshop_app_git_root }}"
+    stdout_file: "{{ devshop_app_commands_log_file }}"
+    stdout_pipe: ">>"
+    stderr_file: "{{ devshop_app_commands_log_file }}"
+    stderr_pipe: ">>"
+  become: yes
+  become_user: "{{ devshop_app_user }}"
+  when:
+    # Run the stage command when...
+    # A stage command exists
+    - lookup('vars', 'devshop_app_command_' + stage)
+
+    # and the stage is not in the skip_stages variable.
+    - stage not in skip_stages | list | join
+
+  changed_when: false
+  register: devshop_app_playbook_stage_register
+  environment: "{{ devshop_app_shell_environment | combine(devshop_app_shell_environment_extra ) }}"
+
+#- name: Set fact with stage run results grouped by stage.
+#  set_fact:
+#    devshop_app_stage_results:
+#      rc: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'rc') }}"
+#      cmd: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'cmd') }}"
+#      stdout: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'stdout') }}"
+#      delta: "{{ devshop_app_playbook_stage_register.results | items2dict(key_name='stage', value_name: 'delta') }}"
+
+- name: DevShop.App Command Stages Complete.
+  with_items: "{{ devshop_app_playbook_stage_register.results }}"
+  loop_control:
+    label: "{{ item.stage }}"
+  when: item.cmd is defined
+  debug:
+    msg: |
+      App: http://{{ inventory_hostname }}
+      Stage: {{ item.stage }}
+      Command: {{ item.cmd }}
+      Time: {{ item.delta }}
+      Return Code: {{ item.rc }}
+
+      Log: {{ devshop_app_commands_log_file }}

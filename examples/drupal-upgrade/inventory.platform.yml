@@ -1,0 +1,61 @@
+---
+drupal:
+  children:
+
+    # App: composerupgrade
+    composerupgrade:
+
+      # App Host defaults for "composerupgrade" app group.
+      vars:
+
+        # App Host defaults.
+        devshop_app_host: server.local.computer
+        devshop_app_server_http: server.local.computer
+        devshop_app_server_db: server.local.computer
+        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
+
+        devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+        devshop_app_git_reference: 9.x
+        devshop_app_name: composerupgrade
+
+      # Environments in "composerupgrade' app group.
+      hosts:
+        d7.local.computer:
+        d8.local.computer:
+        d9.local.computer:
+
+      # Sub groups within the "composerupgrade" app.
+      children:
+
+        # Version Groups.
+        # Add App Hosts to these groups to specify their version. See inventory.sites.yml
+        version7:
+          vars:
+            devshop_app_git_reference: 7.x
+            devshop_app_command_install: >
+              drush site-install {{ drupal_install_profile | default('standard') }} -y
+              --root={{ devshop_app_git_document_root_path }}
+              --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
+              {{ drupal_site_install_extra_args | join(" ") }}
+            devshop_app_command_deploy: |
+              cd web
+              drush updb --yes
+
+        version8:
+          vars:          
+            # devshop_app_git_reference: 8.x
+            
+            # Override the repo used for this environment. Remove if the PR is merged. 
+            devshop_app_git_repository: https://github.com/jonpugh/drupal-project
+            devshop_app_git_reference: patch-1
+        version9:
+          vars:
+            devshop_app_git_reference: 9.x
+
+# Server Hosts
+http:
+  hosts:
+    server.local.computer:
+db:
+  hosts:
+    server.local.computer:

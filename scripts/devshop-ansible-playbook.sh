@@ -5,7 +5,7 @@ ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
 ANSIBLE_TAGS=${ANSIBLE_TAGS:-""}
 ANSIBLE_SKIP_TAGS=${ANSIBLE_SKIP_TAGS:-""}
 ANSIBLE_EXTRA_VARS=${ANSIBLE_EXTRA_VARS:-""}
-ANSIBLE_PLAYBOOK_COMMAND_OPTIONS=${ANSIBLE_PLAYBOOK_COMMAND_OPTIONS:-"--diff"}
+ANSIBLE_PLAYBOOK_COMMAND_OPTIONS=${ANSIBLE_PLAYBOOK_COMMAND_OPTIONS:-""}
 ANSIBLE_VERBOSITY=${ANSIBLE_VERBOSITY:-"0"}
 
 # Build options string if ENV vars exist.
@@ -58,5 +58,8 @@ echo "> $ANSIBLE_PLAYBOOK_FULL_COMMAND"
 # Do not exit on error so we can run additional commands.
 set +e
 time $ANSIBLE_PLAYBOOK_FULL_COMMAND || \
-    echo "Playbook Failed! (exit $?)"; \
-    exit $?
+    (
+      EXIT=$?
+      echo "Playbook Failed! (exit $EXIT)"
+      exit $EXIT
+    )

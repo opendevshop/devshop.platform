@@ -4,18 +4,20 @@
     msg: |
       Current Host: {{ inventory_hostname }}
 
-      {{ devshop_host_service_apps | to_nice_yaml }}
-
+# @TODO: Move lookup of apps using this server to server_vars.py
 - name: "Prepare Apache VHosts."
-  with_items: "{{ devshop_host_service_apps[devshop_host_service] }}"
+  with_items: "{{ groups['apps'] }}"
+  when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
   set_fact:
     devshop_app_apache_vhost:
 
-      servername: "{{ hostvars[item]['ansible_host'] }}"
-      documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_data']['document_root'] | default(devshop_service_http_document_root) }}"
+      servername: "{{ item }}"
+
+      # NOTE: hostvars are from inventory. They do NOT include app role defaults.
+      documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
       extra_parameters: |
-        {% if 'domains' in hostvars[item]['devshop_app_environment_data']: %}
-          {% for domain in hostvars[item]['devshop_app_environment_data']['domains'] %}
+        {% if 'devshop_app_domains' in hostvars[item]: %}
+          {% for domain in hostvars[item]['devshop_app_domains'] %}
         ServerAlias {{ domain }}
           {% endfor %}
         {% endif %}
@@ -28,6 +30,13 @@
 
     # Override role defaults with service defaults.
     apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
+
+
+- name: "Set Facts for Debian hosts."
+  set_fact:
+    php_packages_extra:
+      - "libapache2-mod-php{{ php_version }}"
+  when: ansible_os_family == 'Debian'
 
 
 - name: "Variables prepared."
