@@ -7,7 +7,8 @@
     hostname: "{{ ansible_host }}"
     image: "{{ devshop_host_docker_image }}"
     command: "sleep infinity"
-    volumes: "{{ devshop_host_docker_volumes | default([])}}"
+    volumes: "{{ devshop_host_docker_volumes | default(omit)}}"
+    privileged: "{{ devshop_host_docker_privileged | default(omit)}}"
 
 
   run_once: True
