@@ -1,0 +1,14 @@
+---
+
+- name: Create Server Container
+  local_action:
+    name: "{{ inventory_hostname }}"
+    hostname: "{{ inventory_hostname }}"
+    module: community.general.docker_container
+    image: "{{ devshop_host_docker_image }}"
+    command: "sleep infinity"
+
+  run_once: True
+  when:
+    - devshop_host_type == "docker"
+    - ansible_connection == "docker"

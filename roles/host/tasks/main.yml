@@ -1,4 +1,8 @@
 ---
+
+- name: Create Server Tasks
+  include_tasks: "create.yml"
+
 - name: Gather Server Host Facts
   gather_facts:
   tags:
