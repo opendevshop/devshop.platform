@@ -7,6 +7,8 @@
     module: community.general.docker_container
     image: "{{ devshop_host_docker_image }}"
     command: "sleep infinity"
+    volumes: "{{ devshop_host_docker_volumes | default([])}}"
+
 
   run_once: True
   when:
