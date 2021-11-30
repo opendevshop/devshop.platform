@@ -1,0 +1,18 @@
+---
+
+- name: Create Server Container
+  local_action:
+    module: community.general.docker_container
+    name: "{{ ansible_host }}"
+    hostname: "{{ ansible_host }}"
+    image: "{{ devshop_host_docker_image }}"
+    command: "sleep infinity"
+    volumes: "{{ devshop_host_docker_volumes | default(omit)}}"
+    privileged: "{{ devshop_host_docker_privileged | default(omit)}}"
+
+
+  run_once: True
+  when:
+    - devshop_host_type is defined
+    - devshop_host_type == "docker"
+    - ansible_connection == "docker"

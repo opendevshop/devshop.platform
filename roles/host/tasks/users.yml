@@ -10,9 +10,12 @@
   user:
     name: "{{ devshop_platform_user }}"
     comment: "{{ devshop_platform_user_comment | default(omit) }}"
+    home: "{{ devshop_platform_user_home | default(omit) }}"
     shell: "{{ devshop_platform_user_shell }}"
     uid: "{{ devshop_platform_user_uid | default(omit) }}"
     group: "{{ devshop_platform_user_group | default(omit) }}"
     generate_ssh_key: "{{ devshop_platform_user_generate_ssh_key }}"
     ssh_key_bits: "{{ devshop_platform_user_ssh_key_bits | default(omit) }}"
     ssh_key_file: "{{ devshop_platform_user_ssh_key_file | default(omit) }}"
+
+# @TODO:  Create devshop_host_app_user

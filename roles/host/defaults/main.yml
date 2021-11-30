@@ -40,3 +40,7 @@ devshop_app_git_document_root: web
 
 # Set to "latest" to update packages
 devshop_host_common_packages_state: present
+
+# The default docker image to use when creating Servers.
+devshop_host_docker_image: geerlingguy/docker-ubuntu1804-ansible
+
