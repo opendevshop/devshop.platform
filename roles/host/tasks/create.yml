@@ -12,5 +12,6 @@
 
   run_once: True
   when:
+    - devshop_host_type is defined
     - devshop_host_type == "docker"
     - ansible_connection == "docker"
