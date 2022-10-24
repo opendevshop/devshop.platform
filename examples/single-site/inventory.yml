@@ -1,27 +1,49 @@
 ---
+# The "apps" group contains information about your sites.
 apps:
+
+  # The hosts in the "apps" group are individual sites (instances of the app).
+  hosts:
+
+    # Dev site.
+    dev.local.computer:
+
+      # Override the default git repo or reference for this site.
+      devshop_app_git_reference: 9.x
+      # devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+
+  # Vars listed in the "apps" group are used as defaults for all sites.
   vars:
+    # The git repo that contains the app (website) codebase.
     devshop_app_git_repository: https://github.com/drupal-composer/drupal-project.git
+
+    # The path to clone the app codebase to.
     devshop_app_git_root: "/app"
 
-    # Needed until service_vars plugin is more powerful.
-    devshop_app_name: app
+    # A codename for the app.
+    devshop_app_name: myproject
+
+    # The host that stores the source code.
     devshop_app_host: server.local.computer
+
+    # The web server host.
     devshop_app_server_http: server.local.computer
+
+    # The database host.
     devshop_app_server_db: server.local.computer
 
+    # The command to build the source code.
     devshop_app_command_build: composer install --no-dev
+
+    # The command to run after a git change.
     devshop_app_command_deploy: |
       drush updb -y
 
-  # Environments.
-  hosts:
-
-    # App Host
-    site.local.computer:
-      devshop_app_git_reference: 9.x
-
-# Server Host
+# Services Hosts
+# Each web service is defined by an Ansible group, as yml files in the ./services folder.
+# They contain variables that tell the platform what roles and variables to apply to make the service work.
+# Make sure you have at least one host in each required group for your app.
+# The same host can provide multiple services as roles and variables are combined.
 http:
   hosts:
     server.local.computer:
@@ -30,7 +52,9 @@ db:
   hosts:
     server.local.computer:
 
-# Add the site to the "drupal" group to inherit that group's variables, such as for the build commands.
+# App Types
+# Each app type is defined by an Ansible group, saved in yml files in the ./services folder.
+# Add App Hosts (sites) to AppType Groups so the platform can deploy it.
 drupal:
   hosts:
     site.local.computer:
