@@ -1,4 +1,6 @@
 ---
+# This is a standard Ansible Inventory in YAML format.
+
 # The "apps" group contains information about your sites.
 apps:
 
