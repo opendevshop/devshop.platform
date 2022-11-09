@@ -1,5 +1,6 @@
 ---
 # This is a standard Ansible Inventory in YAML format.
+# Hosts listed in the "apps" group are like VirtualHosts: they represent a site, not a server.
 
 # The "apps" group contains information about your sites.
 apps:
