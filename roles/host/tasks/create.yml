@@ -6,7 +6,8 @@
     name: "{{ ansible_host }}"
     hostname: "{{ ansible_host }}"
     image: "{{ devshop_host_docker_image }}"
-    command: "sleep infinity"
+    command: "{{ devshop_host_docker_command | default(omit)}}"
+    published_ports: "{{ devshop_host_docker_published_ports | default(omit)}}"
     volumes: "{{ devshop_host_docker_volumes | default(omit)}}"
     privileged: "{{ devshop_host_docker_privileged | default(omit)}}"
 
