@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-SCRIPT_FOLDER_PATH="$(dirname "$(readlink -f "$0")")"
+SCRIPT_FOLDER_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
 PLATFORM_FOLDER_PATH="$(cd "$(dirname "$SCRIPT_FOLDER_PATH")" && pwd)"
 
 ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
