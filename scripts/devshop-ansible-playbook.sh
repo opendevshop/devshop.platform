@@ -53,6 +53,17 @@ ANSIBLE_PLAYBOOK_FULL_COMMAND="ansible-playbook $ANSIBLE_PLAYBOOK \
     $*"
 
 echo $LINE
+
+# Detect missing roles and install.
+if [ ! -d ${PLATFORM_FOLDER_PATH}/roles/contrib ]; then
+  echo "No ansible roles found at ${PLATFORM_FOLDER_PATH}/roles/contrib."
+  echo "Running ./scripts/ansible-galaxy-install.sh..."
+  cd ${PLATFORM_FOLDER_PATH}
+  ./scripts/ansible-galaxy-install.sh
+  cd -
+fi
+
+
 echo "Running Ansible Playbook --list-hosts Command: "
 echo "> $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND"
 $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND
