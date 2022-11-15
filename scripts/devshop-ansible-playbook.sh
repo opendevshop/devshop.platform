@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+SCRIPT_FOLDER_PATH="$(dirname "$(readlink -f "$0")")"
+PLATFORM_FOLDER_PATH="$(cd "$(dirname "$SCRIPT_FOLDER_PATH")" && pwd)"
+
 ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
 ANSIBLE_TAGS=${ANSIBLE_TAGS:-""}
 ANSIBLE_SKIP_TAGS=${ANSIBLE_SKIP_TAGS:-""}
@@ -29,6 +32,9 @@ if [ -n "$DEBUG" ]; then
   echo $LINE
   echo "devshop-ansible-playbook.sh Environment Vars:"
   echo
+  echo "SCRIPT_FOLDER_PATH: $SCRIPT_FOLDER_PATH"
+  echo "PLATFORM_FOLDER_PATH: $PLATFORM_FOLDER_PATH"
+  echo "PWD: $PWD"
   echo "ANSIBLE_PLAYBOOK: $ANSIBLE_PLAYBOOK"
   echo "ANSIBLE_TAGS: $ANSIBLE_TAGS"
   echo "ANSIBLE_SKIP_TAGS: $ANSIBLE_SKIP_TAGS"
