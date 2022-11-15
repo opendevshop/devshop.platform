@@ -54,7 +54,7 @@ devshop_app_git_track_submodules: false
 devshop_app_installed: false
 
 # Notify git handlers even if git repo did not change.
-force_build: false
+force_commands: false
 
 # Run install stage even if devshop_app_installed == true
 force_install: false

@@ -41,7 +41,7 @@
       ---------------------------------
       devshop_app_commands_log_file: {{ devshop_app_commands_log_file }}
 
-      force_build: {{ force_build }}
+      force_commands: {{ force_commands }}
       force_install: {{ force_install }}
 
 - name: Prepare Parent Directory
@@ -82,20 +82,20 @@
 # Launch Logic:
 # Task will RUN if:
 #  - there are git changes OR
-#  - force_build is set.
+#  - force_commands is set.
 # Task is changed_when:
 #   - Play run is NOT the molecule idempotency test.
 #   - changed_when is otherwise always TRUE in order to trigger the "git changed" handler.
 - name: Launching Command Stages
-  when: force_build or git_results.changed == true
+  when: force_commands or git_results.changed == true
   changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
     msg: |
       Launching App Commands.
       {% if git_results.changed: %}
       Reason: Git changes detected.
-      {% elif force_build: %}
-      Reason: force_build was set.
+      {% elif force_commands: %}
+      Reason: force_commands was set.
       {% endif %}
 
       devshop_app_installed: {{ devshop_app_installed }}
