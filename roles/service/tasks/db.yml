@@ -24,7 +24,7 @@
       name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
       host: "%"
       password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
-      priv: "{{ hostvars[item]['devshop_app_name'] }}_{{ hostvars[item]['devshop_app_environment'] }}.*:ALL"
+      priv: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}.*:ALL"
 
   register: devshop_service_app_register
 
