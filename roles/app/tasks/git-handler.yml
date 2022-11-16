@@ -92,3 +92,4 @@
       Return Code: {{ item.rc }}
 
       Log: {{ devshop_app_commands_log_file }}
+      Ansible Variable: devshop_app_command_{{ item.stage }}
