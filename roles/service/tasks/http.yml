@@ -1,47 +1,55 @@
 ---
-- name: "Preparing DevShop Service: http"
-  debug:
-    msg: |
-      Current Host: {{ inventory_hostname }}
 
-# @TODO: Move lookup of apps using this server to server_vars.py
-- name: "Prepare Apache VHosts."
-  with_items: "{{ groups['apps'] }}"
-  when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
-  set_fact:
-    devshop_app_apache_vhost:
+- name: Server Hosts Config
+  when:
+    - '"servers" in group_names'
+    - '"http" in group_names'
 
-      servername: "{{ item }}"
+  block:
+    - name: "Preparing DevShop Service: http"
+      debug:
+        msg: |
+          Current Host: {{ inventory_hostname }}
 
-      # NOTE: hostvars are from inventory. They do NOT include app role defaults.
-      documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
-      extra_parameters: |
-        {% if 'devshop_app_domains' in hostvars[item]: %}
-          {% for domain in hostvars[item]['devshop_app_domains'] %}
-        ServerAlias {{ domain }}
-          {% endfor %}
-        {% endif %}
+    # @TODO: Move lookup of apps using this server to server_vars.py
+    - name: "Prepare Apache VHosts."
+      with_items: "{{ groups['apps'] }}"
+      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      set_fact:
+        devshop_app_apache_vhost:
 
-  register: apache_vhost_register
+          servername: "{{ item }}"
 
-- name: "Set Facts for host."
-  set_fact:
-    apache_vhosts: "{{ apache_vhost_register.results | map(attribute='ansible_facts.devshop_app_apache_vhost') | list }}"
+          # NOTE: hostvars are from inventory. They do NOT include app role defaults.
+          documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
+          extra_parameters: |
+            {% if 'devshop_app_domains' in hostvars[item]: %}
+              {% for domain in hostvars[item]['devshop_app_domains'] %}
+            ServerAlias {{ domain }}
+              {% endfor %}
+            {% endif %}
 
-    # Override role defaults with service defaults.
-    apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
+      register: apache_vhost_register
+
+    - name: "Set Facts for host."
+      set_fact:
+        apache_vhosts: "{{ apache_vhost_register.results | map(attribute='ansible_facts.devshop_app_apache_vhost') | list }}"
+
+        # Override role defaults with service defaults.
+        apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
 
 
-- name: "Set Facts for Debian hosts."
-  set_fact:
-    php_packages_extra:
-      - "libapache2-mod-php{{ php_version }}"
-  when: ansible_os_family == 'Debian'
+    - name: "Set Facts for Debian hosts."
+      set_fact:
+        php_packages_extra:
+          - "libapache2-mod-php{{ php_version }}"
+      when:
+        - ansible_os_family == 'Debian'
 
 
-- name: "Variables prepared."
-  debug:
-    msg: |
-      Current Host: {{ inventory_hostname }}
-      apache_vhosts: {{ apache_vhosts }}
-      apache_mods_enabled: {{ apache_mods_enabled }}
+    - name: "Variables prepared."
+      debug:
+        msg: |
+          Current Host: {{ inventory_hostname }}
+          apache_vhosts: {{ apache_vhosts }}
+          apache_mods_enabled: {{ apache_mods_enabled }}

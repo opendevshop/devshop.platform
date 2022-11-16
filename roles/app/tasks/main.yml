@@ -44,6 +44,21 @@
       force_commands: {{ force_commands }}
       force_install: {{ force_install }}
 
+- name: Gather Service Vars
+  loop: "{{ devshop_app_servers | dict2items }}"
+  loop_control:
+    loop_var: loop_item
+  when: loop_item.value
+  include_role:
+    name: service
+    public: true
+    tasks_from: "{{ loop_item.key }}.yml"
+    defaults_from: "{{ loop_item.key }}.yml"
+  vars:
+    devshop_host_service: "{{ loop_item.key }}"
+    devshop_app_service_host: "{{ loop_item.value }}"
+
+
 - name: Prepare Parent Directory
   file:
     path: "{{ devshop_app_git_root }}"

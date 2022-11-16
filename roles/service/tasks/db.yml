@@ -1,82 +1,122 @@
 ---
-- name: "Preparing DevShop Service: db"
-  debug:
-    msg: |
-      Current Host: {{ inventory_hostname }}
-      mysql_user_home: {{ mysql_user_home }}
 
-
-- name: "Prepare Databases."
-  with_items: "{{ groups['apps'] }}"
-  when: hostvars[item]['devshop_app_server_db'] == inventory_hostname
-  set_fact:
-    devshop_app_host: "{{ item }}"
-    # @TODO: Allow users to set by IP or whatever.
-    devshop_app_mysql_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
-    devshop_app_mysql_backend: "mysql"
-    devshop_app_mysql_database:
-      # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
-      # UPDATE: We do. DB Names can only be 32 characters. This will cause collisions if new sites are created with similar names.
-      name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
-      encoding: utf8mb4
-      collation: utf8mb4_general_ci
-    devshop_app_mysql_user:
-      name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
-      host: "%"
-      password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
-      priv: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}.*:ALL"
-
-  register: devshop_service_app_register
-
-- name: "Warn if no databases found."
-  when: devshop_service_app_register.results[0].ansible_facts is not defined
-  debug:
-    msg: |
-      WARNING: No App Hosts were found with 'devshop_app_server_db' set to this host ('{{ inventory_hostname }}').
-
-- name: "Set Facts for host."
-  when: devshop_service_app_register.results[0].ansible_facts is defined
-  set_fact:
-    mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
-    mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
-
-- name: "Set facts on app hosts."
-  when: devshop_service_app_register.results[0].ansible_facts is defined
-  with_items: "{{ devshop_service_app_register.results }}"
-  delegate_to: "{{ item.ansible_facts.devshop_app_host }}"
-  delegate_facts: yes
-  set_fact:
-    devshop_service_db_user: "{{ item.ansible_facts.devshop_app_mysql_user.name }}"
-    devshop_service_db_password: "{{ item.ansible_facts.devshop_app_mysql_user.password }}"
-    devshop_service_db_name: "{{ item.ansible_facts.devshop_app_mysql_database.name }}"
-    devshop_service_db_backend: "{{ item.ansible_facts.devshop_app_mysql_backend }}"
-    devshop_service_db_host: "{{ item.ansible_facts.devshop_app_mysql_hostname }}"
-
-- name: "Variables prepared."
-  debug:
-    msg: |
-      Current Host: {{ inventory_hostname }}
-
-      mysql_databases: {{ mysql_databases }}
-      mysql_users: {{ mysql_users }}
-        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-
-# See https://github.com/geerlingguy/ansible-role-mysql#later-versions-of-mysql-on-centos-7
-- name: Prepare RedHat 7 MySQL Repos
+- name: App Hosts Config
   when:
-    - ansible_distribution_major_version == "7"
-    - ansible_os_family == "RedHat"
-    - devshop_service_db_mysql_repo
+    - '"apps" in group_names'
+
   block:
-    - name: Install the MySQL repo
-      yum:
-        name: "{{ devshop_service_db_mysql_repo }}"
-        state: present
-    - name: Override variables for MySQL (RedHat).
+    - name: Preparing MySQL metadata
       set_fact:
-        mysql_daemon: mysqld
-        mysql_packages: [ 'mysql-server' ]
-        mysql_log_error: /var/log/mysqld.err
-        mysql_syslog_tag: mysqld
-        mysql_pid_file: /var/run/mysqld/mysqld.pid
-        mysql_socket: /var/lib/mysql/mysql.sock
+        # @TODO: Allow users to set by IP or whatever.
+        devshop_app_mysql_hostname: "{{ hostvars[devshop_app_server_db]['ansible_fqdn'] }}"
+        devshop_app_mysql_backend: "mysql"
+        devshop_app_mysql_database:
+          # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
+          # UPDATE: We do. DB Names can only be 32 characters. This will cause collisions if new sites are created with similar names.
+          name: "{{ (hostvars[inventory_hostname]['devshop_app_name'] + '_' + hostvars[inventory_hostname]['devshop_app_environment'])[:32] }}"
+          encoding: utf8mb4
+          collation: utf8mb4_general_ci
+        devshop_app_mysql_user:
+          name: "{{ (hostvars[inventory_hostname]['devshop_app_name'] + '_' + hostvars[inventory_hostname]['devshop_app_environment'])[:32] }}"
+          host: "%"
+          password: "{{ hostvars[inventory_hostname]['devshop_app_mysql_password'] | default('password') }}"
+          priv: "{{ (hostvars[inventory_hostname]['devshop_app_name'] + '_' + hostvars[inventory_hostname]['devshop_app_environment'])[:32] }}.*:ALL"
+      register: devshop_service_app_register
+
+    - debug:
+        msg: |
+          {{ devshop_service_app_register }}
+
+    - name: "Get Facts from host"
+      when: devshop_service_app_register.results.ansible_facts is defined
+      set_fact:
+        mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
+        mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
+
+- name: Server Hosts Config
+  when:
+    - '"servers" in group_names'
+    - '"db" in group_names'
+
+  block:
+    - name: "Preparing DevShop Service: db"
+      debug:
+        msg: |
+          Current Host: {{ inventory_hostname }}
+          mysql_user_home: {{ mysql_user_home }}
+
+
+    - name: "Prepare Databases."
+      with_items: "{{ groups['apps'] }}"
+      when: hostvars[item]['devshop_app_server_db'] == inventory_hostname
+      set_fact:
+        devshop_app_host: "{{ item }}"
+        # @TODO: Allow users to set by IP or whatever.
+        devshop_app_mysql_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
+        devshop_app_mysql_backend: "mysql"
+        devshop_app_mysql_database:
+          # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
+          # UPDATE: We do. DB Names can only be 32 characters. This will cause collisions if new sites are created with similar names.
+          name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
+          encoding: utf8mb4
+          collation: utf8mb4_general_ci
+        devshop_app_mysql_user:
+          name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
+          host: "%"
+          password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
+          priv: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}.*:ALL"
+
+      register: devshop_service_app_register
+
+    - name: "Warn if no databases found."
+      when: devshop_service_app_register.results[0].ansible_facts is not defined
+      debug:
+        msg: |
+          WARNING: No App Hosts were found with 'devshop_app_server_db' set to this host ('{{ inventory_hostname }}').
+
+    - name: "Set Facts for host."
+      when: devshop_service_app_register.results[0].ansible_facts is defined
+      set_fact:
+        mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
+        mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
+
+    - name: "Set facts on app hosts."
+      when: devshop_service_app_register.results[0].ansible_facts is defined
+      with_items: "{{ devshop_service_app_register.results }}"
+      delegate_to: "{{ item.ansible_facts.devshop_app_host }}"
+      delegate_facts: yes
+      set_fact:
+        devshop_service_db_user: "{{ item.ansible_facts.devshop_app_mysql_user.name }}"
+        devshop_service_db_password: "{{ item.ansible_facts.devshop_app_mysql_user.password }}"
+        devshop_service_db_name: "{{ item.ansible_facts.devshop_app_mysql_database.name }}"
+        devshop_service_db_backend: "{{ item.ansible_facts.devshop_app_mysql_backend }}"
+        devshop_service_db_host: "{{ item.ansible_facts.devshop_app_mysql_hostname }}"
+
+    - name: "Variables prepared."
+      debug:
+        msg: |
+          Current Host: {{ inventory_hostname }}
+
+          mysql_databases: {{ mysql_databases }}
+          mysql_users: {{ mysql_users }}
+            - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+
+    # See https://github.com/geerlingguy/ansible-role-mysql#later-versions-of-mysql-on-centos-7
+    - name: Prepare RedHat 7 MySQL Repos
+      when:
+        - ansible_distribution_major_version == "7"
+        - ansible_os_family == "RedHat"
+        - devshop_service_db_mysql_repo
+      block:
+        - name: Install the MySQL repo
+          yum:
+            name: "{{ devshop_service_db_mysql_repo }}"
+            state: present
+        - name: Override variables for MySQL (RedHat).
+          set_fact:
+            mysql_daemon: mysqld
+            mysql_packages: [ 'mysql-server' ]
+            mysql_log_error: /var/log/mysqld.err
+            mysql_syslog_tag: mysqld
+            mysql_pid_file: /var/run/mysqld/mysqld.pid
+            mysql_socket: /var/lib/mysql/mysql.sock
