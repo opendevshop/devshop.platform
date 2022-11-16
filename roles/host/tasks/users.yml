@@ -18,4 +18,12 @@
     ssh_key_bits: "{{ devshop_platform_user_ssh_key_bits | default(omit) }}"
     ssh_key_file: "{{ devshop_platform_user_ssh_key_file | default(omit) }}"
 
-# @TODO:  Create devshop_host_app_user
+- name: Platform user home directory
+  when:
+  file:
+    state: directory
+    path: "{{ devshop_platform_user_home }}"
+    group: "{{ devshop_platform_user_group }}"
+    owner: "{{ devshop_platform_user }}"
+    mode: "0755"
+
