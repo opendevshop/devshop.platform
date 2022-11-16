@@ -20,7 +20,7 @@ apps:
         drupal_site_install_extra_args: []
 
         devshop_app_command_build: |
-          composer install
+          COMPOSER_MEMORY_LIMIT=-1 composer install
 
         devshop_app_command_install: >
           drush site-install {{ drupal_install_profile | default('standard') }} -y
