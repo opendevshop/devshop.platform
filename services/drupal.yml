@@ -16,13 +16,14 @@ apps:
     drupal:
       vars:
         drupal_install_profile: standard
+        drupal_composer_bin_dir: vendor/bin
         drupal_site_install_extra_args: []
 
         devshop_app_command_build: |
           composer install
 
         devshop_app_command_install: >
-          vendor/bin/drush site-install {{ drupal_install_profile | default('standard') }} -y
+          {{ drupal_composer_bin_dir }}/drush site-install {{ drupal_install_profile | default('standard') }} -y
           --root={{ devshop_app_git_root }}
           --db-url={{ devshop_service_db_backend }}://{{ devshop_service_db_user }}:{{ devshop_service_db_password }}@{{ devshop_service_db_host }}/{{ devshop_service_db_name }}
           {{ drupal_site_install_extra_args | join(" ") }}
