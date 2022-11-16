@@ -33,6 +33,18 @@
         mysql_databases: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_database') | list }}"
         mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
 
+    - name: "Set facts on app hosts."
+      when: devshop_service_app_register.results.ansible_facts is defined
+      with_items: "{{ devshop_service_app_register.results }}"
+      delegate_to: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_host }}"
+      delegate_facts: yes
+      set_fact:
+        devshop_service_db_user: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_mysql_user.name }}"
+        devshop_service_db_password: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_mysql_user.password }}"
+        devshop_service_db_name: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_mysql_database.name }}"
+        devshop_service_db_backend: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_mysql_backend }}"
+        devshop_service_db_host: "{{ devshop_service_app_register.results.ansible_facts.devshop_app_mysql_hostname }}"
+
 - name: Server Hosts Config
   when:
     - '"servers" in group_names'
