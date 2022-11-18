@@ -13,9 +13,3 @@ devshop_service_http_apache_mods_enabled:
 devshop_service_http_document_root: "web"
 devshop_host_apps_root: "/var/platform"
 devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }}"
-
-devshop_host_http_certificates_root: "{{ devshop_host_apps_root }}/certificates"
-
-devshop_app_http_certificate_file: "{{ devshop_host_http_certificates_root }}/{{ inventory_hostname }}.crt"
-devshop_app_http_certificate_key_file: "{{ devshop_host_http_certificates_root }}/{{ inventory_hostname }}.key"
-devshop_app_http_certificate_generate_command: "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ devshop_app_http_certificate_file }} -out {{ devshop_app_http_certificate_key_file }}"

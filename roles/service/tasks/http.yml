@@ -11,18 +11,31 @@
         msg: |
           Current Host: {{ inventory_hostname }}
 
+    - name: "All app hosts that use this server:"
+      debug:
+        msg: |
+          {{ hostvars[item] }}
+      with_items: "{{ groups['apps'] }}"
+      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+
+
     # See https://github.com/geerlingguy/ansible-role-apache#requirements
-    - name: "Certificates folder"
+    - name: "Prepare Certificates folder"
+      with_items: "{{ groups['apps'] }}"
+      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
       file:
-        path: "{{ devshop_host_http_certificates_root | dirname }}"
+        path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
         state: directory
-        owner: "{{ devshop_host_http_certificates_root_owner | default(devshop_platform_user) }}"
-        group: "{{ devshop_host_http_certificates_root_group | default(devshop_platform_user) }}"
-        mode: "{{ devshop_host_http_certificates_root_mode | default(omit) }}"
+        owner: "{{ hostvars[item]['devshop_app_http_certificates_root_owner'] | default(devshop_platform_user) }}"
+        group: "{{ hostvars[item]['devshop_app_http_certificates_root_group'] | default(devshop_platform_user) }}"
+        mode: "{{ hostvars[item]['devshop_app_http_certificates_root_mode'] | default(omit) }}"
 
     - name: "Generate self-signed certs"
-      command: "{{ devshop_app_http_certificate_generate_command }}"
-      become: "{{ platform_user }}"
+      with_items: "{{ groups['apps'] }}"
+      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
+      become: true
+      become_user: "{{ devshop_platform_user }}"
 
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
@@ -42,9 +55,9 @@
             ServerAlias {{ domain }}
               {% endfor %}
             {% endif %}
-          certificate_file: "{{ devshop_app_http_certificate_file | default(omit) }}"
-          certificate_key_file: "{{ devshop_app_http_certificate_key_file | default(omit) }}"
-          certificate_chain_file: "{{ devshop_app_http_certificate_chain_file | default(omit) }}"
+          certificate_file: "{{ hostvars[item]['devshop_app_http_certificate_file'] | default(omit) }}"
+          certificate_key_file: "{{ hostvars[item]['devshop_app_http_certificate_key_file'] | default(omit) }}"
+          certificate_chain_file: "{{ hostvars[item]['devshop_app_http_certificate_chain_file'] | default(omit) }}"
 
       register: apache_vhost_register
 

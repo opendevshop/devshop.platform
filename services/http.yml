@@ -22,3 +22,15 @@ servers:
           - "443:443"
 
         apache_remove_default_vhost: true
+
+apps:
+  vars:
+
+    #TODO: Move to default vars.
+    # Because this is inventory, we can't use these vars in the next vars.
+    devshop_app_http_certificates_root: "{{ devshop_host_apps_root }}/certificates"
+
+    devshop_app_http_certificate_file: "{{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.crt"
+    devshop_app_http_certificate_key_file: "{{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key"
+    devshop_app_http_certificate_common_name: "{{ inventory_hostname }}"
+    devshop_app_http_certificate_generate_command: "openssl req -batch -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key -out {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.crt -subj '/O={{ inventory_hostname }}/OU={{ inventory_hostname }}/CN={{ inventory_hostname }}/'"
