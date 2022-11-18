@@ -11,6 +11,19 @@
         msg: |
           Current Host: {{ inventory_hostname }}
 
+    # See https://github.com/geerlingguy/ansible-role-apache#requirements
+    - name: "Certificates folder"
+      file:
+        path: "{{ devshop_host_http_certificates_root | dirname }}"
+        state: directory
+        owner: "{{ devshop_host_http_certificates_root_owner | default(devshop_platform_user) }}"
+        group: "{{ devshop_host_http_certificates_root_group | default(devshop_platform_user) }}"
+        mode: "{{ devshop_host_http_certificates_root_mode | default(omit) }}"
+
+    - name: "Generate self-signed certs"
+      command: "{{ devshop_app_http_certificate_generate_command }}"
+      become: "{{ platform_user }}"
+
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
@@ -18,6 +31,7 @@
       set_fact:
         devshop_app_apache_vhost:
 
+          # See https://github.com/geerlingguy/ansible-role-apache
           servername: "{{ item }}"
 
           # NOTE: hostvars are from inventory. They do NOT include app role defaults.
@@ -28,12 +42,16 @@
             ServerAlias {{ domain }}
               {% endfor %}
             {% endif %}
+          certificate_file: "{{ devshop_app_http_certificate_file | default(omit) }}"
+          certificate_key_file: "{{ devshop_app_http_certificate_key_file | default(omit) }}"
+          certificate_chain_file: "{{ devshop_app_http_certificate_chain_file | default(omit) }}"
 
       register: apache_vhost_register
 
     - name: "Set Facts for host."
       set_fact:
         apache_vhosts: "{{ apache_vhost_register.results | map(attribute='ansible_facts.devshop_app_apache_vhost') | list }}"
+        apache_vhosts_ssl: "{{ apache_vhost_register.results | map(attribute='ansible_facts.devshop_app_apache_vhost') | list }}"
 
         # Override role defaults with service defaults.
         apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
