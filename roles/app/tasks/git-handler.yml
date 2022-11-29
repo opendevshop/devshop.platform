@@ -34,6 +34,7 @@
 
       {% for stage in devshop_app_playbook_stages %}
       ----------------{{ stage }}----------------
+      devshop_app_command_{{ stage }}: |
       {% if stage == skip_stages or stage in skip_stages %} (skipping) {% endif %}
       {{ lookup('vars', 'devshop_app_command_' + stage) | default('Not set.') }}
       {% endfor %}
