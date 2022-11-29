@@ -26,10 +26,6 @@
   # So, instead of this chaos, just gather facts in pre_tasks.
   gather_facts: no
 
-  # Run with --tags servers to include the entire play.
-  tags:
-    - servers
-
   pre_tasks:
     - name: Include platform vars file from importing playbook.
       include_vars: "{{ lookup('env', 'PWD') }}/{{ platform_vars_file }}"
@@ -38,11 +34,13 @@
 
   roles:
     - role: host
-      tags:
-        # Run with --tags hosts to only run the devshop.host role and skip service install.
-        - hosts
+      tags: [always]
+
+    # @TODO: Separate host.services role so we can skip it if tags=apps.
 
     - role: services
+      tags:
+        - servers
 
 - name: Apps
   hosts: apps
