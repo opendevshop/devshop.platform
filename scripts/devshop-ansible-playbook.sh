@@ -54,14 +54,15 @@ ANSIBLE_PLAYBOOK_FULL_COMMAND="ansible-playbook $ANSIBLE_PLAYBOOK \
 
 echo $LINE
 
-# Detect missing roles and install.
-if [ ! -d ${PLATFORM_FOLDER_PATH}/roles/contrib ]; then
-  echo "No ansible roles found at ${PLATFORM_FOLDER_PATH}/roles/contrib."
-  echo "Running ./scripts/ansible-galaxy-install.sh..."
-  cd ${PLATFORM_FOLDER_PATH}
-  ./scripts/ansible-galaxy-install.sh
-  cd -
-fi
+# @TODO: detect missing roles using ansible instead. This is tricky due to paths & ansible config. We don't want this to run unless called.
+## Detect missing roles and install.
+#if [ ! -d ${PLATFORM_FOLDER_PATH}/roles/contrib ]; then
+#  echo "No ansible roles found at ${PLATFORM_FOLDER_PATH}/roles/contrib."
+#  echo "Running ./scripts/ansible-galaxy-install.sh..."
+#  cd ${PLATFORM_FOLDER_PATH}
+#  ./scripts/ansible-galaxy-install.sh
+#  cd -
+#fi
 
 
 echo "Running Ansible Playbook --list-hosts Command: "
