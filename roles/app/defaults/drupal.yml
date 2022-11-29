@@ -1,1 +1,15 @@
 ---
+
+# Template file to use for settings file.
+devshop_app_drupal_create_settings_file: true
+devshop_app_drupal_settings_include_template: "drupal.settings.devshop.php.j2"
+devshop_app_drupal_settings_include_filename: "settings.devshop.php"
+devshop_app_drupal_settings_site_folder: "sites/default"
+
+# This is not alterable by Drupal
+devshop_app_drupal_settings_php_filename: "settings.php"
+devshop_app_drupal_settings_include_code:
+  - # DEVSHOP_INCLUDE: Written by devshop.platform ansible. see devshop_app_drupal_settings_include_code
+  - "if (file_exists($app_root . '/' . $site_path . '/{{ devshop_app_drupal_settings_include_filename }}')) {"
+  - "  include $app_root . '/' . $site_path . '/{{ devshop_app_drupal_settings_include_filename }}';"
+  - "} # END DEVSHOP_INCLUDE"
