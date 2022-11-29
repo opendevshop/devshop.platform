@@ -9,6 +9,7 @@
       set_fact:
         # @TODO: Allow users to set by IP or whatever.
         devshop_app_mysql_hostname: "{{ hostvars[devshop_app_server_db]['ansible_fqdn'] }}"
+        devshop_app_mysql_port: "3306"
         devshop_app_mysql_backend: "mysql"
         devshop_app_mysql_database:
           # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
@@ -39,6 +40,7 @@
         devshop_service_db_name: "{{ devshop_service_app_register.ansible_facts.devshop_app_mysql_database.name }}"
         devshop_service_db_backend: "{{ devshop_service_app_register.ansible_facts.devshop_app_mysql_backend }}"
         devshop_service_db_host: "{{ devshop_service_app_register.ansible_facts.devshop_app_mysql_hostname }}"
+        devshop_service_db_port: "{{ devshop_service_app_register.ansible_facts.devshop_app_mysql_port }}"
 
 - name: Server Hosts Config
   when:
@@ -61,6 +63,7 @@
         # @TODO: Allow users to set by IP or whatever.
         devshop_app_mysql_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
         devshop_app_mysql_backend: "mysql"
+        devshop_app_mysql_port: "3306"
         devshop_app_mysql_database:
           # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
           # UPDATE: We do. DB Names can only be 32 characters. This will cause collisions if new sites are created with similar names.
@@ -98,6 +101,7 @@
         devshop_service_db_name: "{{ item.ansible_facts.devshop_app_mysql_database.name }}"
         devshop_service_db_backend: "{{ item.ansible_facts.devshop_app_mysql_backend }}"
         devshop_service_db_host: "{{ item.ansible_facts.devshop_app_mysql_hostname }}"
+        devshop_service_db_port: "{{ item.ansible_facts.devshop_app_mysql_port }}"
 
     - name: "Variables prepared."
       debug:
