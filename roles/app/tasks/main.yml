@@ -67,13 +67,6 @@
     group: "{{ devshop_app_user_group }}"
     mode: '0755'
 
-# @TODO: Convert to pre-git tasks, then add post-command tasks as well.
-- name: Run App Tasks.
-  include_role:
-    name: "{{ devshop_app_role }}"
-    defaults_from: "{{ devshop_app_role_defaults_from }}"
-    tasks_from: "{{ devshop_app_role_tasks_from }}"
-
 - name: Deploy code from Git
 
   # On idempotent test runs, any changes to the working copy cause failure.
@@ -93,6 +86,13 @@
     recursive: "{{ devshop_app_git_recursive }}"
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
+
+# @TODO: Convert to pre-git tasks, then add post-command tasks as well.
+- name: Run App Tasks.
+  include_role:
+    name: "{{ devshop_app_role }}"
+    defaults_from: "{{ devshop_app_role_defaults_from }}"
+    tasks_from: "{{ devshop_app_role_tasks_from }}"
 
 # Launch Logic:
 # Task will RUN if:
