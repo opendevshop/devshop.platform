@@ -4,7 +4,6 @@
     msg: |
       inventory_hostname: {{ inventory_hostname }}"
 
-# @TODO: This runs BEFORE git clone, so files won't exist the first time, which should result in devshop_app_installed = false.
 - name: Check if site is already installed.
   command:
     cmd: "drush status --root={{ devshop_app_git_root }}"
@@ -18,6 +17,13 @@
 - set_fact:
     devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_status_register.stdout }}"
     devshop_app_drush_status: "{{ drupal_status_register.stdout }}"
+
+- name: Save settings.php file
+  template:
+    src: "{{ devshop_app_drupal_settings_include_template }}"
+    dest: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_include_filename }}"
+  when: devshop_app_drupal_create_settings_file | bool
+
 
 - name: "Drupal App Role complete."
   debug:
