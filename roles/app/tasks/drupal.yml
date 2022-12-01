@@ -18,17 +18,6 @@
     devshop_app_installed: "{{ 'Drupal bootstrap' in drupal_status_register.stdout }}"
     devshop_app_drush_status: "{{ drupal_status_register.stdout }}"
 
-- name: Save settings.devshop.php file
-  template:
-    src: "{{ devshop_app_drupal_settings_include_template }}"
-    dest: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_include_filename }}"
-  when: devshop_app_drupal_create_settings_file | bool
-
-- name: Include settings.devshop.php file
-  blockinfile:
-    path: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_php_filename }}"
-    block: "{{ devshop_app_drupal_settings_include_code }}"
-
 - name: "Drupal App Role complete."
   debug:
     msg: |
