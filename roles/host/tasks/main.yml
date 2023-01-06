@@ -38,6 +38,8 @@
 
       inventory_hostname: {{ inventory_hostname }}
       nodename: {{ ansible_facts.nodename }}
+      ansible_hostname: {{ ansible_hostname }}
+      ansible_fqdn: {{ ansible_fqdn }}
       ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
       ansible_connection: {{ ansible_connection }}
 
