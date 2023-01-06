@@ -25,6 +25,7 @@ devshop_platform_user_shell: "/bin/bash"
 # devshop_platform_user_ssh_key_file: .ssh/id_rsa
 
 devshop_host_prepare_task_files:
+  - 'host.yml'
   - 'packages.yml'
   - 'users.yml'
 
@@ -57,3 +58,7 @@ devshop_host_docker_volumes:
 # If overriding, be sure to include these volumes if needed.
 devshop_host_docker_published_ports:
   - "2222:22"
+
+# Server hostname will default to this unless overridden in your inventory or extra_vars.
+devshop_host_hostname: "{{ inventory_hostname }}"
+devshop_host_hostname_ignore_errors: true

@@ -1,0 +1,26 @@
+---
+
+- name: Detect current server hostname.
+  command: "hostname --fqdn"
+  register: _server_hostname_fqdn_command
+  failed_when: "_server_hostname_fqdn_command.stdout is undefined"
+  become: false
+  tags: [always]
+
+- name: Set devshop_host_hostname variable from current server hostname.
+  set_fact:
+    devshop_host_hostname: "{{ _server_hostname_fqdn_command.stdout }}"
+  when: devshop_host_hostname is not defined
+  tags: [always]
+
+- name: Display server_hostname.
+  debug:
+    msg: "{{ devshop_host_hostname }}"
+  tags: [always]
+
+- name: Set Server Hostname
+  hostname:
+    name: "{{ devshop_host_hostname }}"
+  when: devshop_host_hostname | length > 0
+  ignore_errors: "{{ devshop_host_hostname_ignore_errors }}"
+  tags: [runtime]
