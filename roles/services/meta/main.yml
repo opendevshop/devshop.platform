@@ -48,6 +48,11 @@ dependencies:
       icinga_director_url: ""
       icinga_director_pass: admin
 
+  - name: geerlingguy.mysql
+    when: '"geerlingguy.mysql" in devshop_host_roles'
+    tags:
+      - services
+
   - name: geerlingguy.apache
     when: '"geerlingguy.apache" in devshop_host_roles'
     tags:
@@ -71,10 +76,5 @@ dependencies:
 
   - name: geerlingguy.drush
     when: '"geerlingguy.drush" in devshop_host_roles'
-    tags:
-      - services
-
-  - name: geerlingguy.mysql
-    when: '"geerlingguy.mysql" in devshop_host_roles'
     tags:
       - services
