@@ -4,6 +4,9 @@
   template:
     src: "{{ devshop_app_drupal_settings_include_template }}"
     dest: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_include_filename }}"
+    owner: "{{ devshop_platform_user }}"
+    group: "{{ devshop_platform_user_group }}"
+    mode: '0664'
   when: devshop_app_drupal_create_settings_file | bool
 
 - name: Include settings.devshop.php file
