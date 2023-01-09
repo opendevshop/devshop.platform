@@ -111,10 +111,14 @@
   changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
     msg: |
-      Launching App Commands.
+      Launching App Commands for {{ inventory_hostname }}...
+      {{ devshop_app_git_repository }}
+      {{ devshop_app_git_reference }}
+      
       {% if git_results.changed: %}
       Reason: Git changes detected.
-      {% elif force_commands: %}
+      {% endif %}
+      {% if force_commands: %}
       Reason: force_commands was set.
       {% endif %}
 
