@@ -17,8 +17,6 @@
   delegate_facts: yes
   set_fact:
     devshop_platform_user: "{{ devshop_platform_user }}"
-    devshop_app_user: "{{ devshop_host_app_user }}"
-    devshop_app_user_group: "{{ devshop_host_app_user_group }}"
     devshop_host_apps_root: "{{ devshop_host_apps_root }}"
   tags:
     - about
