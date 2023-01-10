@@ -17,6 +17,7 @@ servers:
             - geerlingguy.repo-epel
 
         # When server is in docker mode, publish HTTP ports
+        # @TODO: Switch to "80" etc when proxy container works.
         devshop_host_docker_published_ports:
           - "80:80"
           - "443:443"
