@@ -1,0 +1,5 @@
+
+proxy:
+  hosts:
+    devshop.platform.proxy:
+

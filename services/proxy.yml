@@ -1,0 +1,36 @@
+---
+servers:
+  children:
+    proxy:
+      vars:
+        devshop_service_proxy:
+          name: A frontloader for other docker containers.
+
+        devshop_host_type: docker
+        ansible_connection: docker
+        devshop_host_docker_image: traefik:v2.9
+        devshop_host_docker_command: --api.insecure=true --providers.docker
+
+        # Override in your inventory, if needed.
+        devshop_host_docker_published_ports:
+        - "80:80"
+        - "8080:8080"
+        - "443:443"
+
+        devshop_host_docker_volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+
+        # set to true to remove this service from devshop_host_services
+        # Use when this service does not have tasks or defaults files in devshop.service.
+        no_service: yes
+
+        # Set labels for traefik to respond to.
+        devshop_host_docker_labels:
+          traefik.http.routers.devshop.tls: "true"
+          traefik.http.routers.devshop.tls.certresolver: "{{ inventory_hostname }}"
+
+          # Main Domain
+          traefik.http.routers.devshop.tls.domains[0].main: "{{ inventory_hostname }}"
+
+          # Alternative Domains
+          traefik.http.routers.devshop.tls.domains[0].sans: "{{ devshop_app_domains | join(',') }}"
