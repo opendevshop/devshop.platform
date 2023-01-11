@@ -17,9 +17,6 @@
     - devshop_host_type == "docker"
     - ansible_connection == "docker"
 
-- debug:
-    msg: "{{ devshop_host_docker_labels }}"
-
 - name: Create Server Container
   local_action:
     module: community.general.docker_container
