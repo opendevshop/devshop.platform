@@ -59,6 +59,9 @@ devshop_host_docker_volumes:
 devshop_host_docker_published_ports:
   - "2222:22"
 
+# Docker labels to apply to this container server.
+devshop_host_docker_labels: {}
+
 # Server hostname will default to this unless overridden in your inventory or extra_vars.
 devshop_host_hostname: "{{ inventory_hostname }}"
 devshop_host_hostname_ignore_errors: true
