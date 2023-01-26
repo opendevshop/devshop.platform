@@ -11,5 +11,5 @@ devshop_service_http_apache_mods_enabled:
 # Override with app.document_root or env.document_root
 
 devshop_service_http_document_root: "web"
-devshop_host_apps_root: "/var/platform"
+devshop_host_apps_root: "/var/platform/apps"
 devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }}"

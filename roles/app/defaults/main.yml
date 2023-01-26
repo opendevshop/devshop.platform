@@ -1,6 +1,6 @@
 ---
 
-devshop_app_type: drupal
+devshop_app_type: default
 
 # The devshop.app role uses include_role after the git code is cloned to process the application.
 # These variables determine what role and what files to load from that role.
@@ -13,7 +13,7 @@ devshop_app_role_tasks_from: "{{ devshop_app_type }}.yml"
 devshop_app_user: "platform"
 devshop_app_user_group: "{{ devshop_app_user }}"
 
-devshop_host_apps_root: "/var/platform"
+devshop_host_apps_root: "/var/platform/apps"
 
 # The app and environment codenames.
 # Used for various things like paths or system domains.

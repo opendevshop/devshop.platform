@@ -58,10 +58,11 @@ dependencies:
     tags:
       - services
 
-  - name: geerlingguy.certbot
-    when: '"geerlingguy.certbot" in devshop_host_roles'
-    tags:
-      - services
+# Leave uncommented until we have time to make it work.
+#  - name: geerlingguy.certbot
+#    when: '"geerlingguy.certbot" in devshop_host_roles'
+#    tags:
+#      - services
 
   # Make sure this runs before gg.php
   - name: geerlingguy.php-versions
