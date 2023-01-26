@@ -16,7 +16,9 @@
         msg: |
           {{ hostvars[item] }}
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+      - devshop_app_server_http in hostvars[item]
+      - hostvars[item]['devshop_app_server_http'] == inventory_hostname
 
 
     # See https://github.com/geerlingguy/ansible-role-apache#requirements
