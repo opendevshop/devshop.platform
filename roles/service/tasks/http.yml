@@ -17,14 +17,14 @@
           {{ hostvars[item] }}
       with_items: "{{ groups['apps'] }}"
       when:
-      - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+      - '"devshop_app_server_http" in hostvars[item]'
       - hostvars[item]['devshop_app_server_http'] == inventory_hostname
 
     # See https://github.com/geerlingguy/ansible-role-apache#requirements
     - name: "Prepare Certificates folder"
       with_items: "{{ groups['apps'] }}"
       when:
-        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - '"devshop_app_server_http" in hostvars[item]'
         - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       file:
         path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
@@ -36,7 +36,7 @@
     - name: "Generate self-signed certs"
       with_items: "{{ groups['apps'] }}"
       when:
-        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - '"devshop_app_server_http" in hostvars[item]'
         - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
       become: true
@@ -46,7 +46,7 @@
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
       when:
-        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - '"devshop_app_server_http" in hostvars[item]'
         - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       set_fact:
         devshop_app_apache_vhost:
@@ -71,7 +71,7 @@
     - name: "Prepare Certbot Variables"
       with_items: "{{ groups['apps'] }}"
       when:
-        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - '"devshop_app_server_http" in hostvars[item]'
         - hostvars[item]['devshop_app_server_http'] == inventory_hostname
 
       register: certbot_certs_register
@@ -91,9 +91,6 @@
           #     - example2.com
           # - domains:
           #     - example3.com:
-
-    - debug:
-        msg: "{{ certbot_certs_register.results | selectattr('ansible_facts') }}"
 
     - name: "Set Facts for host."
       set_fact:
