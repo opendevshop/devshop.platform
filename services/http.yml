@@ -7,6 +7,7 @@ servers:
           name: Web Service for Drupal
           roles:
             - geerlingguy.apache
+            - geerlingguy.certbot
             - geerlingguy.php
             - geerlingguy.php-mysql
             - geerlingguy.php-versions
@@ -35,3 +36,6 @@ apps:
     devshop_app_http_certificate_key_file: "{{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key"
     devshop_app_http_certificate_common_name: "{{ inventory_hostname }}"
     devshop_app_http_certificate_generate_command: "openssl req -batch -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key -out {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.crt -subj '/O={{ inventory_hostname }}/OU={{ inventory_hostname }}/CN={{ inventory_hostname }}/'"
+
+    # Set to false to block creation of a SSL cert.
+    devshop_app_server_http_letsencrypt: yes
