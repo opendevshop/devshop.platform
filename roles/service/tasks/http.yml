@@ -17,14 +17,15 @@
           {{ hostvars[item] }}
       with_items: "{{ groups['apps'] }}"
       when:
-      - devshop_app_server_http in hostvars[item]
+      - "{{ 'devshop_app_server_http' in hostvars[item] }}"
       - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-
 
     # See https://github.com/geerlingguy/ansible-role-apache#requirements
     - name: "Prepare Certificates folder"
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       file:
         path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
         state: directory
@@ -34,7 +35,9 @@
 
     - name: "Generate self-signed certs"
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
       become: true
       become_user: "{{ devshop_platform_user }}"
@@ -42,7 +45,9 @@
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       set_fact:
         devshop_app_apache_vhost:
 
@@ -66,7 +71,8 @@
     - name: "Prepare Certbot Variables"
       with_items: "{{ groups['apps'] }}"
       when:
-      - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+        - "{{ 'devshop_app_server_http' in hostvars[item] }}"
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
 
       register: certbot_certs_register
       set_fact:
