@@ -111,3 +111,15 @@ devshop_app_command_stages_throttle: 1
 
 # Server vars needed by apps
 devshop_service_db_backend: mysql
+
+devshop_app_command_build: |
+  echo "Running variable { devshop_app_command_build } ..."
+
+devshop_app_command_install: |
+  echo "Running variable { devshop_app_command_install } ..."
+
+devshop_app_command_deploy: |
+  echo "Running variable { devshop_app_command_deploy } ..."
+
+devshop_app_command_test: |
+  echo "Running variable { devshop_app_command_test } ..."
