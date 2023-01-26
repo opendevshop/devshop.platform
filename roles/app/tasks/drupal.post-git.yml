@@ -15,3 +15,6 @@
   blockinfile:
     path: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_php_filename }}"
     block: "{{ devshop_app_drupal_settings_include_code }}"
+  when:
+    - devshop_app_drupal_create_settings_file | bool
+    - devshop_service_db_name | default(false)
