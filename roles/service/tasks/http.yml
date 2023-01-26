@@ -96,7 +96,10 @@
         apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
 
         certbot_certs: "{{ certbot_certs_register.results | map(attribute='ansible_facts.devshop_app_certbot_cert') | selectattr('enable') | list}}"
-        certbot_create_if_missing: yes
+
+        # Generating certs during server playbook run isn't great. Too many and LE will lock you out.
+        certbot_create_if_missing: no
+
         certbot_create_standalone_stop_services: []
         certbot_auto_renew_user: "{{ devshop_platform_user }}"
         certbot_auto_renew_hour: "3"
