@@ -4,10 +4,12 @@
   template:
     src: "{{ devshop_app_drupal_settings_include_template }}"
     dest: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}/{{ devshop_app_drupal_settings_include_filename }}"
-    owner: "{{ devshop_platform_user }}"
-    group: "{{ devshop_platform_user_group | default(devshop_platform_user) }}"
+    owner: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user_group | default(devshop_app_user) }}"
     mode: '0664'
-  when: devshop_app_drupal_create_settings_file | bool
+  when:
+  - devshop_app_drupal_create_settings_file | bool
+  - devshop_service_db_name | default(false)
 
 - name: Include settings.devshop.php file
   blockinfile:
