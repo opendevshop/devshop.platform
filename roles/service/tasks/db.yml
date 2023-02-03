@@ -2,11 +2,14 @@
 
 - name: App Hosts Config
   when:
+
     - '"apps" in group_names'
+    - 'devshop_app_server_db is defined'
+    - '"devshop_app_server_db" in hostvars'
+    - '"ansible_fqdn" in hostvars[devshop_app_server_db]'
 
   block:
     - name: Preparing MySQL metadata
-      when: '"ansible_fqdn" in hostvars[devshop_app_server_db]'
       set_fact:
         # @TODO: Allow users to set by IP or whatever.
         devshop_app_mysql_hostname: "{{ hostvars[devshop_app_server_db]['ansible_fqdn'] }}"
@@ -59,7 +62,10 @@
 
     - name: "Prepare Databases."
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_db'] == inventory_hostname
+      when:
+        - 'item in hostvars'
+        - '"devshop_app_server_db" in hostvars[item]'
+        - 'hostvars[item]["devshop_app_server_db"] == inventory_hostname'
       set_fact:
         devshop_app_host: "{{ item }}"
         # @TODO: Allow users to set by IP or whatever.
@@ -93,7 +99,10 @@
         mysql_users: "{{ devshop_service_app_register.results | map(attribute='ansible_facts.devshop_app_mysql_user') | list }}"
 
     - name: "Set facts on app hosts."
-      when: devshop_service_app_register.results[0].ansible_facts is defined
+      when:
+      - '"ansible_facts" in devshop_service_app_register.results[0]'
+      - '"ansible_facts" in item'
+      - '"devshop_app_host" in item.ansible_facts'
       with_items: "{{ devshop_service_app_register.results }}"
       delegate_to: "{{ item.ansible_facts.devshop_app_host }}"
       delegate_facts: yes
