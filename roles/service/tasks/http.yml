@@ -33,14 +33,15 @@
         group: "{{ hostvars[item]['devshop_app_http_certificates_root_group'] | default(devshop_platform_user) }}"
         mode: "{{ hostvars[item]['devshop_app_http_certificates_root_mode'] | default(omit) }}"
 
-    - name: "Generate self-signed certs"
-      with_items: "{{ groups['apps'] }}"
-      when:
-        - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-      command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
-      become: true
-      become_user: "{{ devshop_platform_user }}"
+# @TODO: Decide if we can remove this now that certbot is working.
+#    - name: "Generate self-signed certs"
+#      with_items: "{{ groups['apps'] }}"
+#      when:
+#        - '"devshop_app_server_http" in hostvars[item]'
+#        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+#      command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
+#      become: true
+#      become_user: "{{ devshop_platform_user }}"
 
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
@@ -110,7 +111,7 @@
         certbot_auto_renew_user: "{{ devshop_platform_user }}"
         certbot_auto_renew_hour: "3"
         certbot_auto_renew_minute: "30"
-        certbot_create_method: "standalone"
+        certbot_create_method: "webroot"
 
     - name: "Set Facts for Debian hosts."
       set_fact:
