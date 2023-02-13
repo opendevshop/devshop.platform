@@ -1,65 +1,59 @@
 ---
-#
-#
-#
-
-all:
+# Put sites in "apps" group to tell devshop.platform collection that these hosts are App Hosts.
+apps:
   children:
 
-    # App Hosts
-    # NOTE: Once you have more than one project, you can
-    apps:
-      # Defaults for all App hosts in "apps" group.
+    # Use Ansible Groups to link sites together and provide defaults, similar to a "Project".
+    thinkdrop:
       vars:
-        devshop_app: thinkdrop
+        # Vars in an app's group are set as defaults for all hosts in the group.
         devshop_app_git_repository: git@github.com:thinkdrop/thinkdrop.net.git
+        devshop_app_git_document_root: docroot
+        devshop_app_name: thinkdrop
+        devshop_app_git_root: "{{ devshop_host_apps_root }}/{{ devshop_app_name }}/{{ devshop_app_environment }}"
 
-        # Needed for the platform. "Delegate_to" will ensure tasks run on the right host.
-        ansible_connection: local
+        # Assign this site to Server hosts.
+        devshop_app_host: host.thinkdrop.net
+        devshop_app_server_http: host.thinkdrop.net
+        devshop_app_server_db: host.thinkdrop.net
 
-        # Clones all Apps into the directory ./apps/thinkdrop/live.thinkdrop.net
-        devshop_app_git_root: "{{ playbook_dir }}/apps/{{ devshop_app }}/{{ inventory_hostname }}"
+        drupal_install_profile: minimal
+        drupal_site_install_extra_args:
+            - "--existing-config"
 
-
-      # Environments.
+      # "Hosts" in the "apps" group are like environments. One host represents one site.
       hosts:
+        # Add the variables you want to override for each environment.
+        dev.thinkdrop.net:
+          devshop_app_git_reference: main
+          devshop_app_environment: dev
+
+        test.thinkdrop.net:
+          devshop_app_git_reference: "3.4.1"
+          devshop_app_environment: test
+          drupal_install_profile: minimal
+          drupal_site_install_extra_args:
+            - "--existing-config"
+
         live.thinkdrop.net:
           devshop_app_git_reference: "3.4.0"
+          devshop_app_environment: live
           devshop_app_domains:
             - thinkdrop.net
             - live.thinkdrop.net
             - www.thinkdrop.net
 
-        test.thinkdrop.net:
-          devshop_app_git_reference: "3.4.0"
+        pr0.thinkdrop.net:
+          devshop_app_git_repository: git@github.com:fork/thinkdrop.net.git
+          devshop_app_git_reference: "bug/0"
+          devshop_app_environment: qa
 
-        dev.thinkdrop.net:
-          devshop_app_git_reference: "8.x"
 
-    # Server Hosts
-    servers:
-
-      # Service Groups
-      children:
-
-        # Drupal Web Server
-        service_http:
-          vars:
-            devshop_service_roles_http:
-              - geerlingguy.apache
-              - geerlingguy.php
-              - geerlingguy.php-mysql
-              - geerlingguy.php-versions
-              - geerlingguy.composer
-              - geerlingguy.drush
-          hosts:
-            thinkdrop.local.computer:
-
-        # Drupal Database Server
-        service_db:
-          vars:
-            devshop_service_roles_db:
-              - geerlingguy.mysql
-
-          hosts:
-            thinkdrop.local.computer:
+# Add servers to service groups to configure them with appropriate roles.
+servers:
+  children:
+    http:
+      host.thinkdrop.net:
+    db:
+      hosts:
+        thinkdrop.local.computer:

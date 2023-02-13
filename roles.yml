@@ -4,6 +4,7 @@
 #
 roles:
   - name: geerlingguy.apache
+  - name: geerlingguy.certbot
   - name: geerlingguy.composer
   - name: geerlingguy.drupal
   - name: geerlingguy.drush

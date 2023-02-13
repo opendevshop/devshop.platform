@@ -16,13 +16,16 @@
         msg: |
           {{ hostvars[item] }}
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
-
+      when:
+      - '"devshop_app_server_http" in hostvars[item]'
+      - hostvars[item]['devshop_app_server_http'] == inventory_hostname
 
     # See https://github.com/geerlingguy/ansible-role-apache#requirements
     - name: "Prepare Certificates folder"
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - '"devshop_app_server_http" in hostvars[item]'
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       file:
         path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
         state: directory
@@ -32,7 +35,9 @@
 
     - name: "Generate self-signed certs"
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - '"devshop_app_server_http" in hostvars[item]'
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
       command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
       become: true
       become_user: "{{ devshop_platform_user }}"
@@ -40,7 +45,11 @@
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
-      when: hostvars[item]['devshop_app_server_http'] == inventory_hostname
+      when:
+        - '"devshop_app_server_http" in hostvars[item]'
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+
+      register: apache_vhost_register
       set_fact:
         devshop_app_apache_vhost:
 
@@ -59,7 +68,30 @@
           certificate_key_file: "{{ hostvars[item]['devshop_app_http_certificate_key_file'] | default(omit) }}"
           certificate_chain_file: "{{ hostvars[item]['devshop_app_http_certificate_chain_file'] | default(omit) }}"
 
-      register: apache_vhost_register
+
+    - name: "Prepare Certbot Variables"
+      with_items: "{{ groups['apps'] }}"
+      when:
+        - '"devshop_app_server_http" in hostvars[item]'
+        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+
+      register: certbot_certs_register
+      set_fact:
+        devshop_app_certbot_cert:
+          enable: "{{ hostvars[item]['devshop_app_server_http_letsencrypt'] | default(omit) }}"
+          webroot: "{{ hostvars[item]['devshop_app_git_root'] + '/' + hostvars[item]['devshop_app_git_document_root'] | default(omit) }}"
+          domains: "{{ [item, hostvars[item]['devshop_app_domains'] | default([])] | flatten | default(omit)}}"
+
+          # See https://github.com/geerlingguy/ansible-role-certbot:
+          # @TODO: Allow per site cert emails?
+          # email:
+          # - email: janedoe@example.com
+          #   webroot: "/var/www/html"
+          #   domains:
+          #     - example1.com
+          #     - example2.com
+          # - domains:
+          #     - example3.com:
 
     - name: "Set Facts for host."
       set_fact:
@@ -69,6 +101,16 @@
         # Override role defaults with service defaults.
         apache_mods_enabled: "{{ devshop_service_http_apache_mods_enabled | list }}"
 
+        certbot_certs: "{{ certbot_certs_register.results | map(attribute='ansible_facts.devshop_app_certbot_cert') | list }}"
+
+        # Generating certs during server playbook run isn't great. Too many and LE will lock you out.
+        certbot_create_if_missing: yes
+
+        certbot_create_standalone_stop_services: []
+        certbot_auto_renew_user: "{{ devshop_platform_user }}"
+        certbot_auto_renew_hour: "3"
+        certbot_auto_renew_minute: "30"
+        certbot_create_method: "standalone"
 
     - name: "Set Facts for Debian hosts."
       set_fact:
@@ -84,3 +126,4 @@
           Current Host: {{ inventory_hostname }}
           apache_vhosts: {{ apache_vhosts }}
           apache_mods_enabled: {{ apache_mods_enabled }}
+          certbot_certs: {{ certbot_certs }}
