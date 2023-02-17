@@ -19,34 +19,7 @@
       when:
       - '"devshop_app_server_http" in hostvars[item]'
       - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-<<<<<<< HEAD
-  
-=======
 
-    # See https://github.com/geerlingguy/ansible-role-apache#requirements
-    - name: "Prepare Certificates folder"
-      with_items: "{{ groups['apps'] }}"
-      when:
-        - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-      file:
-        path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
-        state: directory
-        owner: "{{ hostvars[item]['devshop_app_http_certificates_root_owner'] | default(devshop_platform_user) }}"
-        group: "{{ hostvars[item]['devshop_app_http_certificates_root_group'] | default(devshop_platform_user) }}"
-        mode: "{{ hostvars[item]['devshop_app_http_certificates_root_mode'] | default(omit) }}"
-
-# @TODO: Decide if we can remove this now that certbot is working.
-#    - name: "Generate self-signed certs"
-#      with_items: "{{ groups['apps'] }}"
-#      when:
-#        - '"devshop_app_server_http" in hostvars[item]'
-#        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-#      command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
-#      become: true
-#      become_user: "{{ devshop_platform_user }}"
-
->>>>>>> 8f7ecf00c8ee73ffaf697a65d59a90c0e7ea50cb
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
