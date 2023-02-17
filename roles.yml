@@ -15,6 +15,7 @@ roles:
   - name: geerlingguy.mysql
   - name: geerlingguy.php-mysql
   - name: geerlingguy.php-versions
+  - name: geerlingguy.apache-php-fpm
   - name: geerlingguy.repo-remi
   - name: geerlingguy.repo-epel
   - name: geerlingguy.repo-dotdeb
