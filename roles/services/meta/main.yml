@@ -83,3 +83,4 @@ dependencies:
     when: '"geerlingguy.drush" in devshop_host_roles'
     tags:
       - services
+      - php
