@@ -6,9 +6,9 @@
     'prefix' => '',
     'host' => '{{ devshop_service_db_host }}',
     'port' => '{{ devshop_service_db_port }}',
-    'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
+#    'namespace' => 'Drupal\\mysql\\Driver\\Database\\mysql',
     'driver' => '{{ devshop_service_db_backend }}',
-    'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
+#    'autoload' => 'core/modules/mysql/src/Driver/Database/mysql/',
     # @See https://www.drupal.org/docs/system-requirements/setting-the-mysql-transaction-isolation-level
     'init_commands' => [
         'isolation_level' => 'SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED',
