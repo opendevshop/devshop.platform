@@ -27,15 +27,7 @@ servers:
 
 apps:
   vars:
-
-    #TODO: Move to default vars.
-    # Because this is inventory, we can't use these vars in the next vars.
-    devshop_app_http_certificates_root: "{{ devshop_host_apps_root }}/certificates"
-
-    devshop_app_http_certificate_file: "{{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.crt"
-    devshop_app_http_certificate_key_file: "{{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key"
-    devshop_app_http_certificate_common_name: "{{ inventory_hostname }}"
-    devshop_app_http_certificate_generate_command: "openssl req -batch -x509 -nodes -days 365 -newkey rsa:2048 -keyout {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.key -out {{ devshop_host_apps_root }}/certificates/{{ inventory_hostname }}.crt -subj '/O={{ inventory_hostname }}/OU={{ inventory_hostname }}/CN={{ inventory_hostname }}/'"
-
-    # Set to false to block creation of a SSL cert.
     devshop_app_server_http_letsencrypt: yes
+    devshop_app_http_certificate_file: /etc/letsencrypt/live/{{ inventory_hostname }}/cert.pem
+    devshop_app_http_certificate_key_file: /etc/letsencrypt/live/{{ inventory_hostname }}/privkey.pem
+    devshop_app_http_certificate_chain_file: /etc/letsencrypt/live/{{ inventory_hostname }}/fullchain.pem

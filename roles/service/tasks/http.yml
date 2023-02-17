@@ -19,29 +19,7 @@
       when:
       - '"devshop_app_server_http" in hostvars[item]'
       - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-
-    # See https://github.com/geerlingguy/ansible-role-apache#requirements
-    - name: "Prepare Certificates folder"
-      with_items: "{{ groups['apps'] }}"
-      when:
-        - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-      file:
-        path: "{{ hostvars[item]['devshop_app_http_certificates_root'] }}"
-        state: directory
-        owner: "{{ hostvars[item]['devshop_app_http_certificates_root_owner'] | default(devshop_platform_user) }}"
-        group: "{{ hostvars[item]['devshop_app_http_certificates_root_group'] | default(devshop_platform_user) }}"
-        mode: "{{ hostvars[item]['devshop_app_http_certificates_root_mode'] | default(omit) }}"
-
-    - name: "Generate self-signed certs"
-      with_items: "{{ groups['apps'] }}"
-      when:
-        - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
-      command: "{{ hostvars[item]['devshop_app_http_certificate_generate_command'] }}"
-      become: true
-      become_user: "{{ devshop_platform_user }}"
-
+  
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
@@ -103,22 +81,15 @@
 
         certbot_certs: "{{ certbot_certs_register.results | map(attribute='ansible_facts.devshop_app_certbot_cert') | list }}"
 
+        # @TODO: Figure out why we can't move these to inventory/defaults vars files.
         # Generating certs during server playbook run isn't great. Too many and LE will lock you out.
         certbot_create_if_missing: yes
-
+        
         certbot_create_standalone_stop_services: []
         certbot_auto_renew_user: "{{ devshop_platform_user }}"
         certbot_auto_renew_hour: "3"
         certbot_auto_renew_minute: "30"
-        certbot_create_method: "standalone"
-
-    - name: "Set Facts for Debian hosts."
-      set_fact:
-        php_packages_extra:
-          - "libapache2-mod-php{{ php_version }}"
-      when:
-        - ansible_os_family == 'Debian'
-
+        certbot_create_method: "webroot"
 
     - name: "Variables prepared."
       debug:
@@ -127,3 +98,11 @@
           apache_vhosts: {{ apache_vhosts }}
           apache_mods_enabled: {{ apache_mods_enabled }}
           certbot_certs: {{ certbot_certs }}
+
+    # @TODO replace with  apache-php-fpm role
+    - name: "Set Facts for Debian hosts."
+      set_fact:
+        php_packages_extra:
+          - "libapache2-mod-php{{ php_version }}"
+      when:
+        - ansible_os_family == 'Debian'
