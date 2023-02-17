@@ -11,6 +11,9 @@ servers:
             - geerlingguy.php
             - geerlingguy.php-mysql
             - geerlingguy.php-versions
+            - geerlingguy.apache-php-fpm
+            - geerlingguy.php-memcached
+            - geerlingguy.memcached
             - geerlingguy.composer
             - geerlingguy.drush
             - geerlingguy.repo-dotdeb
@@ -25,6 +28,13 @@ servers:
 
         apache_remove_default_vhost: true
 
+        php_enable_php_fpm: true
+        apache_vhosts:
+          - servername: "www.example.com"
+            documentroot: "/var/www/example"
+            extra_parameters: |
+                  ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000/var/www/example"
+    
 apps:
   vars:
     devshop_app_server_http_letsencrypt: yes

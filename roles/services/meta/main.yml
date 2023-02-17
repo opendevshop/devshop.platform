@@ -74,6 +74,22 @@ dependencies:
     tags:
       - services
 
+  - name: geerlingguy.apache-php-fpm
+    when: '"geerlingguy.php-memcached" in devshop_host_roles'
+    tags:
+      - services
+  
+  - name: geerlingguy.memcached
+    when: '"geerlingguy.memcached" in devshop_host_roles'
+    tags:
+      - services
+
+  - name: geerlingguy.php-memcached
+    when: '"geerlingguy.php-memcached" in devshop_host_roles'
+    tags:
+      - services
+  
+
   - name: geerlingguy.composer
     when: '"geerlingguy.composer" in devshop_host_roles'
     tags:

@@ -42,6 +42,9 @@
             ServerAlias {{ domain }}
               {% endfor %}
             {% endif %}
+            
+            ProxyPassMatch ^/(.*\.php(/.*)?)$ "fcgi://127.0.0.1:9000{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
+             
           certificate_file: "{{ hostvars[item]['devshop_app_http_certificate_file'] | default(omit) }}"
           certificate_key_file: "{{ hostvars[item]['devshop_app_http_certificate_key_file'] | default(omit) }}"
           certificate_chain_file: "{{ hostvars[item]['devshop_app_http_certificate_chain_file'] | default(omit) }}"
