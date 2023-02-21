@@ -1,5 +1,11 @@
 ---
 servers:
+  vars:
+
+    # Force all servers to use py3.
+    # @TODO: I added this because CI tests were failing. Is it more stable to keep this here?
+    ansible_python_intepreter: /usr/bin/python3
+
   children:
     common:
       vars:
