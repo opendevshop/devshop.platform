@@ -69,6 +69,11 @@ dependencies:
     tags:
       - services
 
+  - name: geerlingguy.apache-php-fpm
+    when: '"geerlingguy.apache-php-fpm" in devshop_host_roles'
+    tags:
+      - services
+
   - name: geerlingguy.php-mysql
     when: '"geerlingguy.php" in devshop_host_roles'
     tags:
