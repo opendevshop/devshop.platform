@@ -16,4 +16,9 @@ servers:
             - geerlingguy.repo-remi
             - geerlingguy.repo-epel
 
+        # When server is in docker mode, publish HTTP ports
+        devshop_host_docker_published_ports:
+          - "80:80"
+          - "443:443"
+
         apache_remove_default_vhost: true

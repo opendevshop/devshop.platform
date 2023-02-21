@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
+SCRIPT_FOLDER_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+PLATFORM_FOLDER_PATH="$(cd "$(dirname "$SCRIPT_FOLDER_PATH")" && pwd)"
+
 ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
 ANSIBLE_TAGS=${ANSIBLE_TAGS:-""}
 ANSIBLE_SKIP_TAGS=${ANSIBLE_SKIP_TAGS:-""}
@@ -29,6 +32,9 @@ if [ -n "$DEBUG" ]; then
   echo $LINE
   echo "devshop-ansible-playbook.sh Environment Vars:"
   echo
+  echo "SCRIPT_FOLDER_PATH: $SCRIPT_FOLDER_PATH"
+  echo "PLATFORM_FOLDER_PATH: $PLATFORM_FOLDER_PATH"
+  echo "PWD: $PWD"
   echo "ANSIBLE_PLAYBOOK: $ANSIBLE_PLAYBOOK"
   echo "ANSIBLE_TAGS: $ANSIBLE_TAGS"
   echo "ANSIBLE_SKIP_TAGS: $ANSIBLE_SKIP_TAGS"
@@ -47,6 +53,17 @@ ANSIBLE_PLAYBOOK_FULL_COMMAND="ansible-playbook $ANSIBLE_PLAYBOOK \
     $*"
 
 echo $LINE
+
+# Detect missing roles and install.
+if [ ! -d ${PLATFORM_FOLDER_PATH}/roles/contrib ]; then
+  echo "No ansible roles found at ${PLATFORM_FOLDER_PATH}/roles/contrib."
+  echo "Running ./scripts/ansible-galaxy-install.sh..."
+  cd ${PLATFORM_FOLDER_PATH}
+  ./scripts/ansible-galaxy-install.sh
+  cd -
+fi
+
+
 echo "Running Ansible Playbook --list-hosts Command: "
 echo "> $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND"
 $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND

@@ -16,14 +16,15 @@
     devshop_app_mysql_backend: "mysql"
     devshop_app_mysql_database:
       # @TODO: Determine if we need an aegir-like DB name generator, or if we can always rely on this pattern.
-      name: "{{ hostvars[item]['devshop_app_name'] }}_{{ hostvars[item]['devshop_app_environment'] }}"
+      # UPDATE: We do. DB Names can only be 32 characters. This will cause collisions if new sites are created with similar names.
+      name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
       encoding: utf8mb4
       collation: utf8mb4_general_ci
     devshop_app_mysql_user:
-      name: "{{ hostvars[item]['devshop_app_name'] }}_{{ hostvars[item]['devshop_app_environment'] }}"
+      name: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}"
       host: "%"
       password: "{{ hostvars[item]['devshop_app_mysql_password'] | default('password') }}"
-      priv: "{{ hostvars[item]['devshop_app_name'] }}_{{ hostvars[item]['devshop_app_environment'] }}.*:ALL"
+      priv: "{{ (hostvars[item]['devshop_app_name'] + '_' + hostvars[item]['devshop_app_environment'])[:32] }}.*:ALL"
 
   register: devshop_service_app_register
 

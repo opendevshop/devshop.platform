@@ -54,7 +54,7 @@ devshop_app_git_track_submodules: false
 devshop_app_installed: false
 
 # Notify git handlers even if git repo did not change.
-force_build: false
+force_commands: false
 
 # Run install stage even if devshop_app_installed == true
 force_install: false
@@ -108,3 +108,6 @@ devshop_app_commands_log_file_start_content: |
 # Passed to the "command" task to limit the number of calls to trigger at once.
 # If not set to 1, calls to things like composer that cache files might collide when all being called at the same time.
 devshop_app_command_stages_throttle: 1
+
+# Server vars needed by apps
+devshop_service_db_backend: mysql
