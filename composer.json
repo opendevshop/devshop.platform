@@ -1,0 +1,14 @@
+{
+    "name": "devshop/platform",
+    "description": "Server tools & configura",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jon Pugh",
+            "email": "jon@thinkdrop.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
