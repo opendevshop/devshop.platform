@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PIP_PACKAGES={$PIP_PACKAGES:-ansible}
+PIP_PACKAGES=${PIP_PACKAGES:-ansible}
 
 apt-get update \
   && apt-get install -y --no-install-recommends \
