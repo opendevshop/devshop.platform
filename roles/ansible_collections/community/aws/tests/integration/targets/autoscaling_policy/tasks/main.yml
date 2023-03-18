@@ -1,0 +1,317 @@
+---
+# __Test Outline__
+#
+# __ec2_scaling_policy__
+# create simplescaling scaling policy
+# update simplescaling scaling policy
+# remove simplescaling scaling policy
+# create stepscaling scaling policy
+# update stepscaling scaling policy
+# remove stepscaling scaling policy
+
+- module_defaults:
+    group/aws:
+        region: "{{ aws_region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        security_token: "{{ security_token | default(omit) }}"
+  collections:
+    - amazon.aws
+  block:
+
+    - name: create trivial launch_configuration
+      ec2_lc:
+        name: "{{ scaling_policy_lc_name }}"
+        state: present
+        instance_type: t3.nano
+        image_id: "{{ ec2_ami_id }}"
+
+    - name: create trivial ASG
+      ec2_asg:
+        name: "{{ scaling_policy_asg_name }}"
+        state: present
+        launch_config_name: "{{ scaling_policy_lc_name }}"
+        min_size: 0
+        max_size: 1
+        desired_capacity: 0
+
+    - name: Create Simple Scaling policy using implicit defaults
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_simplescaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        adjustment_type: ChangeInCapacity
+        scaling_adjustment: 1
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.changed
+
+    - name: Update Simple Scaling policy using explicit defaults
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_simplescaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        adjustment_type: ChangeInCapacity
+        scaling_adjustment: 1
+        policy_type: SimpleScaling
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - not result.changed
+
+    - name: min_adjustment_step is ignored with ChangeInCapacity
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_simplescaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        adjustment_type: ChangeInCapacity
+        scaling_adjustment: 1
+        min_adjustment_step: 1
+        policy_type: SimpleScaling
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - not result.changed
+          - result.adjustment_type == "ChangeInCapacity"
+
+    - name: Change Simple Scaling policy adjustment_type to PercentChangeInCapacity
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_simplescaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        adjustment_type: PercentChangeInCapacity
+        scaling_adjustment: 1
+        min_adjustment_step: 1
+        policy_type: SimpleScaling
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_simplescaling_policy"
+          - result.changed
+          - result.adjustment_type == "PercentChangeInCapacity"
+
+    - name: Remove Simple Scaling policy
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_simplescaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed
+
+    - name: Create Step Scaling policy
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        policy_type: StepScaling
+        metric_aggregation: Maximum
+        step_adjustments:
+        - upper_bound: 20
+          scaling_adjustment: 50
+        - lower_bound: 20
+          scaling_adjustment: 100
+        adjustment_type: "PercentChangeInCapacity"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.changed
+
+    - name: Add another step
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: present
+        policy_type: StepScaling
+        metric_aggregation: Maximum
+        step_adjustments:
+        - upper_bound: 20
+          scaling_adjustment: 50
+        - lower_bound: 20
+          upper_bound: 40
+          scaling_adjustment: 75
+        - lower_bound: 40
+          scaling_adjustment: 100
+        adjustment_type: "PercentChangeInCapacity"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_stepscaling_policy"
+          - result.changed
+          - result.adjustment_type == "PercentChangeInCapacity"
+
+    - name: Remove Step Scaling policy
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed
+
+    - name: Remove Step Scaling policy (idemopotency)
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_stepscaling_policy"
+        asg_name: "{{ scaling_policy_asg_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result is successful
+
+    - name: create TargetTracking predefined policy
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_targettracking_predefined_policy"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          predefined_metric_spec:
+            predefined_metric_type: ASGAverageCPUUtilization
+          target_value: 98.0
+        asg_name: "{{ scaling_policy_asg_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result.changed
+          - result is successful
+
+    - name: create TargetTrackingScaling predefined policy (idempotency)
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_targettracking_predefined_policy"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          predefined_metric_spec:
+            predefined_metric_type: ASGAverageCPUUtilization
+          target_value: 98.0
+        asg_name: "{{ scaling_policy_asg_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_policy"
+          - result is not changed
+
+#    # It would be good to also test this but we would need an Target group and an ALB
+#    - name: create TargetTracking predefined policy with resource_label
+#      ec2_scaling_policy:
+#        name: "{{ resource_prefix }}_targettracking_predefined_rl_policy"
+#        policy_type: TargetTrackingScaling
+#        target_tracking_config:
+#          predefined_metric_spec:
+#            predefined_metric_type: ALBRequestCountPerTarget
+#            resource_label: "{{ alb_resource_label }}"
+#          target_value: 98.0
+#        asg_name: "{{ scaling_policy_asg_name }}"
+#      register: result
+#
+#    - assert:
+#        that:
+#          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_rl_policy"
+#          - result.changed
+#          - result is successful
+#
+#    - name: create TargetTracking predefined policy with resource_label (idempotency)
+#      ec2_scaling_policy:
+#        name: "{{ resource_prefix }}_targettracking_predefined_rl_policy"
+#        policy_type: TargetTrackingScaling
+#        target_tracking_config:
+#          predefined_metric_spec:
+#            predefined_metric_type: ALBRequestCountPerTarget
+#            resource_label: "{{ alb_resource_label }}"
+#          target_value: 98.0
+#        asg_name: "{{ scaling_policy_asg_name }}"
+#      register: result
+#
+#    - assert:
+#        that:
+#          - result.policy_name == "{{ resource_prefix }}_targettracking_predefined_rl_policy"
+#          - result is not changed
+
+    - name: create TargetTrackingScaling custom policy
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_targettracking_custom_policy"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          customized_metric_spec:
+            metric_name: metric_1
+            namespace: namespace_1
+            statistic: Minimum
+            unit: Gigabits
+            dimensions: [{'Name': 'dimension1', 'Value': 'value1'}]
+          disable_scalein: true
+          target_value: 98.0
+        asg_name: "{{ scaling_policy_asg_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result.changed
+          - result is successful
+
+    - name: create TargetTrackingScaling custom policy (idempotency)
+      ec2_scaling_policy:
+        name: "{{ resource_prefix }}_targettracking_custom_policy"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          customized_metric_spec:
+            metric_name: metric_1
+            namespace: namespace_1
+            statistic: Minimum
+            unit: Gigabits
+            dimensions: [{'Name': 'dimension1', 'Value': 'value1'}]
+          disable_scalein: true
+          target_value: 98.0
+        asg_name: "{{ scaling_policy_asg_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.policy_name == "{{ resource_prefix }}_targettracking_custom_policy"
+          - result is not changed
+
+  always:
+
+    # ============================================================
+    - name: Remove the scaling policies
+      ec2_scaling_policy:
+        name: "{{ item }}"
+        state: absent
+      register: result
+      with_items:
+        - "{{ resource_prefix }}_simplescaling_policy"
+        - "{{ resource_prefix }}_stepscaling_policy"
+        - "{{ resource_prefix }}_targettracking_predefined_policy"
+        - "{{ resource_prefix }}_targettracking_predefined_rl_policy"
+        - "{{ resource_prefix }}_targettracking_custom_policy"
+      ignore_errors: yes
+
+    - name: remove the ASG
+      ec2_asg:
+        name: "{{ scaling_policy_asg_name }}"
+        state: absent
+      ignore_errors: yes
+
+    - name: remove the Launch Configuration
+      ec2_lc:
+        name: "{{ scaling_policy_lc_name }}"
+        state: absent
+      ignore_errors: yes

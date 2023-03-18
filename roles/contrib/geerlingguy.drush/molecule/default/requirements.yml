@@ -1,0 +1,7 @@
+---
+roles:
+  - name: geerlingguy.repo-remi
+  - name: geerlingguy.php-versions
+  - name: geerlingguy.php
+  - name: geerlingguy.composer
+  - name: geerlingguy.git

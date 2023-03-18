@@ -1,0 +1,13 @@
+- name: test add s3 bucket notification
+  collections:
+    - amazon.aws
+    - community.general
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+    - include_tasks: test_sns_sqs_notifications.yml
+    - include_tasks: test_lambda_notifications.yml

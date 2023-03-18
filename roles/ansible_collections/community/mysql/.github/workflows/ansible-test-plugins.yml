@@ -1,0 +1,147 @@
+name: Plugins CI
+on:
+  push:
+    paths:
+      - 'plugins/**'
+      - 'tests/**'
+      - '.github/workflows/ansible-test-plugins.yml'
+  pull_request:
+    paths:
+      - 'plugins/**'
+      - 'tests/**'
+      - '.github/workflows/ansible-test-plugins.yml'
+  schedule:
+    - cron: '0 6 * * *'
+
+
+env:
+  mysql_version_file: "tests/integration/targets/setup_mysql/defaults/main.yml"
+  connector_version_file: "tests/integration/targets/setup_mysql/vars/main.yml"
+
+jobs:
+  sanity:
+    name: "Sanity (Ansible: ${{ matrix.ansible }})"
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.12
+          - stable-2.13
+          - stable-2.14
+          - devel
+    steps:
+      - name: Perform sanity testing
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          ansible-core-version: ${{ matrix.ansible }}
+          testing-type: sanity
+          pull-request-change-detection: true
+
+  integration:
+    name: "Integration (Python: ${{ matrix.python }}, Ansible: ${{ matrix.ansible }}, MySQL: ${{ matrix.db_engine_version }}, Connector: ${{ matrix.connector }})"
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        db_engine_version:
+          - mysql_5.7.31
+          - mysql_8.0.22
+          - mariadb_10.3.34
+          - mariadb_10.8.3
+        ansible:
+          - stable-2.12
+          - stable-2.13
+          - stable-2.14
+          - devel
+        python:
+          - 3.6
+          - 3.8
+          - 3.9
+        connector:
+          - pymysql==0.7.10
+          - pymysql==0.9.3
+          - mysqlclient==2.0.1
+        exclude:
+          - db_engine_version: mysql_8.0.22
+            connector: pymysql==0.7.10
+          - db_engine_version: mariadb_10.8.3
+            connector: pymysql==0.7.10
+          - python: 3.6
+            ansible: stable-2.12
+          - python: 3.6
+            ansible: stable-2.13
+          - python: 3.6
+            ansible: stable-2.14
+          - python: 3.6
+            ansible: devel
+          - python: 3.8
+            ansible: stable-2.13
+          - python: 3.8
+            ansible: stable-2.14
+          - python: 3.8
+            ansible: devel
+          - python: 3.9
+            ansible: stable-2.12
+
+    steps:
+      - name: >-
+          Perform integration testing against
+          Ansible version ${{ matrix.ansible }}
+          under Python ${{ matrix.python }}
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          ansible-core-version: ${{ matrix.ansible }}
+          pre-test-cmd: >-
+            DB_ENGINE=$(echo '${{ matrix.db_engine_version }}' | awk -F_ '{print $1}');
+            DB_VERSION=$(echo '${{ matrix.db_engine_version }}' | awk -F_ '{print $2}');
+            DB_ENGINE_PRETTY=$([[ "${DB_ENGINE}" == 'mysql' ]] && echo 'MySQL' || echo 'MariaDB');
+            >&2 echo Matrix factor for the DB is ${{ matrix.db_engine_version }}...;
+            >&2 echo Setting ${DB_ENGINE_PRETTY} version to ${DB_VERSION}...;
+            sed -i -e "s/^${DB_ENGINE}_version:.*/${DB_ENGINE}_version: $DB_VERSION/g" '${{ env.mysql_version_file }}';
+            if [[ ${{ matrix.db_engine_version }} == mariadb* ]];
+            then
+              echo Set MariaDB install flag...; sed -i -e "s/^mariadb_install: false/mariadb_install: true/g" '${{ env.mysql_version_file }}';
+              echo Set MariaDB v10.8.3 URL sub dir...; sed -i -e "s/^mariadb_url_subdir:.*/mariadb_url_subdir: linux-systemd/g" '${{ env.connector_version_file }}';
+            fi;
+            >&2 echo Setting Connector version to ${{ matrix.connector }}...;
+            sed -i 's/^python_packages:.*/python_packages: [${{ matrix.connector }}]/' ${{ env.connector_version_file }}
+          target-python-version: ${{ matrix.python }}
+          testing-type: integration
+          pull-request-change-detection: true
+
+  units:
+    runs-on: ubuntu-20.04
+    name: Units (Ⓐ${{ matrix.ansible }})
+    strategy:
+      # As soon as the first unit test fails,
+      # cancel the others to free up the CI queue
+      fail-fast: true
+      matrix:
+        ansible:
+          - stable-2.12
+          - stable-2.13
+          - stable-2.14
+          - devel
+        python:
+          - 3.8
+          - 3.9
+        exclude:
+          - python: 3.8
+            ansible: stable-2.13
+          - python: 3.8
+            ansible: stable-2.14
+          - python: 3.8
+            ansible: devel
+          - python: 3.9
+            ansible: stable-2.12
+
+    steps:
+      - name: >-
+          Perform unit testing against
+          Ansible version ${{ matrix.ansible }}
+        uses: ansible-community/ansible-test-gh-action@release/v1
+        with:
+          ansible-core-version: ${{ matrix.ansible }}
+          target-python-version: ${{ matrix.python }}
+          testing-type: units
+          pull-request-change-detection: true

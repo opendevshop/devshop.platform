@@ -1,0 +1,2 @@
+scaling_policy_lc_name: "{{ resource_prefix }}_lc"
+scaling_policy_asg_name: "{{ resource_prefix }}_asg"

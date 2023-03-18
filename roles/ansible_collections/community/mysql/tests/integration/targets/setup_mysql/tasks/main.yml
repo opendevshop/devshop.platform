@@ -1,0 +1,21 @@
+---
+####################################################################
+# WARNING: These are designed specifically for Ansible tests       #
+# and should not be used as examples of how to write Ansible roles #
+####################################################################
+
+- import_tasks: setvars.yml
+  tags:
+    - setup_mysql
+- import_tasks: dir.yml
+  tags:
+    - setup_mysql
+- import_tasks: install.yml
+  tags:
+    - setup_mysql
+- import_tasks: config.yml
+  tags:
+    - setup_mysql
+- import_tasks: verify.yml
+  tags:
+    - setup_mysql

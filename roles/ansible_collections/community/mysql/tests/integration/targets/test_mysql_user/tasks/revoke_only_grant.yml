@@ -1,0 +1,58 @@
+---
+- vars:
+    mysql_parameters: &mysql_params
+      login_user: '{{ mysql_user }}'
+      login_password: '{{ mysql_password }}'
+      login_host: 127.0.0.1
+      login_port: '{{ mysql_primary_port }}'
+  block:
+    - name: Drop mysql user if exists
+      mysql_user:
+        <<: *mysql_params
+        name: '{{ user_name_1 }}'
+        state: absent
+      ignore_errors: true
+
+    - name: create user with two grants
+      mysql_user:
+        <<: *mysql_params
+        name: "{{ user_name_1 }}"
+        password: "{{ user_password_1 }}"
+        update_password: on_create
+        priv: '*.*:SELECT,GRANT'
+
+    - name: user must have only on priv, grant priv must be dropped
+      register: result
+      mysql_user:
+        <<: *mysql_params
+        name: "{{ user_name_1 }}"
+        password: "{{ user_password_1 }}"
+        update_password: on_create
+        priv: '*.*:SELECT'
+
+    - assert:
+        that:
+          - result is not failed
+          - result is changed
+
+    - name: immutable - user must have only on priv, grant priv must be dropped
+      register: result
+      mysql_user:
+        <<: *mysql_params
+        name: "{{ user_name_1 }}"
+        password: "{{ user_password_1 }}"
+        update_password: on_create
+        priv: '*.*:SELECT'
+
+    - assert:
+        that:
+          - result is not failed
+          - result is not changed
+
+  always:
+    - name: drop user
+      mysql_user:
+        <<: *mysql_params
+        name: '{{ user_name_1 }}'
+        state: absent
+      ignore_errors: true

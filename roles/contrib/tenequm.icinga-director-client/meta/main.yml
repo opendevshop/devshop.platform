@@ -1,0 +1,19 @@
+galaxy_info:
+  author: Mykhaylo Kolesnik
+  description: Role for Icinga client setup through Icinga Director API.
+
+  license: MIT
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Debian
+      versions:
+        - jessie
+        - stretch
+    - name: Ubuntu
+      versions:
+        - xenial
+
+  galaxy_tags:
+    - icinga
