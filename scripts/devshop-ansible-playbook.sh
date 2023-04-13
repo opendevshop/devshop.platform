@@ -27,7 +27,7 @@ ON_FAIL=${ON_FAIL:-"systemctl status --no-pager"}
 LINE="------------------------"
 echo $LINE
 echo "Welcome to the Platform."
-
+echo "Current Directory: $(pwd)"
 if [ -n "$DEBUG" ]; then
   echo $LINE
   echo "devshop-ansible-playbook.sh Environment Vars:"
