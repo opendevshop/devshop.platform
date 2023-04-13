@@ -20,15 +20,11 @@ dependencies:
     when: '"geerlingguy.security" in devshop_host_roles'
     tags:
       - services
-    vars:
-      security_sudoers_passwordless: "{{ devshop_host_admins }}"
 
   - name: geerlingguy.github-users
     when: '"geerlingguy.github-users" in devshop_host_roles'
     tags:
       - services
-    vars:
-      github_users: "{{ devshop_host_github_users }}"
 
   - name: tenequm.icinga-director-client
     when: '"tenequm.icinga-director-client" in devshop_host_roles'

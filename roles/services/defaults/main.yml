@@ -2,10 +2,3 @@
 devshop_host_users:
   - platform
   - control
-  - jonpugh
-
-devshop_host_admins:
-  - jonpugh
-
-devshop_host_github_users:
-  - jonpugh
