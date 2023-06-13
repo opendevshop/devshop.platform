@@ -9,7 +9,7 @@ apps:
   hosts:
 
     # Dev site.
-    dev.local.computer:
+    site.local.computer:
 
       # Override the default git repo or reference for this site.
       devshop_app_git_reference: 9.x
