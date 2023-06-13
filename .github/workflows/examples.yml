@@ -23,12 +23,12 @@ jobs:
           - job_name: Single Site
             distro: ubuntu2004
             ansible_options: |
-              --inventory ./examples/single-site
+              --inventory ./examples/single-site -v
 
           - job_name: Ten Sites
             distro: ubuntu2004
             ansible_options: |
-              --inventory ./examples/ten-sites
+              --inventory ./examples/ten-sites -v
 
 # @TODO: Create a simpler upgrade process test/example.
 #          - job_name: Drupal Upgrades
