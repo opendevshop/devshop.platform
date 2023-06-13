@@ -64,7 +64,8 @@ echo $LINE
 #  cd -
 #fi
 
-
+cd $SCRIPT_FOLDER_PATH
+echo "Changed director to $SCRIPT_FOLDER_PATH"
 echo "Running Ansible Playbook --list-hosts Command: "
 echo "> $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND"
 $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND
