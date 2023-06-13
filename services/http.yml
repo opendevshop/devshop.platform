@@ -26,7 +26,8 @@ servers:
 
         apache_remove_default_vhost: true
 
-        drush_composer_global_install: true
+        drush_install_from_source: true
+        drush_composer_global_install: false
         drush_launcher_install: false
 apps:
   vars:
