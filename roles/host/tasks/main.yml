@@ -3,6 +3,10 @@
 - name: Create Server Tasks
   include_tasks: "create.yml"
 
+  # This probably shouldn't create the container when tag=about, but how can we get info about without the container?
+  tags:
+    - always
+
 - name: Gather Server Host Facts
   gather_facts:
   tags:
