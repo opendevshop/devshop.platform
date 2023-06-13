@@ -130,4 +130,9 @@
   notify:
     - git changed
 
+- name: Skipped Command Stages
+  when: not force_commands and git_results.changed == false
+  debug:
+    msg: "Command stages were skipped because there were no changes to git. To force the App Commands to run, use the option --extra-vars=force_commands=true"
+
 - meta: flush_handlers
