@@ -55,6 +55,8 @@ dependencies:
 
   - name: geerlingguy.apache
     when: '"geerlingguy.apache" in devshop_host_roles'
+    vars:
+      apache_ignore_missing_ssl_certificate: false
     tags:
       - services
 
