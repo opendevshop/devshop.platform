@@ -38,9 +38,6 @@ devshop_app_git_root: "{{ devshop_host_apps_root }}/apps/{{ inventory_hostname }
 devshop_app_git_document_root: web
 devshop_app_git_document_root_path: "{{ devshop_app_git_root }}/{{ devshop_app_git_document_root }}"
 
-# Whether the git checkout should be forced. If set to true, any local modifications to files will be lost.
-devshop_app_git_force: true
-
 # Passed to ansible.builtin.git recursive option.
 # Set to false to stop git from cloning the repo with the "recursive" option.
 devshop_app_git_recursive: true
@@ -52,6 +49,9 @@ devshop_app_git_track_submodules: false
 # Set to TRUE to skip the "install" command stage.
 # The app playbooks set this variable as each app type will have a different way of detecting if it is installed.
 devshop_app_installed: false
+
+# Whether the git checkout should be hard reset. If set to true, any local modifications to files will be lost.
+force_reset: false
 
 # Notify git handlers even if git repo did not change.
 force_commands: false

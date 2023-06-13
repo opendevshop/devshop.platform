@@ -89,7 +89,7 @@
     version: "{{ devshop_app_git_reference }}"
     dest: "{{ devshop_app_git_root }}"
     accept_hostkey: yes
-    force: "{{ devshop_app_git_force }}"
+    force: "{{ force_reset }}"
     recursive: "{{ devshop_app_git_recursive }}"
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
