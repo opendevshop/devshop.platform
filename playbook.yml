@@ -34,7 +34,8 @@
 
   roles:
     - role: host
-      tags: [always]
+      tags:
+        - servers
 
     # @TODO: Separate host.services role so we can skip it if tags=apps.
 
