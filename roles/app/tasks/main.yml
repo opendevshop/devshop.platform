@@ -94,11 +94,11 @@
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
 
-- name: Run Post-Git Tasks.
-  include_role:
-    name: "{{ devshop_app_role }}"
-    defaults_from: "{{ devshop_app_role_defaults_from }}"
-    tasks_from: "{{ devshop_app_type }}.post-git.yml"
+#- name: Run Post-Git Tasks.
+#  include_role:
+#    name: "{{ devshop_app_role }}"
+#    defaults_from: "{{ devshop_app_role_defaults_from }}"
+#    tasks_from: "{{ devshop_app_type }}.post-git.yml"
 
 # Launch Logic:
 # Task will RUN if:
