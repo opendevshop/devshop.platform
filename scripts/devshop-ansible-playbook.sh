@@ -2,7 +2,9 @@
 set -e
 
 SCRIPT_FOLDER_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
-PLATFORM_FOLDER_PATH="$(cd "$(dirname "$SCRIPT_FOLDER_PATH")" && pwd)"
+
+#TODO: Look for /vendor and set dynamically.
+PLATFORM_FOLDER_PATH="$(cd "$(dirname $(dirname $(dirname "$SCRIPT_FOLDER_PATH")))" && pwd)"
 
 ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
 ANSIBLE_TAGS=${ANSIBLE_TAGS:-""}
@@ -10,6 +12,11 @@ ANSIBLE_SKIP_TAGS=${ANSIBLE_SKIP_TAGS:-""}
 ANSIBLE_EXTRA_VARS=${ANSIBLE_EXTRA_VARS:-""}
 ANSIBLE_PLAYBOOK_COMMAND_OPTIONS=${ANSIBLE_PLAYBOOK_COMMAND_OPTIONS:-""}
 ANSIBLE_VERBOSITY=${ANSIBLE_VERBOSITY:-"0"}
+
+# If the including repo has an inventory.yml file at the root, load it.
+if [[ -f "$PLATFORM_FOLDER_PATH/inventory.yml" ]]; then
+  ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$PLATFORM_FOLDER_PATH/inventory.yml"
+fi
 
 # Build options string if ENV vars exist.
 if [[ -n "${ANSIBLE_TAGS}" ]]; then
@@ -21,6 +28,9 @@ fi
 if [[ -n "${ANSIBLE_EXTRA_VARS}" ]]; then
   ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="--extra-vars $ANSIBLE_EXTRA_VARS $ANSIBLE_PLAYBOOK_COMMAND_OPTIONS"
 fi
+
+
+ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$SCRIPT_FOLDER_PATH/services"
 
 ON_FAIL=${ON_FAIL:-"systemctl status --no-pager"}
 # TODO: Goat Scripts
