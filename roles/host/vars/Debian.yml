@@ -7,3 +7,4 @@ __devshop_host_common_packages:
   - openssh-server
   - curl
   - unzip
+  - sendmail
