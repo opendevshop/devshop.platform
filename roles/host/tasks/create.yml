@@ -9,10 +9,12 @@
   with_items: "{{ groups['apps'] }}"
   delegate_to: "{{ item }}"
   set_fact:
-    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [(hostvars[item]['devshop_app_docker_git_root'] | default(hostvars[item]['devshop_app_git_root'])) + ':' + hostvars[item]['devshop_app_git_root']] }}"
+    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [(hostvars[item]['devshop_app_docker_git_root']) + ':' + hostvars[item]['devshop_app_git_root']] }}"
     devshop_host_docker_labels: "{{ devshop_host_docker_labels | default({}) | combine({'traefik.http.routers.vhosts.rule': 'Host(`' + item + '`)'}) }}"
   when:
     - hostvars[item]['devshop_app_host'] == inventory_hostname
+    # Only map if devshop_app_docker_git_root is set.
+    - hostvars[item]['devshop_app_docker_git_root'] | default(false)
     - devshop_host_type is defined
     - devshop_host_type == "docker"
     - ansible_connection == "docker"
