@@ -9,7 +9,7 @@
   with_items: "{{ groups['apps'] }}"
   delegate_to: "{{ item }}"
   set_fact:
-#    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [hostvars[item]['devshop_app_git_root'] + ':' + hostvars[item]['devshop_app_git_root']] }}"
+    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [hostvars[item]['devshop_app_git_root'] + ':' + hostvars[item]['devshop_app_git_root']] }}"
     devshop_host_docker_labels: "{{ devshop_host_docker_labels | default({}) | combine({'traefik.http.routers.vhosts.rule': 'Host(`' + item + '`)'}) }}"
   when:
     - hostvars[item]['devshop_app_host'] == inventory_hostname
@@ -26,10 +26,11 @@
     command: "{{ devshop_host_docker_command | default(omit)}}"
     published_ports: "{{ devshop_host_docker_published_ports | default(omit)}}"
     volumes: "{{ devshop_host_docker_volumes | default(omit)}}"
-    privileged: "{{ devshop_host_docker_privileged | default(omit)}}"
+    privileged: "{{ devshop_host_docker_privileged | default(true)}}"
     working_dir: "{{ devshop_host_docker_working_dir | default(devshop_platform_user_home)}}"
     labels: "{{ devshop_host_docker_labels | default(omit) }}"
     environment: "{{ devshop_host_docker_environment | default(omit) }}"
+    cgroupns_mode: "{{ devshop_host_docker_cgroupns | default(\"host\") }}"
 
   run_once: True
   when:
