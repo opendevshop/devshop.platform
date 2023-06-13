@@ -29,6 +29,7 @@
     privileged: "{{ devshop_host_docker_privileged | default(omit)}}"
     working_dir: "{{ devshop_host_docker_working_dir | default(devshop_platform_user_home)}}"
     labels: "{{ devshop_host_docker_labels | default(omit) }}"
+    environment: "{{ devshop_host_docker_environment | default(omit) }}"
 
   run_once: True
   when:
