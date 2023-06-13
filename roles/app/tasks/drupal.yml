@@ -6,8 +6,8 @@
 
 - name: Check if site is already installed.
   command:
-    cmd: "drush status --root={{ devshop_app_git_root }}"
-    chdir: "{{ devshop_app_git_root }}"
+    cmd: "drush status --root={{ devshop_app_git_document_root_path }} status bootstrap"
+    chdir: "{{ devshop_app_git_document_root_path }}"
   register: drupal_status_register
   failed_when: "drupal_status_register.stdout is undefined"
   changed_when: false
