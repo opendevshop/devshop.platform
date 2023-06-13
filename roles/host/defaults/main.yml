@@ -56,6 +56,10 @@ devshop_host_docker_volumes:
 
 devshop_app_docker_git_root: "{{ inventory_dir }}"
 
+# The platform will commit the built image as the image name.
+# If set to false, container will need to be reinstalled on every d run.
+devshop_host_docker_image_commit_after_host_role: true
+
 # The docker ports to use when creating the container.
 # If overriding, be sure to include these volumes if needed.
 devshop_host_docker_published_ports:

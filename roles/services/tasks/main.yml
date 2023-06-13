@@ -1,4 +1,13 @@
 ---
+
+- name: Save Docker Container as Image
+  local_action: command docker commit {{ inventory_hostname }} {{ devshop_host_docker_image }}
+  when:
+    - devshop_host_docker_image_commit_after_host_role
+    - devshop_host_type is defined
+    - devshop_host_type == "docker"
+    - ansible_connection == "docker"
+
 - name: DevShop.Services Role Complete.
   debug:
     msg: |
