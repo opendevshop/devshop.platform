@@ -26,6 +26,8 @@ servers:
 
         apache_remove_default_vhost: true
 
+        drush_composer_global_install: true
+        drush_launcher_install: false
 apps:
   vars:
     devshop_app_server_http_letsencrypt: yes
