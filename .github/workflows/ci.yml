@@ -1,5 +1,5 @@
 ---
-name: Cross Platform Support Tests
+name: Cross Platform Tests
 'on':
   pull_request:
   push:
@@ -13,48 +13,27 @@ defaults:
     working-directory: 'devshop.platform'
 
 jobs:
-# Remove lint tests for now.
-#  lint:
-#    name: Lint
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Check out the codebase.
-#        uses: actions/checkout@v2
-#        with:
-#          path: 'devshop.platform'
-#
-#      - name: Set up Python 3.
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: '3.x'
-#
-#      - name: Install test dependencies.
-#        run: pip3 install yamllint
-#
-#      - name: Lint code.
-#        run: |
-#          yamllint .
-  molecule:
-    name: "${{ matrix.distro }} - ${{ matrix.example }}"
+  examples:
+    name: "${{ matrix.job_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - distro: ubuntu2004
-            example: single-site
+          - job_name: Ubuntu 20.04
+            ansible_options: |
+              --inventory ./examples/single-site \
+              --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu2004-ansible
 
-          - distro: ubuntu1804
-            example: single-site
+          - job_name: Ubuntu 18.04
+            ansible_options: |
+              --inventory ./examples/single-site \
+              --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu1804-ansible
 
-          - distro: debian10
-            example: single-site
-
-#          - distro: centos7
-#            example: single-site
-
-          - distro: centos8
-            example: single-site
+    env:
+      PY_COLORS: '1'
+      ANSIBLE_FORCE_COLOR: '1'
+      MOLECULE_DISTRO: ${{ matrix.distro }}
 
     steps:
       - name: Check out the codebase.
@@ -68,10 +47,12 @@ jobs:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker
+        run: |
+          pip3 install ansible molecule[docker] docker
+          bash scripts/ansible-galaxy-install.sh
 
       # See: https://github.com/geerlingguy/ansible-role-mysql/issues/422
-      - name: Disable AppArmor on Debian.
+      - name: Disable AppArmoDuring a workflow run, files are uploaded and downloaded individually using the upload-artifact and download-artifact actions. However, when a workflow run finishes and an artifact is downloaded from either the UI or through the download api, a zip is dynamically created with all the file contents that were uploaded. There is currently no way to download artifacts after a workflow run finishes in a format other than a zip or to download artifact contents individually. One of the consequences of this limitation is that if a zip is uploaded during a workflow run and then downloaded from the UI, there will be a double zip created.r on Debian.
         run: |
           set -x
           sudo apt-get install apparmor-profiles
@@ -79,10 +60,24 @@ jobs:
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
         if: ${{ startsWith(matrix.distro, 'debian') }}
 
-      - name: Test Molecule Example ${{ matrix.example }}.
-        run: molecule test
+      - name: Run d.
         env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
-          MOLECULE_EXAMPLE: ${{ matrix.example }}
+          OPTIONS: ${{ matrix.ansible_options }}
+        run: |
+          ./d \
+          ${OPTIONS}
+
+      - name: Run d again.
+        if: ${{ matrix.ansible_options }} and {{ always() }}
+        env:
+          OPTIONS: ${{ matrix.ansible_options }}
+        run: |
+          ./d \
+          ${OPTIONS}
+
+      - name: Upload artifacts.
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: "artifact-${{ matrix.job_name }}"
+          path: devshop.platform/molecule/default/artifacts
