@@ -69,8 +69,8 @@ jobs:
           sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
         if: ${{ startsWith(matrix.distro, 'debian') }}
 
-      - name: Create a molecule instance.
-        run: molecule create
+      #- name: Create a molecule instance.
+      #  run: molecule create
 
       - name: Run d with 'about' tag.
         env:
