@@ -53,13 +53,13 @@ dependencies:
     tags:
       - services
 
-  - name: geerlingguy.apache
-    when: '"geerlingguy.apache" in devshop_host_roles'
+  - name: geerlingguy.certbot
+    when: '"geerlingguy.certbot" in devshop_host_roles'
     tags:
       - services
 
-  - name: geerlingguy.certbot
-    when: '"geerlingguy.certbot" in devshop_host_roles'
+  - name: geerlingguy.apache
+    when: '"geerlingguy.apache" in devshop_host_roles'
     tags:
       - services
 
