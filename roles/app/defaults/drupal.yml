@@ -10,6 +10,6 @@ devshop_app_drupal_settings_site_folder: "sites/default"
 devshop_app_drupal_settings_php_filename: "settings.php"
 devshop_app_drupal_settings_include_code: |
   # DEVSHOP_INCLUDE: Written by devshop.platform ansible. see devshop_app_drupal_settings_include_code
-  if (file_exists($app_root . '/' . $site_path . '/{{ devshop_app_drupal_settings_include_filename }}')) {
-    include $app_root . '/' . $site_path . '/{{ devshop_app_drupal_settings_include_filename }}';
+  if (file_exists(__DIR__ . '/{{ devshop_app_drupal_settings_include_filename }}')) {
+    include __DIR__ . '/{{ devshop_app_drupal_settings_include_filename }}';
   } # END DEVSHOP_INCLUDE"
