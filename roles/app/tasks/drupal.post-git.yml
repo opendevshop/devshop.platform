@@ -4,7 +4,7 @@
   file:
     state: directory
     recurse: yes
-    path: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}
+    path: "{{ devshop_app_git_document_root_path }}/{{ devshop_app_drupal_settings_site_folder }}"
 
 - name: Save settings.devshop.php file
   template:
