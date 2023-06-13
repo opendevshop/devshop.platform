@@ -65,6 +65,10 @@
 #
 #
 
+- name: Install python
+  raw: apt-get update && apt-get install python-is-python3
+  become: true
+
 - name: Prepare Host
   tags: [hosts]
   loop: "{{ devshop_host_prepare_task_files }}"

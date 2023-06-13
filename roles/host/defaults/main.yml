@@ -43,7 +43,7 @@ devshop_app_git_document_root: web
 devshop_host_common_packages_state: present
 
 # The default docker image to use when creating Servers.
-devshop_host_docker_image: geerlingguy/docker-ubuntu1804-ansible
+devshop_host_docker_image: geerlingguy/docker-ubuntu2004-ansible
 
 # The docker command to use when creating the container.
 # If blank, the default command from the container will be used.
