@@ -7,7 +7,8 @@ servers:
           name: Web Service for Drupal
           roles:
             - geerlingguy.apache
-            - geerlingguy.certbot
+            # This used to work... python something or other is breaking.
+            # - geerlingguy.certbot
             - geerlingguy.php
             - geerlingguy.php-mysql
             - geerlingguy.php-versions
