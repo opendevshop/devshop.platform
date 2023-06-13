@@ -20,8 +20,8 @@
 - name: Create Server Container
   local_action:
     module: community.general.docker_container
-    name: "{{ ansible_host }}"
-    hostname: "{{ ansible_host }}"
+    name: "{{ inventory_hostname }}"
+    hostname: "{{ inventory_hostname }}"
     image: "{{ devshop_host_docker_image }}"
     command: "{{ devshop_host_docker_command | default(omit)}}"
     published_ports: "{{ devshop_host_docker_published_ports | default(omit)}}"
