@@ -50,8 +50,6 @@ from ansible.inventory.group import Group
 
 class VarsModule(BaseVarsPlugin):
 
-    REQUIRES_ENABLED = True
-
     def __init__(self):
         """ constructor """
         super(VarsModule, self).__init__()
