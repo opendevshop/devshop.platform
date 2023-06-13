@@ -50,6 +50,8 @@ apps:
 http:
   hosts:
     server.local.computer:
+      ansible_connection: docker
+      devshop_host_type: docker
 
 db:
   hosts:
