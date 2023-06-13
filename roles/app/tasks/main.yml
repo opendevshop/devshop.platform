@@ -33,6 +33,7 @@
       Git Repository: {{ devshop_app_git_repository }}
       Git Reference:  {{ devshop_app_git_reference }}
       Git Root:       {{ devshop_app_git_root }}
+      inventory_dir:  {{ inventory_dir }}
       ---------------------------------
       Servers:
       {{ devshop_app_servers | to_nice_yaml }}

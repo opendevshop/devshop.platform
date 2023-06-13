@@ -9,13 +9,25 @@
   with_items: "{{ groups['apps'] }}"
   delegate_to: "{{ item }}"
   set_fact:
-    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [hostvars[item]['devshop_app_git_root'] + ':' + hostvars[item]['devshop_app_git_root']] }}"
+    devshop_host_docker_volumes: "{{ devshop_host_docker_volumes + [(hostvars[item]['devshop_app_docker_git_root'] | default(hostvars[item]['devshop_app_git_root'])) + ':' + hostvars[item]['devshop_app_git_root']] }}"
     devshop_host_docker_labels: "{{ devshop_host_docker_labels | default({}) | combine({'traefik.http.routers.vhosts.rule': 'Host(`' + item + '`)'}) }}"
   when:
     - hostvars[item]['devshop_app_host'] == inventory_hostname
     - devshop_host_type is defined
     - devshop_host_type == "docker"
     - ansible_connection == "docker"
+
+- name: DevShop.Host Docker Container Info
+  tags:
+    - about
+  debug:
+    msg: |
+      -----------------------------------------------
+      DevShop.Host Docker Container is about to be created...
+      -----------------------------------------------
+      name: {{ inventory_hostname }}
+      devshop_host_docker_volumes:
+      {{ devshop_host_docker_volumes | to_nice_yaml }}      
 
 - name: Create Server Container
   local_action:

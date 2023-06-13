@@ -54,6 +54,8 @@ devshop_host_docker_command: ""
 devshop_host_docker_volumes:
   - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
 
+devshop_app_docker_git_root: "{{ inventory_dir }}"
+
 # The docker ports to use when creating the container.
 # If overriding, be sure to include these volumes if needed.
 devshop_host_docker_published_ports:
