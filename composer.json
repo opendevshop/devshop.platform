@@ -12,6 +12,6 @@
     "minimum-stability": "dev",
     "require": {},
     "bin": [
-      "scripts/devshop-ansible-playbook.sh"
+      "d"
     ]
 }
