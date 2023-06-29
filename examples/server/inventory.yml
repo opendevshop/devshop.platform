@@ -1,1 +1,9 @@
 
+common:
+  hosts:
+    fullhostname.server.com
+  vars:
+    ansible_connection: local
+    github_users:
+      - jonpugh
+    security_sudoers_passwordless: "{{github_users}}"
