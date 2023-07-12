@@ -22,13 +22,11 @@ jobs:
         include:
           - job_name: Ubuntu 20.04
             ansible_options: |
-              --inventory ./examples/single-site \
-              --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu2004-ansible
+              --inventory ./examples/single-site --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu2004-ansible
 
           - job_name: Ubuntu 18.04
             ansible_options: |
-              --inventory ./examples/single-site \
-              --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu1804-ansible
+              --inventory ./examples/single-site --extra-vars=devshop_host_docker_image=geerlingguy/docker-ubuntu1804-ansible
 
     env:
       PY_COLORS: '1'
