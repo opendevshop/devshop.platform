@@ -1,6 +1,12 @@
 ---
 
 - name: Save Docker Container as Image
+  debug:
+    msg: | 
+      Running command:
+      command docker commit {{ inventory_hostname }} {{ devshop_host_docker_image }}
+
+- name: Save Docker Container as Image
   local_action: command docker commit {{ inventory_hostname }} {{ devshop_host_docker_image }}
   when:
     - devshop_host_docker_image_commit_after_host_role
