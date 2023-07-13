@@ -13,7 +13,8 @@ servers:
             - geerlingguy.php-mysql
             - geerlingguy.php-versions
             - geerlingguy.composer
-            - geerlingguy.drush
+            # Too much chance of conflict.
+            # - geerlingguy.drush
             - geerlingguy.repo-dotdeb
             - geerlingguy.repo-remi
             - geerlingguy.repo-epel
