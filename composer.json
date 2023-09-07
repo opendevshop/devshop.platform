@@ -12,6 +12,7 @@
     "minimum-stability": "dev",
     "require": {},
     "bin": [
-      "d"
+      "d",
+      "scripts/ansible-galaxy-install.sh"
     ]
 }
