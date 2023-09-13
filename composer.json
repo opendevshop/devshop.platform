@@ -1,6 +1,6 @@
 {
     "name": "devshop/platform",
-    "description": "Server tools & configura",
+    "description": "Ansible collection for hosting websites.",
     "type": "library",
     "license": "MIT",
     "authors": [
