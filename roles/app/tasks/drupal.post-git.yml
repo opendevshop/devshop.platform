@@ -1,4 +1,27 @@
 ---
+- name: Prepare .env file.
+  file:
+    path: "{{ devshop_app_env_file_path }}"
+    state: touch
+
+- name: Write service variables to .env file.
+  blockinfile:
+    path: "{{ devshop_app_env_file_path }}"
+    block: |
+      ##
+      ## Written by opendevshop/devshop.platform:roles/app/tasks/drupal.post-git.yml
+      ##
+      ##
+      MYSQL_DATABASE={{ devshop_service_db_name }}
+      MYSQL_USER={{ devshop_service_db_user }}
+      MYSQL_PASSWORD={{ devshop_service_db_password }}
+      MYSQL_HOSTNAME={{ devshop_service_db_host }}
+      MYSQL_PORT={{ devshop_service_db_port }}
+      ## END ansible_managed.
+
+  when:
+    - devshop_service_db_name | default(false)
+
 #
 #- name: Make sure settings folder exists
 #  file:
