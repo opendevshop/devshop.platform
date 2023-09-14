@@ -60,13 +60,12 @@
           inventory_hostname: {{ inventory_hostname }}
           mysql_user_home: {{ mysql_user_home }}
 
-
     - name: "Prepare Databases."
       with_items: "{{ groups['apps'] }}"
       when:
         - 'item in hostvars'
         - '"devshop_app_server_db" in hostvars[item]'
-        - 'hostvars[item]["devshop_app_server_db"] == ansible_hostname'
+        - 'hostvars[item]["devshop_app_server_db"] == inventory_hostname'
       set_fact:
         devshop_app_host: "{{ item }}"
         # @TODO: Allow users to set by IP or whatever.
