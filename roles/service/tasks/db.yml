@@ -5,7 +5,7 @@
 
     - '"apps" in group_names'
     - 'devshop_app_server_db is defined'
-    - '"devshop_app_server_db" in hostvars'
+    - 'devshop_app_server_db in hostvars'
     - '"ansible_fqdn" in hostvars[devshop_app_server_db]'
 
   block:
@@ -56,7 +56,8 @@
     - name: "Preparing DevShop Service: db"
       debug:
         msg: |
-          Current Host: {{ inventory_hostname }}
+          ansible_hostname: {{ ansible_hostname }}
+          inventory_hostname: {{ inventory_hostname }}
           mysql_user_home: {{ mysql_user_home }}
 
 
@@ -65,7 +66,7 @@
       when:
         - 'item in hostvars'
         - '"devshop_app_server_db" in hostvars[item]'
-        - 'hostvars[item]["devshop_app_server_db"] == inventory_hostname'
+        - 'hostvars[item]["devshop_app_server_db"] == ansible_hostname'
       set_fact:
         devshop_app_host: "{{ item }}"
         # @TODO: Allow users to set by IP or whatever.
