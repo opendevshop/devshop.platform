@@ -76,6 +76,9 @@
 
 - name: Deploy code from Git
 
+  # Slow things down. SSH Hosts can throttle you if you clone too fast.
+  throttle: 1
+
   # On idempotent test runs, any changes to the working copy cause failure.
   # This can happen when build scripts are run.
   # To allow molecule idempotency to pass, this tag is added.
@@ -94,11 +97,11 @@
     track_submodules: "{{ devshop_app_git_track_submodules }}"
   register: git_results
 
-#- name: Run Post-Git Tasks.
-#  include_role:
-#    name: "{{ devshop_app_role }}"
-#    defaults_from: "{{ devshop_app_role_defaults_from }}"
-#    tasks_from: "{{ devshop_app_type }}.post-git.yml"
+- name: Run Post-Git Tasks.
+  include_role:
+    name: "{{ devshop_app_role }}"
+    defaults_from: "{{ devshop_app_role_defaults_from }}"
+    tasks_from: "{{ devshop_app_type }}.post-git.yml"
 
 # Launch Logic:
 # Task will RUN if:
@@ -115,7 +118,7 @@
       Launching App Commands for {{ inventory_hostname }}...
       {{ devshop_app_git_repository }}
       {{ devshop_app_git_reference }}
-      
+
       {% if git_results.changed: %}
       Reason: Git changes detected.
       {% endif %}
