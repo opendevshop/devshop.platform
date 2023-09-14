@@ -1,0 +1,6 @@
+---
+
+- name: Login link
+  command:
+    cmd: "drush uli"
+    chdir: "{{ devshop_app_git_root }}"
