@@ -1,6 +1,6 @@
 ---
 
-- name: App Hosts Config
+- name: "Preparing DevShop App Service: db"
   when:
 
     - '"apps" in group_names'
@@ -53,7 +53,7 @@
     - '"db" in group_names'
 
   block:
-    - name: "Preparing DevShop Service: db"
+    - name: "Preparing DevShop Host Service: db"
       debug:
         msg: |
           ansible_hostname: {{ ansible_hostname }}
