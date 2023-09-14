@@ -79,6 +79,11 @@
   # Slow things down. SSH Hosts can throttle you if you clone too fast.
   throttle: 1
 
+  # Retry git checkout. Git servers might block us for cloning so fast.
+  retries: 10
+  delay: 4
+  until: "git_results is not failed"
+
   # On idempotent test runs, any changes to the working copy cause failure.
   # This can happen when build scripts are run.
   # To allow molecule idempotency to pass, this tag is added.
