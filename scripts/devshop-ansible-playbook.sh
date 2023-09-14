@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 set -e
+if [[ -z "$COMPOSER_RUNTIME_BIN_DIR" ]]; then
+  BIN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+else
+  BIN_DIR="$COMPOSER_RUNTIME_BIN_DIR"
+fi
 
-SCRIPT_FOLDER_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+PLATFORM_FOLDER_PATH="$( cd "$(dirname "$0")" ; pwd -P )"
+PROJECT_FOLDER_PATH=$(dirname $BIN_DIR)
 
-#TODO: Look for /vendor and set dynamically.
-PLATFORM_FOLDER_PATH="$(cd "$(dirname $(dirname $(dirname "$SCRIPT_FOLDER_PATH")))" && pwd)"
-
-ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"playbook.yml"}
+ANSIBLE_PLAYBOOK=${ANSIBLE_PLAYBOOK:-"${PLATFORM_FOLDER_PATH}/playbook.yml"}
 ANSIBLE_TAGS=${ANSIBLE_TAGS:-""}
 ANSIBLE_SKIP_TAGS=${ANSIBLE_SKIP_TAGS:-""}
 ANSIBLE_EXTRA_VARS=${ANSIBLE_EXTRA_VARS:-""}
@@ -14,8 +17,8 @@ ANSIBLE_PLAYBOOK_COMMAND_OPTIONS=${ANSIBLE_PLAYBOOK_COMMAND_OPTIONS:-""}
 ANSIBLE_VERBOSITY=${ANSIBLE_VERBOSITY:-"0"}
 
 # If the including repo has an inventory.yml file at the root, load it.
-if [[ -f "$PLATFORM_FOLDER_PATH/inventory.yml" ]]; then
-  ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$PLATFORM_FOLDER_PATH/inventory.yml"
+if [[ -f "$PROJECT_FOLDER_PATH/inventory.yml" ]]; then
+  ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$PROJECT_FOLDER_PATH/inventory.yml"
 fi
 
 # Build options string if ENV vars exist.
@@ -30,20 +33,26 @@ if [[ -n "${ANSIBLE_EXTRA_VARS}" ]]; then
 fi
 
 
-ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$SCRIPT_FOLDER_PATH/services"
+ANSIBLE_PLAYBOOK_COMMAND_OPTIONS="$ANSIBLE_PLAYBOOK_COMMAND_OPTIONS --inventory=$PLATFORM_FOLDER_PATH/services"
 
 ON_FAIL=${ON_FAIL:-"systemctl status --no-pager"}
 # TODO: Goat Scripts
 LINE="------------------------"
 echo $LINE
 echo "Welcome to the Platform."
+echo "Current Dir: ${pwd}"
+# Detect dependencies
+if [[ ! `command -v ansible` ]]; then
+  echo "This script requires ansible. Install it and try again."
+  exit 1
+fi
 
 if [ -n "$DEBUG" ]; then
   echo $LINE
   echo "devshop-ansible-playbook.sh Environment Vars:"
   echo
-  echo "SCRIPT_FOLDER_PATH: $SCRIPT_FOLDER_PATH"
   echo "PLATFORM_FOLDER_PATH: $PLATFORM_FOLDER_PATH"
+  echo "PROJECT_FOLDER_PATH: $PROJECT_FOLDER_PATH"
   echo "PWD: $PWD"
   echo "ANSIBLE_PLAYBOOK: $ANSIBLE_PLAYBOOK"
   echo "ANSIBLE_TAGS: $ANSIBLE_TAGS"
@@ -66,16 +75,16 @@ echo $LINE
 
 # @TODO: detect missing roles using ansible instead. This is tricky due to paths & ansible config. We don't want this to run unless called.
 ## Detect missing roles and install.
-#if [ ! -d ${PLATFORM_FOLDER_PATH}/roles/contrib ]; then
-#  echo "No ansible roles found at ${PLATFORM_FOLDER_PATH}/roles/contrib."
+#if [ ! -d ${PROJECT_FOLDER_PATH}/roles/contrib ]; then
+#  echo "No ansible roles found at ${PROJECT_FOLDER_PATH}/roles/contrib."
 #  echo "Running ./scripts/ansible-galaxy-install.sh..."
-#  cd ${PLATFORM_FOLDER_PATH}
+#  cd ${PROJECT_FOLDER_PATH}
 #  ./scripts/ansible-galaxy-install.sh
 #  cd -
 #fi
 
-cd $SCRIPT_FOLDER_PATH
-echo "Changed director to $SCRIPT_FOLDER_PATH"
+cd $PROJECT_FOLDER_PATH
+echo "Changed directory to $PROJECT_FOLDER_PATH"
 echo "Running Ansible Playbook --list-hosts Command: "
 echo "> $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND"
 $ANSIBLE_PLAYBOOK_INVENTORY_COMMAND
