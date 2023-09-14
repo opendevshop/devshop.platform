@@ -8,3 +8,4 @@ __devshop_host_common_packages:
   - curl
   - unzip
   - sendmail
+  - acl
