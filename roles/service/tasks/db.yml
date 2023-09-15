@@ -1,11 +1,11 @@
 ---
 
-- name: App Hosts Config
+- name: "Preparing DevShop App Service: db"
   when:
 
     - '"apps" in group_names'
     - 'devshop_app_server_db is defined'
-    - '"devshop_app_server_db" in hostvars'
+    - 'devshop_app_server_db in hostvars'
     - '"ansible_fqdn" in hostvars[devshop_app_server_db]'
 
   block:
@@ -53,12 +53,12 @@
     - '"db" in group_names'
 
   block:
-    - name: "Preparing DevShop Service: db"
+    - name: "Preparing DevShop Host Service: db"
       debug:
         msg: |
-          Current Host: {{ inventory_hostname }}
+          ansible_hostname: {{ ansible_hostname }}
+          inventory_hostname: {{ inventory_hostname }}
           mysql_user_home: {{ mysql_user_home }}
-
 
     - name: "Prepare Databases."
       with_items: "{{ groups['apps'] }}"

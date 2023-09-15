@@ -6,7 +6,7 @@
     - '"http" in group_names'
 
   block:
-    - name: "Preparing DevShop Service: http"
+    - name: "Preparing DevShop Host Service: http"
       debug:
         msg: |
           Current Host: {{ inventory_hostname }}
@@ -14,25 +14,29 @@
     - name: "All app hosts that use this server:"
       debug:
         msg: |
-          {{ hostvars[item] }}
+          inventory_hostname: {{ item }}
+          ansible_host: {{ hostvars[item]['ansible_host'] }}
+          HTTP Server: {{ hostvars[item]['devshop_app_server_http'] }}
       with_items: "{{ groups['apps'] }}"
       when:
-      - '"devshop_app_server_http" in hostvars[item]'
-      - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+        - 'item in hostvars'
+        - '"devshop_app_server_http" in hostvars[item]'
+        - 'hostvars[item]["devshop_app_server_http"] == inventory_hostname'
 
     # @TODO: Move lookup of apps using this server to server_vars.py
     - name: "Prepare Apache VHosts."
       with_items: "{{ groups['apps'] }}"
       when:
+        - 'item in hostvars'
         - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+        - 'hostvars[item]["devshop_app_server_http"] == inventory_hostname'
 
       register: apache_vhost_register
       set_fact:
         devshop_app_apache_vhost:
 
           # See https://github.com/geerlingguy/ansible-role-apache
-          servername: "{{ item }}"
+          servername: "{{ hostvars[item]['ansible_host'] }}"
 
           # NOTE: hostvars are from inventory. They do NOT include app role defaults.
           documentroot: "{{ hostvars[item]['devshop_app_git_root'] }}/{{ hostvars[item]['devshop_app_git_document_root'] | default(devshop_app_git_document_root) }}"
@@ -50,8 +54,9 @@
     - name: "Prepare Certbot Variables"
       with_items: "{{ groups['apps'] }}"
       when:
+        - 'item in hostvars'
         - '"devshop_app_server_http" in hostvars[item]'
-        - hostvars[item]['devshop_app_server_http'] == inventory_hostname
+        - 'hostvars[item]["devshop_app_server_http"] == inventory_hostname'
 
       register: certbot_certs_register
       set_fact:
@@ -84,14 +89,14 @@
         # @TODO: Figure out why we can't move these to inventory/defaults vars files.
         # Generating certs during server playbook run isn't great. Too many and LE will lock you out.
         certbot_create_if_missing: yes
-        
+
         certbot_create_standalone_stop_services: []
         certbot_auto_renew_user: "{{ devshop_platform_user }}"
         certbot_auto_renew_hour: "3"
         certbot_auto_renew_minute: "30"
         certbot_create_method: "webroot"
 
-    # @TODO: replace with php fpm role. 
+    # @TODO: replace with php fpm role.
     - name: "Set Facts for Debian hosts."
       set_fact:
         php_packages_extra:

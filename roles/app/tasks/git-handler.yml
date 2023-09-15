@@ -28,6 +28,7 @@
   debug:
     msg: |
       ================={{ inventory_hostname }}=================
+      http://{{ ansible_host }}
       User: {{ devshop_app_user }}
       Directory: {{ devshop_app_git_root }}
       Log File: {{ devshop_app_commands_log_file }}

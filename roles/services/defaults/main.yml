@@ -2,10 +2,7 @@
 devshop_host_users:
   - platform
   - control
-  - jonpugh
 
-devshop_host_admins:
-  - jonpugh
+devshop_host_admins: []
 
-devshop_host_github_users:
-  - jonpugh
+devshop_host_github_users: "{{ devshop_host_admins }}"
