@@ -1,8 +1,4 @@
 ---
-- name: Gather App Host Facts
-  gather_facts:
-  tags:
-    - always
 
 - name: Prevent the role from running as root.
   fail:
@@ -22,8 +18,6 @@
 
       inventory_hostname: {{ inventory_hostname }}
       ansible_host:   {{ ansible_host }}
-      nodename: {{ ansible_facts.nodename }}
-      ansible_default_ipv4.address: {{ ansible_default_ipv4.address }}
       ansible_connection: {{ ansible_connection }}
 
       groups:
@@ -39,6 +33,7 @@
       {{ devshop_app_servers | to_nice_yaml }}
       ---------------------------------
       devshop_app_user: {{ devshop_app_user }}
+      devshop_app_user_group: {{ devshop_app_user_group }}
       ---------------------------------
       devshop_app_commands_log_file: {{ devshop_app_commands_log_file }}
 
@@ -67,6 +62,7 @@
     owner: "{{ devshop_app_user }}"
     group: "{{ devshop_app_user_group }}"
     mode: '0755'
+  become: false
 
 - name: Run App Tasks.
   include_role:
