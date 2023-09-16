@@ -116,7 +116,7 @@
 #   - Play run is NOT the molecule idempotency test.
 #   - changed_when is otherwise always TRUE in order to trigger the "git changed" handler.
 - name: Launching Command Stages
-  when: force_commands or git_results.changed == true
+  when: force_install or force_commands or git_results.changed == true
   changed_when: '"molecule-idempotence-notest" not in ansible_skip_tags'
   debug:
     msg: |
