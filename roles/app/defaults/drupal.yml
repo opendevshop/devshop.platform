@@ -1,5 +1,7 @@
 ---
 
+devshop_app_drupal_site_hosting_environment: "DevShop Platform"
+
 # Template file to use for settings file.
 devshop_app_drupal_create_settings_file: true
 devshop_app_drupal_settings_include_template: "drupal.settings.devshop.php.j2"

@@ -2,8 +2,9 @@
 - name: Prepare .env file.
   file:
     path: "{{ devshop_app_env_file_path }}"
+    owner: "{{ devshop_app_user }}"
+    group: "{{ devshop_app_user }}"
     state: touch
-  become: false
 
 - name: Write service variables to .env file.
   blockinfile:
@@ -19,9 +20,10 @@
       MYSQL_HOSTNAME="{{ devshop_service_db_host }}"
       MYSQL_PORT="{{ devshop_service_db_port }}"
       DRUSH_OPTIONS_URI="{{ ansible_host }}"
-      ## END ansible_managed.
-    become: false
 
+      ## Used by site.module for the "Host Provider" property.
+      DRUPAL_SITE_HOST_PROVIDER="{{ devshop_app_drupal_site_host_provider }}"
+      ## END ansible_managed.
   when:
     - devshop_service_db_name | default(false)
 
