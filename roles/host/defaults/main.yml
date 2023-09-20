@@ -16,6 +16,9 @@ devshop_platform_user_group: "{{ devshop_platform_user }}"
 devshop_platform_user_comment: "The DevShop Platform User"
 devshop_platform_user_shell: "/bin/bash"
 
+# An array of public keys to add to authorized_keys for platform user.
+devshop_platform_user_authorized_keys: []
+
 # Set if needed.
 # See https://docs.ansible.com/ansible/latest/collections/ansible/posix/user_module.html
 # devshop_platform_user_uid: 1001
